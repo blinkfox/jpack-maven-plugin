@@ -1,0 +1,12 @@
+<service>
+    <id>${projectId}</id>
+    <name>${name}</name>
+    <description>${description}</description>
+    <workingdirectory>%BASE%\</workingdirectory>
+    <logpath>%BASE%\logs</logpath>
+    <logmode>rotate</logmode>
+    <startmode>Automatic</startmode>
+
+    <executable>java</executable>
+    <arguments>${arguments}</arguments>
+</service>
