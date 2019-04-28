@@ -24,9 +24,9 @@ import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
- * HelloMojo.
+ * 打包的Mojo.
  *
- * @author blinkfox on 2019-04-22.
+ * @author blinkfox on 2019-04-28.
  */
 @Mojo(name = "hello", defaultPhase = LifecyclePhase.PACKAGE)
 public class HelloMojo extends AbstractMojo {
