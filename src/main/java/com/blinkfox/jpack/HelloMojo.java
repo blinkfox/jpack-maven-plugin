@@ -1,7 +1,7 @@
-package com.blinkfox.deploypack;
+package com.blinkfox.jpack;
 
-import com.blinkfox.deploypack.utils.CompressKit;
-import com.blinkfox.deploypack.utils.TemplateKit;
+import com.blinkfox.jpack.utils.CompressKit;
+import com.blinkfox.jpack.utils.TemplateKit;
 
 import java.io.File;
 import java.io.FileWriter;

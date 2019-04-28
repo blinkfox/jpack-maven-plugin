@@ -1,4 +1,4 @@
-package com.blinkfox.deploypack.utils;
+package com.blinkfox.jpack.utils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

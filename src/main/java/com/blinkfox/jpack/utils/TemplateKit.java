@@ -1,4 +1,4 @@
-package com.blinkfox.deploypack.utils;
+package com.blinkfox.jpack.utils;
 
 import org.beetl.core.Configuration;
 import org.beetl.core.GroupTemplate;
