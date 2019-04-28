@@ -1,7 +1,11 @@
 package com.blinkfox.jpack;
 
+import com.blinkfox.jpack.entity.PackInfo;
+
 import java.io.File;
 
+import com.blinkfox.jpack.handler.impl.LinuxPackHandler;
+import com.blinkfox.jpack.handler.impl.WindowsPackHandler;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -28,20 +32,8 @@ public class packMojo extends AbstractMojo {
     private File targetDir;
 
     /**
-     * 该 Maven 项目 pom.xml 中的 `artifactId`.
-     */
-    @Parameter(defaultValue = "${project.artifactId}", required = true)
-    private String artifactId;
-
-    /**
-     * 该 Maven 项目 pom.xml 中的版本 `version`.
-     */
-    @Parameter(defaultValue = "${project.version}", required = true)
-    private String version;
-
-    /**
      * 该 Maven 项目 pom.xml 中的 `finalName`，如果 Maven 中设置了此项，打包的名称前缀将是这个值，
-     * 否则打包的名称前缀就是 `artifactId + version`.
+     * 否则打包的名称前缀默认就是 `artifactId + version`.
      */
     @Parameter(defaultValue = "${project.build.finalName}")
     private String finalName;
@@ -70,15 +62,17 @@ public class packMojo extends AbstractMojo {
     @Override
     public void execute() {
         log = getLog();
-        log.info("---------- 开始执行打包... -----------");
-        log.info("targetDir: " + targetDir);
-        log.info("artifactId: " + artifactId);
-        log.info("version: " + version);
-        log.info("finalName: " + finalName);
-        log.info("description: " + description);
-        log.info("vmOptions: " + vmOptions);
-        log.info("programArgs: " + programArgs);
-        log.info("---------- 执行打包结束. -------------");
+        PackInfo packInfo = new PackInfo()
+                .setTargetDir(this.targetDir)
+                .setName(this.finalName)
+                .setDescription(this.description)
+                .setVmOptions(this.vmOptions)
+                .setProgramArgs(this.programArgs);
+        log.info("PackInfo:" + packInfo);
+
+        // 分别打包为 Windows 和 Linux 下的部署包.
+        new WindowsPackHandler(log).pack(packInfo);
+        new LinuxPackHandler(log).pack(packInfo);
     }
 
 }
