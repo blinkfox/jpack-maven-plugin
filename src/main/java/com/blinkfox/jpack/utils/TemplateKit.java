@@ -1,12 +1,14 @@
 package com.blinkfox.jpack.utils;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+
 import org.beetl.core.Configuration;
 import org.beetl.core.GroupTemplate;
 import org.beetl.core.Template;
 import org.beetl.core.resource.ClasspathResourceLoader;
-
-import java.io.IOException;
-import java.util.Map;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * svg 模板生成工具类，这里使用高性能的 beetl 来输出模板.
@@ -41,8 +43,6 @@ public final class TemplateKit {
     static void initTemplateByPath(String path) {
         try {
             Configuration cfg = Configuration.defaultConfiguration();
-            cfg.setStatementStart("@");
-            cfg.setStatementEnd(null);
             cfg.getResourceMap().put("autoCheck", "false");
             groupTemplate = new GroupTemplate(new ClasspathResourceLoader(path), cfg);
         } catch (IOException e) {
@@ -59,8 +59,20 @@ public final class TemplateKit {
      */
     public static String render(String filePath, Map<String, Object> context) {
         Template template = groupTemplate.getTemplate(filePath);
-        template.binding(context);
+        template.fastBinding(context);
         return template.render();
+    }
+
+    /**
+     * 渲染指定全路径下的模板文件到指定的输出路径中.
+     *
+     * @param template 模板文件
+     * @param context 上下文参数
+     * @param out 输出路径
+     * @throws IOException IO异常
+     */
+    public static void renderFile(String template, Map<String, Object> context, String out) throws IOException {
+        FileUtils.fileWrite(out, StandardCharsets.UTF_8.name(), TemplateKit.render(template, context));
     }
 
 }

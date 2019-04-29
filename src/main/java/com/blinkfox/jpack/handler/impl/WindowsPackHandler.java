@@ -9,6 +9,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -20,6 +21,11 @@ import java.util.Map;
  * @author blinkfox on 2019-04-29.
  */
 public class WindowsPackHandler extends AbstractPackHandler {
+
+    /**
+     * bat 文件的名称数组.
+     */
+    private static final String[] BAT_NAME_ARR = {"install", "uninstall", "start", "stop", "restart"};
 
     /**
      * Windows 平台主目录的名称常量.
@@ -51,6 +57,9 @@ public class WindowsPackHandler extends AbstractPackHandler {
         this.renderWinswXml(super.platformPath + File.separator + projectName + ".xml", packInfo);
         super.copyFiles("windows/bin/winsw.exe", projectName + ".exe");
         super.copyFiles("windows/bin/winsw.exe.config", projectName + ".exe.config");
+
+        // 创建所有的 `.bat` 文件.
+        this.createAllBatFiles(packInfo.getName());
     }
 
     /**
@@ -71,13 +80,33 @@ public class WindowsPackHandler extends AbstractPackHandler {
         context.put("arguments", vmOptions + "-jar ..\\" + packInfo.getFullJarName() + args);
 
         // 渲染出 winsw.xml 模板中的内容，并将内容写入到 bin 目录的文件中.
-        String content = TemplateKit.render("windows/bin/winsw.xml", context);
         try {
-            FileUtils.fileWrite(destXml, StandardCharsets.UTF_8.name(), content);
+            TemplateKit.renderFile("windows/bin/winsw.xml", context, destXml);
         } catch (IOException e) {
-            log.error("渲染 winsw.xml 文件内容并写入 bin 目录出错!", e);
+            log.error("渲染 winsw.xml 模板内容并写入 bin 目录中出错！", e);
         }
-        log.info("生成的内容:\n" + content);
+    }
+
+    /**
+     * 创建所有的 bin 目录下的 bat 文件，如：install.bat, start.bat 等.
+     *
+     * @param name 打包的项目名称
+     */
+    private void createAllBatFiles(String name) {
+        try {
+            for (String batName : BAT_NAME_ARR) {
+                // 构造渲染的上下文参数.
+                Map<String, Object> context = new HashMap<>(4);
+                context.put("name", name);
+                context.put("batName", batName);
+
+                // 渲染 .bat 的模板，并将结果写入到 bin 目录下，生成如：install.bat, start.bat 等文件.
+                TemplateKit.renderFile("windows/bin/template.bat", context,
+                        super.binPath + batName + ".bat");
+            }
+        } catch (IOException e) {
+            log.error("渲染 template.bat 模板内容并写入到 bin 目录中出错！", e);
+        }
     }
 
 }
