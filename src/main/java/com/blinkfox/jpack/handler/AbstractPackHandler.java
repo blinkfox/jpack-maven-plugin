@@ -34,19 +34,24 @@ public abstract class AbstractPackHandler implements PackHandler {
     protected String binPath;
 
     /**
-     * 创建各个平台下的 home 目录和 home 目录中的 bin 目录文件夹.
+     * 创建各个平台下的主目录和主目录中的 bin, docs, logs 等目录文件夹.
      */
-    protected void createHomeAndBinDir() {
+    protected void createPlatformCommonDir() {
         File platformDir = new File(this.platformPath);
         try {
+            // 创建或清空各平台的主目录.
             if (platformDir.exists()) {
                 FileUtils.cleanDirectory(platformDir);
             } else {
                 FileUtils.mkdir(this.platformPath);
             }
+
+            this.binPath = this.platformPath + File.separator + AbstractPackHandler.BIN_DIR_NAME + File.separator;
             FileUtils.forceMkdir(new File(binPath));
+            FileUtils.forceMkdir(new File(this.platformPath + File.separator + "docs" + File.separator));
+            FileUtils.forceMkdir(new File(this.platformPath + File.separator + "logs" + File.separator));
         } catch (IOException e) {
-            log.error("清空【" + platformPath + "】目录或者创建 bin 目录失败！请检查文件是否正在使用!", e);
+            log.error("清空【" + platformPath + "】目录或者创建 bin 目录等失败！请检查文件是否正在使用!", e);
         }
     }
 

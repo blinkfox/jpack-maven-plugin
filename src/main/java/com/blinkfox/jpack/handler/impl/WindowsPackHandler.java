@@ -36,8 +36,7 @@ public class WindowsPackHandler extends AbstractPackHandler {
     @Override
     public void pack(PackInfo packInfo) {
         super.platformPath = packInfo.getHomeDir().getAbsolutePath() + File.separator + WINDOWS_DIR_NAME;
-        super.binPath = super.platformPath + File.separator + AbstractPackHandler.BIN_DIR_NAME + File.separator;
-        super.createHomeAndBinDir();
+        super.createPlatformCommonDir();
     }
 
 }
