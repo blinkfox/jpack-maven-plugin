@@ -34,6 +34,7 @@ public class LinuxPackHandler extends AbstractPackHandler {
      */
     @Override
     public void pack(PackInfo packInfo) {
+        super.packInfo = packInfo;
         super.platformPath = packInfo.getHomeDir().getAbsolutePath() + File.separator + LINUX_DIR_NAME;
         super.createPlatformCommonDir();
         super.copyFiles("windows/README.md", "README.md");

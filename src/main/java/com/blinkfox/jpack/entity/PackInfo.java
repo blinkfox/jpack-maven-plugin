@@ -109,4 +109,13 @@ public class PackInfo {
         return this.name + JAR;
     }
 
+    /**
+     * 获取打包的完整文件路径名称，但不含文件扩展名.
+     *
+     * @return 包名称
+     */
+    public String getPackName() {
+        return this.homeDir.getAbsolutePath() + File.separator + this.name;
+    }
+
 }

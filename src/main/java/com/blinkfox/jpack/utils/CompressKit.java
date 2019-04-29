@@ -35,7 +35,7 @@ public final class CompressKit {
     /**
      * 压缩文件夹为 zip 格式.
      *
-     * @param dir     文件夹
+     * @param dir 文件夹
      * @param zipPath zip全路径名
      */
     public static void zip(String dir, String zipPath) {
@@ -94,8 +94,8 @@ public final class CompressKit {
         try (ZipArchiveOutputStream zaos = new ZipArchiveOutputStream(new File(zipFilePath))) {
             zaos.setUseZip64(Zip64Mode.AsNeeded);
 
-            //将每个文件用ZipArchiveEntry封装
-            //再用ZipArchiveOutputStream写到压缩文件中
+            // 将每个文件用 ZipArchiveEntry 封装
+            // 再用 ZipArchiveOutputStream 写到压缩文件中
             for (String strfile : files) {
                 File file = new File(strfile);
                 zaos.putArchiveEntry(new ZipArchiveEntry(file, getFilePathName(dir, strfile)));
@@ -116,10 +116,12 @@ public final class CompressKit {
      * @param file 单个的文件对象
      */
     private static void compressFile(ZipArchiveOutputStream zaos, File file) {
-        try (InputStream is = new BufferedInputStream(new FileInputStream(file))) {
+        try (
+                InputStream is = new FileInputStream(file);
+                InputStream bis = new BufferedInputStream(is)) {
             byte[] buffer = new byte[1024];
             int len;
-            while ((len = is.read(buffer)) != -1) {
+            while ((len = bis.read(buffer)) != -1) {
                 //把缓冲区的字节写入到 ZipArchiveEntry.
                 zaos.write(buffer, 0, len);
             }
@@ -161,9 +163,9 @@ public final class CompressKit {
         tOut.putArchiveEntry(new TarArchiveEntry(f, entryName));
 
         if (f.isFile()) {
-            FileInputStream in = new FileInputStream(f);
-            IOUtils.copy(in, tOut);
-            in.close();
+            try (FileInputStream in = new FileInputStream(f)) {
+                IOUtils.copy(in, tOut);
+            }
             tOut.closeArchiveEntry();
         } else {
             tOut.closeArchiveEntry();

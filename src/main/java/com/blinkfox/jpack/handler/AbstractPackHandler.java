@@ -3,6 +3,7 @@ package com.blinkfox.jpack.handler;
 import java.io.File;
 import java.io.IOException;
 
+import com.blinkfox.jpack.entity.PackInfo;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
@@ -28,6 +29,11 @@ public abstract class AbstractPackHandler implements PackHandler {
      * 资源管理器对象.
      */
     private ResourceManager resourceManager;
+
+    /**
+     * 打包的相关参数实体对象.
+     */
+    protected PackInfo packInfo;
 
     /**
      * Maven 插件可公用的日志对象.
@@ -63,8 +69,8 @@ public abstract class AbstractPackHandler implements PackHandler {
             // 在主目录下创建 bin, docs, logs 等目录.
             this.binPath = this.platformPath + File.separator + AbstractPackHandler.BIN_DIR_NAME + File.separator;
             FileUtils.forceMkdir(new File(binPath));
-            FileUtils.forceMkdir(new File(this.platformPath + File.separator + "docs" + File.separator));
-            FileUtils.forceMkdir(new File(this.platformPath + File.separator + "logs" + File.separator));
+            FileUtils.forceMkdir(new File(this.platformPath + File.separator + "docs"));
+//            FileUtils.forceMkdir(new File(this.platformPath + File.separator + "logs"));
         } catch (IOException | PlexusContainerException | ComponentLookupException e) {
             log.error("清空【" + platformPath + "】目录或者创建 bin 目录等失败！请检查文件是否正在使用!", e);
         }

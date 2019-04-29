@@ -1,19 +1,18 @@
 package com.blinkfox.jpack.handler.impl;
 
 import com.blinkfox.jpack.entity.PackInfo;
-
 import com.blinkfox.jpack.handler.AbstractPackHandler;
+import com.blinkfox.jpack.utils.CompressKit;
 import com.blinkfox.jpack.utils.TemplateKit;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.FileUtils;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Windows 下的打包处理器实现类.
@@ -48,6 +47,7 @@ public class WindowsPackHandler extends AbstractPackHandler {
      */
     @Override
     public void pack(PackInfo packInfo) {
+        super.packInfo = packInfo;
         super.platformPath = packInfo.getHomeDir().getAbsolutePath() + File.separator + WINDOWS_DIR_NAME;
         super.createPlatformCommonDir();
 
@@ -60,6 +60,9 @@ public class WindowsPackHandler extends AbstractPackHandler {
 
         // 创建所有的 `.bat` 文件.
         this.createAllBatFiles(packInfo.getName());
+
+        // 制作 .zip 压缩包.
+        this.compress();
     }
 
     /**
@@ -107,6 +110,22 @@ public class WindowsPackHandler extends AbstractPackHandler {
         } catch (IOException e) {
             log.error("渲染 template.bat 模板内容并写入到 bin 目录中出错！", e);
         }
+    }
+
+    /**
+     * 制作 windows 下的 zip 压缩包.
+     */
+    private void compress() {
+        log.info("正在制作 windows 下的部署压缩包...");
+        try {
+            CompressKit.zip(super.platformPath,  super.packInfo.getPackName() + ".zip");
+            log.info("正在清除临时文件....");
+            FileUtils.forceDelete(super.platformPath);
+            log.info("已清除临时文件.");
+        } catch (IOException e) {
+            log.info("压缩并清除 windows 下部署的临时文件失败.", e);
+        }
+        log.info("制作 windows 下的部署压缩包完成.");
     }
 
 }
