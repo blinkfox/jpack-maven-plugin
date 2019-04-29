@@ -46,6 +46,7 @@ public abstract class AbstractPackHandler implements PackHandler {
                 FileUtils.mkdir(this.platformPath);
             }
 
+            // 在主目录下创建 bin, docs, logs 等目录.
             this.binPath = this.platformPath + File.separator + AbstractPackHandler.BIN_DIR_NAME + File.separator;
             FileUtils.forceMkdir(new File(binPath));
             FileUtils.forceMkdir(new File(this.platformPath + File.separator + "docs" + File.separator));
