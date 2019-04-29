@@ -12,7 +12,7 @@ public class PackInfo {
     /**
      * 各平台打包的主文件目录.
      */
-    private File targetDir;
+    private File homeDir;
 
     /**
      * 所打包项目的名称.
@@ -36,12 +36,12 @@ public class PackInfo {
 
     /* 以下是 getter 和 setter 方法. */
 
-    public File getTargetDir() {
-        return targetDir;
+    public File getHomeDir() {
+        return homeDir;
     }
 
-    public PackInfo setTargetDir(File targetDir) {
-        this.targetDir = targetDir;
+    public PackInfo setHomeDir(File homeDir) {
+        this.homeDir = homeDir;
         return this;
     }
 

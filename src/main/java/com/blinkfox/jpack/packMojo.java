@@ -1,28 +1,32 @@
 package com.blinkfox.jpack;
 
 import com.blinkfox.jpack.entity.PackInfo;
-
-import java.io.File;
-
 import com.blinkfox.jpack.handler.impl.LinuxPackHandler;
 import com.blinkfox.jpack.handler.impl.WindowsPackHandler;
+
+import java.io.File;
+import java.io.IOException;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * 打包的 Maven 插件主入口 Mojo 类.
  *
  * @author blinkfox on 2019-04-28.
  */
-@Mojo(name = "pack", defaultPhase = LifecyclePhase.PACKAGE)
+@Mojo(name = "build", defaultPhase = LifecyclePhase.PACKAGE)
 public class packMojo extends AbstractMojo {
 
     /**
-     * 日志对象.
+     * 用来存放 jpack 打包时的文件夹名称常量.
      */
+    private static final String HOME_DIR_NAME = "jpack";
+
     private static Log log;
 
     /**
@@ -63,7 +67,7 @@ public class packMojo extends AbstractMojo {
     public void execute() {
         log = getLog();
         PackInfo packInfo = new PackInfo()
-                .setTargetDir(this.targetDir)
+                .setHomeDir(this.createHomeDir())
                 .setName(this.finalName)
                 .setDescription(this.description)
                 .setVmOptions(this.vmOptions)
@@ -73,6 +77,21 @@ public class packMojo extends AbstractMojo {
         // 分别打包为 Windows 和 Linux 下的部署包.
         new WindowsPackHandler(log).pack(packInfo);
         new LinuxPackHandler(log).pack(packInfo);
+    }
+
+    /**
+     * 创建 jpack 主文件夹目录.
+     *
+     * @return jpack 目录的 file 对象
+     */
+    private File createHomeDir() {
+        File file = new File(this.targetDir + File.separator + HOME_DIR_NAME + File.separator);
+        try {
+            FileUtils.forceMkdir(file);
+        } catch (IOException e) {
+            log.error("创建 jpack 文件夹失败！请检查其中是否有文件正在使用! ", e);
+        }
+        return file;
     }
 
 }

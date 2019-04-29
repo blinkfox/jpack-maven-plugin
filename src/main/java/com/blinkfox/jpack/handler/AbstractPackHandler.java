@@ -1,10 +1,10 @@
 package com.blinkfox.jpack.handler;
 
-import org.apache.maven.plugin.logging.Log;
-import org.codehaus.plexus.util.FileUtils;
-
 import java.io.File;
 import java.io.IOException;
+
+import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * 各个平台可公用的、抽象的打包处理器抽象类.
@@ -26,7 +26,7 @@ public abstract class AbstractPackHandler implements PackHandler {
     /**
      * 各平台中的主目录路径.
      */
-    protected String homePath;
+    protected String platformPath;
 
     /**
      * 各平台中的主目录中的 bin 目录路径.
@@ -37,16 +37,16 @@ public abstract class AbstractPackHandler implements PackHandler {
      * 创建各个平台下的 home 目录和 home 目录中的 bin 目录文件夹.
      */
     protected void createHomeAndBinDir() {
-        File homeDir = new File(this.homePath);
+        File platformDir = new File(this.platformPath);
         try {
-            if (homeDir.exists()) {
-                FileUtils.cleanDirectory(homeDir);
+            if (platformDir.exists()) {
+                FileUtils.cleanDirectory(platformDir);
             } else {
-                FileUtils.mkdir(this.homePath);
+                FileUtils.mkdir(this.platformPath);
             }
             FileUtils.forceMkdir(new File(binPath));
         } catch (IOException e) {
-            log.error("清空【" + homePath + "】目录或者创建 bin 目录失败！请检查文件是否正在使用!", e);
+            log.error("清空【" + platformPath + "】目录或者创建 bin 目录失败！请检查文件是否正在使用!", e);
         }
     }
 
