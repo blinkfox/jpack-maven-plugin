@@ -4,6 +4,12 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.DefaultPlexusContainer;
+import org.codehaus.plexus.PlexusContainerException;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.resource.ResourceManager;
+import org.codehaus.plexus.resource.loader.FileResourceCreationException;
+import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
@@ -17,6 +23,11 @@ public abstract class AbstractPackHandler implements PackHandler {
      * bin 主目录的名称常量.
      */
     protected static final String BIN_DIR_NAME = "bin";
+
+    /**
+     * 资源管理器对象.
+     */
+    private ResourceManager resourceManager;
 
     /**
      * Maven 插件可公用的日志对象.
@@ -39,6 +50,9 @@ public abstract class AbstractPackHandler implements PackHandler {
     protected void createPlatformCommonDir() {
         File platformDir = new File(this.platformPath);
         try {
+            // 初始化资源管理器对象，用于获取 resources 下的资源.
+            this.resourceManager = (ResourceManager) new DefaultPlexusContainer().lookup(ResourceManager.ROLE);
+
             // 创建或清空各平台的主目录.
             if (platformDir.exists()) {
                 FileUtils.cleanDirectory(platformDir);
@@ -51,8 +65,23 @@ public abstract class AbstractPackHandler implements PackHandler {
             FileUtils.forceMkdir(new File(binPath));
             FileUtils.forceMkdir(new File(this.platformPath + File.separator + "docs" + File.separator));
             FileUtils.forceMkdir(new File(this.platformPath + File.separator + "logs" + File.separator));
-        } catch (IOException e) {
+        } catch (IOException | PlexusContainerException | ComponentLookupException e) {
             log.error("清空【" + platformPath + "】目录或者创建 bin 目录等失败！请检查文件是否正在使用!", e);
+        }
+    }
+
+    /**
+     * 复制基础文件到各平台的主目录中，如：`README.md`.
+     *
+     * @param source 源地址
+     * @param destination 目标地址
+     */
+    protected void copyFiles(String source, String destination) {
+        try {
+            FileUtils.copyFile(this.resourceManager.getResourceAsFile(source),
+                    new File(this.platformPath, destination));
+        } catch (IOException | ResourceNotFoundException | FileResourceCreationException e) {
+            log.error("复制默认资源到平台中出错！", e);
         }
     }
 

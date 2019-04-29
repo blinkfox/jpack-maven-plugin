@@ -36,10 +36,16 @@ public class packMojo extends AbstractMojo {
     private File targetDir;
 
     /**
-     * 该 Maven 项目 pom.xml 中的 `finalName`，如果 Maven 中设置了此项，打包的名称前缀将是这个值，
-     * 否则打包的名称前缀默认就是 `artifactId + version`.
+     * Maven 项目的 `artifactId`.
      */
-    @Parameter(defaultValue = "${project.build.finalName}")
+    @Parameter(defaultValue = "${project.artifactId}", required = true)
+    private String artifactId;
+
+    /**
+     * 该 Maven 项目 pom.xml 中的 `finalName`，如果 Maven 中设置了此项，打包的名称前缀将是这个值，
+     * 否则打包的名称前缀 Maven 默认就是 `artifactId + version`.
+     */
+    @Parameter(defaultValue = "${project.build.finalName}", required = true)
     private String finalName;
 
     /**
@@ -68,6 +74,7 @@ public class packMojo extends AbstractMojo {
         log = getLog();
         PackInfo packInfo = new PackInfo()
                 .setHomeDir(this.createHomeDir())
+                .setArtifactId(this.artifactId)
                 .setName(this.finalName)
                 .setDescription(this.description)
                 .setVmOptions(this.vmOptions)

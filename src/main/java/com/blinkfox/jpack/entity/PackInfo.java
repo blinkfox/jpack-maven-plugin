@@ -10,9 +10,19 @@ import java.io.File;
 public class PackInfo {
 
     /**
+     * jar 包后缀常量.
+     */
+    private static final String JAR = ".jar";
+
+    /**
      * 各平台打包的主文件目录.
      */
     private File homeDir;
+
+    /**
+     * 所打包项目的 artifactId.
+     */
+    private String artifactId;
 
     /**
      * 所打包项目的名称.
@@ -42,6 +52,15 @@ public class PackInfo {
 
     public PackInfo setHomeDir(File homeDir) {
         this.homeDir = homeDir;
+        return this;
+    }
+
+    public String getArtifactId() {
+        return artifactId;
+    }
+
+    public PackInfo setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
         return this;
     }
 
@@ -79,6 +98,15 @@ public class PackInfo {
     public PackInfo setProgramArgs(String programArgs) {
         this.programArgs = programArgs;
         return this;
+    }
+
+    /**
+     * 获取完整的打包时 jar 包的名称.
+     *
+     * @return jar 包名称
+     */
+    public String getFullJarName() {
+        return this.name + JAR;
     }
 
 }
