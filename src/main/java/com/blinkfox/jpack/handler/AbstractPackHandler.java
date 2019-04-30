@@ -70,7 +70,7 @@ public abstract class AbstractPackHandler implements PackHandler {
             this.binPath = this.platformPath + File.separator + AbstractPackHandler.BIN_DIR_NAME + File.separator;
             FileUtils.forceMkdir(new File(binPath));
             FileUtils.forceMkdir(new File(this.platformPath + File.separator + "docs"));
-//            FileUtils.forceMkdir(new File(this.platformPath + File.separator + "logs"));
+            FileUtils.forceMkdir(new File(this.platformPath + File.separator + "logs"));
         } catch (IOException | PlexusContainerException | ComponentLookupException e) {
             log.error("清空【" + platformPath + "】目录或者创建 bin 目录等失败！请检查文件是否正在使用!", e);
         }

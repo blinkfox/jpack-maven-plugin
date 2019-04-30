@@ -120,7 +120,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <vmOptions>-Xms1024m -Xmx2048m</vmOptions>
+                    <vmOptions>-Xms512m -Xmx1024m</vmOptions>
                     <programArgs>--server.port=9090</programArgs>
                 </configuration>
             </plugin>
