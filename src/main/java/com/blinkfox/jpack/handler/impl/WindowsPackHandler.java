@@ -3,6 +3,7 @@ package com.blinkfox.jpack.handler.impl;
 import com.blinkfox.jpack.entity.PackInfo;
 import com.blinkfox.jpack.handler.AbstractPackHandler;
 import com.blinkfox.jpack.utils.CompressKit;
+import com.blinkfox.jpack.utils.Logger;
 import com.blinkfox.jpack.utils.TemplateKit;
 
 import java.io.File;
@@ -11,7 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
@@ -30,15 +30,6 @@ public class WindowsPackHandler extends AbstractPackHandler {
      * Windows 平台主目录的名称常量.
      */
     private static final String WINDOWS_DIR_NAME = "windows";
-
-    /**
-     * WindowsPackHandler 类的构造方法.
-     *
-     * @param log 日志实例
-     */
-    public WindowsPackHandler(Log log) {
-        super.log = log;
-    }
 
     /**
      * 根据打包的相关参数，将该 Maven 项目打包成 Windows 中的可部署包的方法.
@@ -86,7 +77,7 @@ public class WindowsPackHandler extends AbstractPackHandler {
         try {
             TemplateKit.renderFile("windows/bin/winsw.xml", context, destXml);
         } catch (IOException e) {
-            log.error("渲染 winsw.xml 模板内容并写入 bin 目录中出错！", e);
+            Logger.error("渲染 winsw.xml 模板内容并写入 bin 目录中出错！", e);
         }
     }
 
@@ -108,7 +99,7 @@ public class WindowsPackHandler extends AbstractPackHandler {
                         super.binPath + batName + ".bat");
             }
         } catch (IOException e) {
-            log.error("渲染 template.bat 模板内容并写入到 bin 目录中出错！", e);
+            Logger.error("渲染 template.bat 模板内容并写入到 bin 目录中出错！", e);
         }
     }
 
@@ -116,16 +107,16 @@ public class WindowsPackHandler extends AbstractPackHandler {
      * 制作 windows 下的 zip 压缩包.
      */
     private void compress() {
-        log.info("正在制作 windows 下的部署压缩包...");
+        Logger.info("正在制作 windows 下的部署压缩包...");
         try {
             CompressKit.zip(super.platformPath,  super.packInfo.getPackName() + ".zip");
-            log.info("正在清除临时文件....");
+            Logger.info("正在清除临时文件....");
             FileUtils.forceDelete(super.platformPath);
-            log.info("已清除临时文件.");
+            Logger.info("已清除临时文件.");
         } catch (IOException e) {
-            log.info("压缩并清除 windows 下部署的临时文件失败.", e);
+            Logger.error("压缩并清除 windows 下部署的临时文件失败.", e);
         }
-        log.info("制作 windows 下的部署压缩包完成.");
+        Logger.info("制作 windows 下的部署压缩包完成.");
     }
 
 }

@@ -15,6 +15,11 @@ public class PackInfo {
     private static final String JAR = ".jar";
 
     /**
+     * maven 生成的 target 文件目录.
+     */
+    private File targetDir;
+
+    /**
      * 各平台打包的主文件目录.
      */
     private File homeDir;
@@ -45,6 +50,15 @@ public class PackInfo {
     private String programArgs;
 
     /* 以下是 getter 和 setter 方法. */
+
+    public File getTargetDir() {
+        return targetDir;
+    }
+
+    public PackInfo setTargetDir(File targetDir) {
+        this.targetDir = targetDir;
+        return this;
+    }
 
     public File getHomeDir() {
         return homeDir;

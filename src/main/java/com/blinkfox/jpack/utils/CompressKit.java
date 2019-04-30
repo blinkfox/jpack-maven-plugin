@@ -82,23 +82,23 @@ public final class CompressKit {
     /**
      * 把文件压缩成 zip 格式.
      *
-     * @param files       需要压缩的文件数组
+     * @param filePaths 需要压缩的文件数组
      * @param zipFilePath 压缩后的 zip 文件路径,如"D:/test/aa.zip";
-     * @param dir         待压缩的目录
+     * @param dir 待压缩的目录
      */
-    private static void compressFilesZip(List<String> files, String zipFilePath, String dir) {
-        if (files == null || files.isEmpty()) {
+    private static void compressFilesZip(List<String> filePaths, String zipFilePath, String dir) {
+        if (filePaths == null || filePaths.isEmpty()) {
             return;
         }
 
+        List<File> files = getAllFiles(filePaths);
         try (ZipArchiveOutputStream zaos = new ZipArchiveOutputStream(new File(zipFilePath))) {
             zaos.setUseZip64(Zip64Mode.AsNeeded);
 
             // 将每个文件用 ZipArchiveEntry 封装
             // 再用 ZipArchiveOutputStream 写到压缩文件中
-            for (String strfile : files) {
-                File file = new File(strfile);
-                zaos.putArchiveEntry(new ZipArchiveEntry(file, getFilePathName(dir, strfile)));
+            for (File file : files) {
+                zaos.putArchiveEntry(new ZipArchiveEntry(file, getFilePathName(dir, file.getAbsolutePath())));
                 if (!file.isDirectory()) {
                     compressFile(zaos, file);
                 }
@@ -107,6 +107,27 @@ public final class CompressKit {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 根据文件路径创建文件放入集合中，须将目录放在文件之前.
+     *
+     * @param filePaths 文件路径集合
+     * @return 文件对象集合
+     */
+    private static List<File> getAllFiles(List<String> filePaths) {
+        List<File> dirs = new ArrayList<>();
+        List<File> files = new ArrayList<>();
+        for (String filePath : filePaths) {
+            File file = new File(filePath);
+            if (file.isDirectory()) {
+                dirs.add(file);
+            } else {
+                files.add(file);
+            }
+        }
+        dirs.addAll(files);
+        return dirs;
     }
 
     /**

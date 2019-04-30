@@ -1,10 +1,11 @@
 package com.blinkfox.jpack.handler;
 
+import com.blinkfox.jpack.entity.PackInfo;
+import com.blinkfox.jpack.utils.Logger;
+
 import java.io.File;
 import java.io.IOException;
 
-import com.blinkfox.jpack.entity.PackInfo;
-import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
@@ -34,11 +35,6 @@ public abstract class AbstractPackHandler implements PackHandler {
      * 打包的相关参数实体对象.
      */
     protected PackInfo packInfo;
-
-    /**
-     * Maven 插件可公用的日志对象.
-     */
-    protected Log log;
 
     /**
      * 各平台中的主目录路径.
@@ -71,8 +67,11 @@ public abstract class AbstractPackHandler implements PackHandler {
             FileUtils.forceMkdir(new File(binPath));
             FileUtils.forceMkdir(new File(this.platformPath + File.separator + "docs"));
             FileUtils.forceMkdir(new File(this.platformPath + File.separator + "logs"));
+
+            FileUtils.copyFileToDirectory(packInfo.getTargetDir().getAbsolutePath()
+                    + File.separator + packInfo.getFullJarName(), platformPath);
         } catch (IOException | PlexusContainerException | ComponentLookupException e) {
-            log.error("清空【" + platformPath + "】目录或者创建 bin 目录等失败！请检查文件是否正在使用!", e);
+            Logger.error("清空【" + platformPath + "】目录或者创建 bin 目录等失败！请检查文件是否正在使用!", e);
         }
     }
 
@@ -87,7 +86,7 @@ public abstract class AbstractPackHandler implements PackHandler {
             FileUtils.copyFile(this.resourceManager.getResourceAsFile(source),
                     new File(this.platformPath, destination));
         } catch (IOException | ResourceNotFoundException | FileResourceCreationException e) {
-            log.error("复制默认资源到平台中出错！", e);
+            Logger.error("复制默认资源到平台中出错！", e);
         }
     }
 
