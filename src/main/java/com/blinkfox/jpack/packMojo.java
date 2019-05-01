@@ -92,7 +92,11 @@ public class packMojo extends AbstractMojo {
     private File createHomeDir() {
         File file = new File(this.targetDir + File.separator + HOME_DIR_NAME + File.separator);
         try {
-            FileUtils.forceMkdir(file);
+            if (file.exists()) {
+                FileUtils.cleanDirectory(file);
+            } else {
+                FileUtils.forceMkdir(file);
+            }
         } catch (IOException e) {
             Logger.error("创建 jpack 文件夹失败！请检查其中是否有文件正在使用! ", e);
         }

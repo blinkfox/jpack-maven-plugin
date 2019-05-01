@@ -1,6 +1,8 @@
 package com.blinkfox.jpack.handler;
 
+import com.blinkfox.jpack.consts.PlatformEnum;
 import com.blinkfox.jpack.entity.PackInfo;
+import com.blinkfox.jpack.utils.CompressKit;
 import com.blinkfox.jpack.utils.Logger;
 
 import java.io.File;
@@ -50,17 +52,12 @@ public abstract class AbstractPackHandler implements PackHandler {
      * 创建各个平台下的主目录和主目录中的 bin, docs, logs 等目录文件夹.
      */
     protected void createPlatformCommonDir() {
-        File platformDir = new File(this.platformPath);
         try {
             // 初始化资源管理器对象，用于获取 resources 下的资源.
             this.resourceManager = (ResourceManager) new DefaultPlexusContainer().lookup(ResourceManager.ROLE);
 
             // 创建或清空各平台的主目录.
-            if (platformDir.exists()) {
-                FileUtils.cleanDirectory(platformDir);
-            } else {
-                FileUtils.mkdir(this.platformPath);
-            }
+            FileUtils.mkdir(this.platformPath);
 
             // 在主目录下创建 bin, docs, logs 等目录.
             this.binPath = this.platformPath + File.separator + AbstractPackHandler.BIN_DIR_NAME + File.separator;
@@ -68,6 +65,7 @@ public abstract class AbstractPackHandler implements PackHandler {
             FileUtils.forceMkdir(new File(this.platformPath + File.separator + "docs"));
             FileUtils.forceMkdir(new File(this.platformPath + File.separator + "logs"));
 
+            // 复制 target 目录中的 jar 包到各平台目录中.
             FileUtils.copyFileToDirectory(packInfo.getTargetDir().getAbsolutePath()
                     + File.separator + packInfo.getFullJarName(), platformPath);
         } catch (IOException | PlexusContainerException | ComponentLookupException e) {
@@ -78,7 +76,7 @@ public abstract class AbstractPackHandler implements PackHandler {
     /**
      * 复制基础文件到各平台的主目录中，如：`README.md`.
      *
-     * @param source 源地址
+     * @param source      源地址
      * @param destination 目标地址
      */
     protected void copyFiles(String source, String destination) {
@@ -88,6 +86,34 @@ public abstract class AbstractPackHandler implements PackHandler {
         } catch (IOException | ResourceNotFoundException | FileResourceCreationException e) {
             Logger.error("复制默认资源到平台中出错！", e);
         }
+    }
+
+    /**
+     * 制作 linux 下的 tar.gz 压缩包.
+     */
+    protected void compress(PlatformEnum platformEnum) {
+        String platform = platformEnum.getCode();
+        Logger.info("正在制作 " + platform + " 下的部署压缩包...");
+        try {
+            // 制作压缩包.
+            switch (platformEnum) {
+                case WINDOWS:
+                    CompressKit.zip(platformPath, packInfo.getPackName() + ".zip");
+                    break;
+                case LINUX:
+                    CompressKit.tarGz(platformPath, packInfo.getPackName() + ".tar.gz");
+                    break;
+                default:
+                    break;
+            }
+
+            Logger.debug("正在清除 " + platform + " 临时文件....");
+            FileUtils.forceDelete(platformPath);
+            Logger.debug("已清除 " + platform + " 临时文件.");
+        } catch (IOException e) {
+            Logger.error("压缩并清除 " + platform + " 下部署的临时文件失败.", e);
+        }
+        Logger.info("制作 " + platform + " 下的部署压缩包完成.");
     }
 
 }

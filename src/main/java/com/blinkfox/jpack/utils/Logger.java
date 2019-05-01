@@ -29,6 +29,15 @@ public final class Logger {
     }
 
     /**
+     * 打印 debug 日志.
+     *
+     * @param content 日志内容
+     */
+    public static void debug(CharSequence content) {
+        log.debug(content);
+    }
+
+    /**
      * 打印 info 日志.
      *
      * @param content 日志内容
