@@ -8,5 +8,5 @@
     <startmode>Automatic</startmode>
 
     <executable>java</executable>
-    <arguments>${arguments}</arguments>
+    <arguments> -server ${arguments}</arguments>
 </service>
