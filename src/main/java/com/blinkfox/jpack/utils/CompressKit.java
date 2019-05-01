@@ -160,12 +160,18 @@ public final class CompressKit {
      * @throws FileNotFoundException FileNotFoundException
      * @throws IOException IOException
      */
-    public static void tarGz(String dirPath, String tarGzPath) throws FileNotFoundException, IOException {
-        try (FileOutputStream fOut = new FileOutputStream(new File(tarGzPath));
+    public static void tarGz(String dirPath, String tarGzPath) throws IOException {
+        File tarGzFile = new File(tarGzPath);
+        try (FileOutputStream fOut = new FileOutputStream(tarGzFile);
                 BufferedOutputStream bOut = new BufferedOutputStream(fOut);
                 GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(bOut);
                 TarArchiveOutputStream tOut = new TarArchiveOutputStream(gzOut)) {
-            addFileToTarGz(tOut, dirPath, "");
+            File[] children = new File(dirPath).listFiles();
+            if (children != null && children.length > 0) {
+                for (File child : children) {
+                    addFileToTarGz(tOut, child.getAbsolutePath(), tarGzFile.getName().split(".tar.gz")[0] + "/");
+                }
+            }
             tOut.finish();
         }
     }
@@ -177,8 +183,7 @@ public final class CompressKit {
      * @param dirPath 文件夹路径
      * @param base 基础路径
      */
-    private static void addFileToTarGz(TarArchiveOutputStream tOut, String dirPath, String base)
-            throws IOException {
+    private static void addFileToTarGz(TarArchiveOutputStream tOut, String dirPath, String base) throws IOException {
         File f = new File(dirPath);
         String entryName = base + f.getName();
         tOut.putArchiveEntry(new TarArchiveEntry(f, entryName));
