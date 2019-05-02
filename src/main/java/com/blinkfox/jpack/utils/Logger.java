@@ -15,12 +15,12 @@ public final class Logger {
     private static Log log;
 
     /**
-     * 构造方法.
+     * 私有构造方法.
      */
     private Logger() {}
 
     /**
-     * 初始化设置日志对象，必须初始化才行.
+     * 初始化设置日志对象，必须初始化才行，且最好保证只初始化一次.
      *
      * @param mvnLog maven的日志对象
      */

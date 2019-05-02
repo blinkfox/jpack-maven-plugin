@@ -1,5 +1,6 @@
 package com.blinkfox.jpack;
 
+import com.blinkfox.jpack.entity.CopyResource;
 import com.blinkfox.jpack.entity.PackInfo;
 import com.blinkfox.jpack.handler.impl.LinuxPackHandler;
 import com.blinkfox.jpack.handler.impl.WindowsPackHandler;
@@ -65,6 +66,12 @@ public class PackBuildMojo extends AbstractMojo {
     private String programArgs;
 
     /**
+     * 复制相关资源到各平台包的中的自定义配置参数.
+     */
+    @Parameter(property = "copyResources")
+    private CopyResource[] copyResources;
+
+    /**
      * 执行该 Mojo 的方法.
      */
     @Override
@@ -77,7 +84,8 @@ public class PackBuildMojo extends AbstractMojo {
                 .setName(this.finalName)
                 .setDescription(this.description)
                 .setVmOptions(this.vmOptions)
-                .setProgramArgs(this.programArgs);
+                .setProgramArgs(this.programArgs)
+                .setCopyResources(this.copyResources);
 
         // 分别打包为 Windows 和 Linux 下的部署包.
         new WindowsPackHandler().pack(packInfo);

@@ -49,6 +49,11 @@ public class PackInfo {
      */
     private String programArgs;
 
+    /**
+     * 复制相关资源到各平台包的中的自定义配置参数.
+     */
+    private CopyResource[] copyResources;
+
     /* 以下是 getter 和 setter 方法. */
 
     public File getTargetDir() {
@@ -111,6 +116,15 @@ public class PackInfo {
 
     public PackInfo setProgramArgs(String programArgs) {
         this.programArgs = programArgs;
+        return this;
+    }
+
+    public CopyResource[] getCopyResources() {
+        return copyResources;
+    }
+
+    public PackInfo setCopyResources(CopyResource[] copyResources) {
+        this.copyResources = copyResources;
         return this;
     }
 

@@ -1,12 +1,14 @@
 package com.blinkfox.jpack.handler;
 
 import com.blinkfox.jpack.consts.PlatformEnum;
+import com.blinkfox.jpack.entity.CopyResource;
 import com.blinkfox.jpack.entity.PackInfo;
 import com.blinkfox.jpack.utils.CompressKit;
 import com.blinkfox.jpack.utils.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
@@ -15,6 +17,7 @@ import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceCreationException;
 import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * 各个平台可公用的、抽象的打包处理器抽象类.
@@ -89,9 +92,49 @@ public abstract class AbstractPackHandler implements PackHandler {
     }
 
     /**
+     * 复制配置的自定义资源到各平台的文件夹中.
+     */
+    private void copyCustomResources() {
+        CopyResource[] copyResources = packInfo.getCopyResources();
+        if (copyResources == null || copyResources.length == 0) {
+            return;
+        }
+
+        // 遍历复制资源.
+        for (CopyResource copyResource : copyResources) {
+            String fromPath = copyResource.getFrom();
+            if (StringUtils.isNotBlank(fromPath)) {
+                // 复制网络url资源到目录中.
+                if (fromPath.startsWith("http://") || fromPath.startsWith("https://")) {
+                    String[] arr = fromPath.split("/");
+                    File dir = new File(this.platformPath + File.separator + copyResource.getTo());
+                    try {
+                        FileUtils.forceMkdir(dir);
+                        FileUtils.copyURLToFile(new URL(fromPath), new File(dir + arr[arr.length - 1]));
+                    } catch (IOException e) {
+                        Logger.error("复制配置的自定义网络资源到各平台的包中出错！", e);
+                    }
+                    continue;
+                }
+
+                // 不是网络资源，则代表是相对路径或绝对路径的资源，直接复制到对应的目录中即可.
+                try {
+                    FileUtils.copyFileToDirectory(copyResource.getFrom(),
+                            this.platformPath + File.separator + copyResource.getTo());
+                } catch (IOException e) {
+                    Logger.error("复制配置的自定义资源到各平台的包中出错！", e);
+                }
+            }
+        }
+    }
+
+    /**
      * 制作 linux 下的 tar.gz 压缩包.
      */
     protected void compress(PlatformEnum platformEnum) {
+        // 复制自定义资源到包中.
+        copyCustomResources();
+
         String platform = platformEnum.getCode();
         Logger.info("正在制作 " + platform + " 下的部署压缩包...");
         try {

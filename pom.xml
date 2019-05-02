@@ -122,6 +122,16 @@
                 <configuration>
                     <vmOptions>-Xms512m -Xmx1024m</vmOptions>
                     <programArgs>--server.port=9090</programArgs>
+                    <copyResources>
+                        <copyResource>
+                            <from>docs/hello.md</from>
+                            <to>.</to>
+                        </copyResource>
+                        <copyResource>
+                            <from>../abc/abc.md</from>
+                            <to>abc</to>
+                        </copyResource>
+                    </copyResources>
                 </configuration>
             </plugin>
         </plugins>
