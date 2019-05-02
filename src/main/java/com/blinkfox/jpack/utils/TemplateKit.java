@@ -1,5 +1,7 @@
 package com.blinkfox.jpack.utils;
 
+import com.blinkfox.jpack.exception.PackException;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -40,13 +42,13 @@ public final class TemplateKit {
      *
      * @param path 资源路径
      */
-    static void initTemplateByPath(String path) {
+    private static void initTemplateByPath(String path) {
         try {
             Configuration cfg = Configuration.defaultConfiguration();
             cfg.getResourceMap().put("autoCheck", "false");
             groupTemplate = new GroupTemplate(new ClasspathResourceLoader(path), cfg);
         } catch (IOException e) {
-            throw new RuntimeException("使用 beetl 初始化配置模版出错！", e);
+            throw new PackException("使用 beetl 初始化配置模版出错！", e);
         }
     }
 

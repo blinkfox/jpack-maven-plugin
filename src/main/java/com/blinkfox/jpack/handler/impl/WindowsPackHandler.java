@@ -1,8 +1,8 @@
 package com.blinkfox.jpack.handler.impl;
 
+import com.blinkfox.jpack.consts.PlatformEnum;
 import com.blinkfox.jpack.entity.PackInfo;
 import com.blinkfox.jpack.handler.AbstractPackHandler;
-import com.blinkfox.jpack.consts.PlatformEnum;
 import com.blinkfox.jpack.utils.Logger;
 import com.blinkfox.jpack.utils.TemplateKit;
 

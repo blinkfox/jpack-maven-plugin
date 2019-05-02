@@ -20,11 +20,11 @@ public final class Logger {
     private Logger() {}
 
     /**
-     * 设置日志对象.
+     * 初始化设置日志对象，必须初始化才行.
      *
      * @param mvnLog maven的日志对象
      */
-    public static synchronized void setLog(Log mvnLog) {
+    public static synchronized void initSetLog(Log mvnLog) {
         log = mvnLog;
     }
 
@@ -44,15 +44,6 @@ public final class Logger {
      */
     public static void info(CharSequence content) {
         log.info(content);
-    }
-
-    /**
-     * 打印 error 日志.
-     *
-     * @param content 日志内容
-     */
-    public static void error(CharSequence content) {
-        log.error(content);
     }
 
     /**

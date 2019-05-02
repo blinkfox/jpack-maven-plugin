@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,8 +28,7 @@ public final class CompressKit {
     /**
      * 私有构造方法.
      */
-    private CompressKit() {
-    }
+    private CompressKit() {}
 
     /**
      * 压缩文件夹为 zip 格式.
@@ -38,7 +36,7 @@ public final class CompressKit {
      * @param dir 文件夹
      * @param zipPath zip全路径名
      */
-    public static void zip(String dir, String zipPath) {
+    public static void zip(String dir, String zipPath) throws IOException {
         compressFilesZip(getDirFiles(dir), zipPath, dir);
     }
 
@@ -86,7 +84,7 @@ public final class CompressKit {
      * @param zipFilePath 压缩后的 zip 文件路径,如"D:/test/aa.zip";
      * @param dir 待压缩的目录
      */
-    private static void compressFilesZip(List<String> filePaths, String zipFilePath, String dir) {
+    private static void compressFilesZip(List<String> filePaths, String zipFilePath, String dir) throws IOException {
         if (filePaths == null || filePaths.isEmpty()) {
             return;
         }
@@ -104,8 +102,6 @@ public final class CompressKit {
                 }
             }
             zaos.finish();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -136,7 +132,7 @@ public final class CompressKit {
      * @param zaos ZipArchiveOutputStream对象
      * @param file 单个的文件对象
      */
-    private static void compressFile(ZipArchiveOutputStream zaos, File file) {
+    private static void compressFile(ZipArchiveOutputStream zaos, File file) throws IOException {
         try (
                 InputStream is = new FileInputStream(file);
                 InputStream bis = new BufferedInputStream(is)) {
@@ -147,8 +143,6 @@ public final class CompressKit {
                 zaos.write(buffer, 0, len);
             }
             zaos.closeArchiveEntry();
-        } catch (IOException e) {
-            throw new RuntimeException("压缩文件异常.", e);
         }
     }
 
@@ -157,48 +151,48 @@ public final class CompressKit {
      *
      * @param dirPath 文件夹路径
      * @param tarGzPath 压缩文件的路径
-     * @throws FileNotFoundException FileNotFoundException
      * @throws IOException IOException
      */
     public static void tarGz(String dirPath, String tarGzPath) throws IOException {
         File tarGzFile = new File(tarGzPath);
-        try (FileOutputStream fOut = new FileOutputStream(tarGzFile);
-                BufferedOutputStream bOut = new BufferedOutputStream(fOut);
-                GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(bOut);
-                TarArchiveOutputStream tOut = new TarArchiveOutputStream(gzOut)) {
+        try (FileOutputStream fos = new FileOutputStream(tarGzFile);
+                BufferedOutputStream bos = new BufferedOutputStream(fos);
+                GzipCompressorOutputStream gcos = new GzipCompressorOutputStream(bos);
+                TarArchiveOutputStream taos = new TarArchiveOutputStream(gcos)) {
+            String tarGzName = tarGzFile.getName().split(".tar.gz")[0] + File.separator;
             File[] children = new File(dirPath).listFiles();
             if (children != null && children.length > 0) {
                 for (File child : children) {
-                    addFileToTarGz(tOut, child.getAbsolutePath(), tarGzFile.getName().split(".tar.gz")[0] + "/");
+                    addFileToTarGz(taos, child.getAbsolutePath(), tarGzName);
                 }
             }
-            tOut.finish();
+            taos.finish();
         }
     }
 
     /**
      * 将文件添加到 tar.gz 压缩文件夹中.
      *
-     * @param tOut TarArchiveOutputStream实例
+     * @param taos TarArchiveOutputStream实例
      * @param dirPath 文件夹路径
      * @param base 基础路径
      */
-    private static void addFileToTarGz(TarArchiveOutputStream tOut, String dirPath, String base) throws IOException {
+    private static void addFileToTarGz(TarArchiveOutputStream taos, String dirPath, String base) throws IOException {
         File f = new File(dirPath);
         String entryName = base + f.getName();
-        tOut.putArchiveEntry(new TarArchiveEntry(f, entryName));
+        taos.putArchiveEntry(new TarArchiveEntry(f, entryName));
 
         if (f.isFile()) {
             try (FileInputStream in = new FileInputStream(f)) {
-                IOUtils.copy(in, tOut);
+                IOUtils.copy(in, taos);
             }
-            tOut.closeArchiveEntry();
+            taos.closeArchiveEntry();
         } else {
-            tOut.closeArchiveEntry();
+            taos.closeArchiveEntry();
             File[] children = f.listFiles();
             if (children != null && children.length > 0) {
                 for (File child : children) {
-                    addFileToTarGz(tOut, child.getAbsolutePath(), entryName + "/");
+                    addFileToTarGz(taos, child.getAbsolutePath(), entryName + "/");
                 }
             }
         }

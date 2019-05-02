@@ -20,7 +20,7 @@ import org.codehaus.plexus.util.FileUtils;
  * @author blinkfox on 2019-04-28.
  */
 @Mojo(name = "build", defaultPhase = LifecyclePhase.PACKAGE)
-public class packMojo extends AbstractMojo {
+public class PackBuildMojo extends AbstractMojo {
 
     /**
      * 用来存放 jpack 打包时的文件夹名称常量.
@@ -69,7 +69,7 @@ public class packMojo extends AbstractMojo {
      */
     @Override
     public void execute() {
-        Logger.setLog(super.getLog());
+        Logger.initSetLog(super.getLog());
         PackInfo packInfo = new PackInfo()
                 .setTargetDir(this.targetDir)
                 .setHomeDir(this.createHomeDir())
@@ -82,6 +82,7 @@ public class packMojo extends AbstractMojo {
         // 分别打包为 Windows 和 Linux 下的部署包.
         new WindowsPackHandler().pack(packInfo);
         new LinuxPackHandler().pack(packInfo);
+        Logger.info("jpack 打包完毕.");
     }
 
     /**
