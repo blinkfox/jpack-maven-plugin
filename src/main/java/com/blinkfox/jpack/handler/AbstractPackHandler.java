@@ -72,10 +72,22 @@ public abstract class AbstractPackHandler implements PackHandler {
             FileUtils.forceMkdir(new File(this.platformPath + File.separator + "logs"));
 
             // 复制 target 目录中的 jar 包到各平台目录中.
-            FileUtils.copyFileToDirectory(packInfo.getTargetDir().getAbsolutePath()
-                    + File.separator + packInfo.getFullJarName(), platformPath);
+            this.copyJar();
         } catch (IOException | PlexusContainerException | ComponentLookupException e) {
-            Logger.error("清空【" + platformPath + "】目录或者创建 bin 目录等失败！请检查文件是否正在使用!", e);
+            Logger.error("创建【" + platformPath + "】目录或者复制相关的资源失败！请检查文件是否正在使用!", e);
+        }
+    }
+
+    /**
+     * 复制 jar 包到平台目录中.
+     */
+    private void copyJar() {
+        String jar = packInfo.getFullJarName();
+        try {
+            FileUtils.copyFileToDirectory(packInfo.getTargetDir().getAbsolutePath() + File.separator + jar,
+                    platformPath);
+        } catch (IOException e) {
+            Logger.error("复制【" + jar + "】到【" + platformPath + "】目录中失败！应该还没有打包文件，将忽略此异常!" + e.getMessage());
         }
     }
 

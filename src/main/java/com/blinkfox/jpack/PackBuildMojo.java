@@ -91,6 +91,7 @@ public class PackBuildMojo extends AbstractMojo {
                 .setVmOptions(this.vmOptions)
                 .setProgramArgs(this.programArgs)
                 .setCopyResources(this.copyResources);
+        Logger.info(packInfo.toString());
 
         // 在各平台下执行打包.
         new PlatformPackContext().pack(platforms, packInfo);
@@ -115,4 +116,21 @@ public class PackBuildMojo extends AbstractMojo {
         return file;
     }
 
+    /* getter and setter methods. */
+
+    public void setTargetDir(File targetDir) {
+        this.targetDir = targetDir;
+    }
+
+    public void setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
+    }
+
+    public void setFinalName(String finalName) {
+        this.finalName = finalName;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

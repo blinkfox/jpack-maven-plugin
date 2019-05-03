@@ -146,4 +146,21 @@ public class PackInfo {
         return this.homeDir.getAbsolutePath() + File.separator + this.name;
     }
 
+    /**
+     * 重写的 toString 方法.
+     *
+     * @return String
+     */
+    @Override
+    public String toString() {
+        return "PackInfo = {"
+                + "targetDir: '" + targetDir + '\''
+                + ", homeDir: '" + homeDir + '\''
+                + ", artifactId: '" + artifactId + '\''
+                + ", name: '" + name + '\''
+                + ", description: '" + description + '\''
+                + ", vmOptions: '" + vmOptions + '\''
+                + ", programArgs: '" + programArgs + '\''
+                + '}';
+    }
 }

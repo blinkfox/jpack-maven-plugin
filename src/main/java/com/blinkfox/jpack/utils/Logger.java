@@ -47,6 +47,15 @@ public final class Logger {
     }
 
     /**
+     * 打印 error 日志信息.
+     *
+     * @param content 日志内容
+     */
+    public static void error(CharSequence content) {
+        log.error(content);
+    }
+
+    /**
      * 打印 error 日志和 Throwable 堆栈信息.
      *
      * @param content 日志内容
