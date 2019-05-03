@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
@@ -118,21 +119,19 @@ public abstract class AbstractPackHandler implements PackHandler {
      */
     protected void copyCustomResources() {
         CopyResource[] copyResources = packInfo.getCopyResources();
-        if (copyResources == null || copyResources.length == 0) {
+        if (ArrayUtils.isEmpty(copyResources)) {
             return;
         }
 
         // 遍历复制资源.
         for (CopyResource copyResource : copyResources) {
             String fromPath = copyResource.getFrom();
-            if (StringUtils.isBlank(fromPath)) {
-                continue;
-            }
-
-            try {
-                this.copyCustomResources(fromPath, copyResource);
-            } catch (IOException e) {
-                Logger.error("复制配置的自定义资源【" + fromPath + "】到各平台的包中出错！", e);
+            if (StringUtils.isNotBlank(fromPath)) {
+                try {
+                    this.copyCustomResources(fromPath, copyResource);
+                } catch (IOException e) {
+                    Logger.error("复制配置的自定义资源【" + fromPath + "】到各平台的包中出错！", e);
+                }
             }
         }
     }

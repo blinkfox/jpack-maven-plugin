@@ -2,8 +2,7 @@ package com.blinkfox.jpack;
 
 import com.blinkfox.jpack.entity.CopyResource;
 import com.blinkfox.jpack.entity.PackInfo;
-import com.blinkfox.jpack.handler.impl.LinuxPackHandler;
-import com.blinkfox.jpack.handler.impl.WindowsPackHandler;
+import com.blinkfox.jpack.handler.PlatformPackContext;
 import com.blinkfox.jpack.utils.Logger;
 
 import java.io.File;
@@ -66,6 +65,12 @@ public class PackBuildMojo extends AbstractMojo {
     private String programArgs;
 
     /**
+     * 支持的打包平台数组，如果没有或者为空，则视为支持所有平台.
+     */
+    @Parameter(property = "platforms")
+    private String[] platforms;
+
+    /**
      * 复制相关资源到各平台包的中的自定义配置参数.
      */
     @Parameter(property = "copyResources")
@@ -87,10 +92,8 @@ public class PackBuildMojo extends AbstractMojo {
                 .setProgramArgs(this.programArgs)
                 .setCopyResources(this.copyResources);
 
-        // 分别打包为 Windows 和 Linux 下的部署包.
-        new WindowsPackHandler().pack(packInfo);
-        new LinuxPackHandler().pack(packInfo);
-        Logger.info("jpack 打包完毕.");
+        // 在各平台下执行打包.
+        new PlatformPackContext().pack(platforms, packInfo);
     }
 
     /**

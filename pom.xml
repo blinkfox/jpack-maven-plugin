@@ -122,6 +122,10 @@
                 <configuration>
                     <vmOptions>-Xms512m -Xmx1024m</vmOptions>
                     <programArgs>--server.port=9090</programArgs>
+                    <platforms>
+                        <param>Windows</param>
+                        <param>Linux</param>
+                    </platforms>
                     <copyResources>
                         <copyResource>
                             <from>docs/hello.md</from>
