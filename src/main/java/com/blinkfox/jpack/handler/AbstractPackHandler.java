@@ -54,7 +54,9 @@ public abstract class AbstractPackHandler implements PackHandler {
     /**
      * 创建各个平台下的主目录和主目录中的 bin, docs, logs 等目录文件夹.
      */
-    protected void createPlatformCommonDir() {
+    protected void createPlatformCommonDir(PlatformEnum platformEnum) {
+        this.initPlatformPath(platformEnum);
+
         try {
             // 初始化资源管理器对象，用于获取 resources 下的资源.
             this.resourceManager = (ResourceManager) new DefaultPlexusContainer().lookup(ResourceManager.ROLE);
@@ -77,6 +79,26 @@ public abstract class AbstractPackHandler implements PackHandler {
     }
 
     /**
+     * 初始化各平台的基础路径.
+     *
+     * @param platformEnum 平台枚举类
+     */
+    private void initPlatformPath(PlatformEnum platformEnum) {
+        String basePath = packInfo.getHomeDir().getAbsolutePath() + File.separator;
+        // 制作压缩包.
+        switch (platformEnum) {
+            case WINDOWS:
+                this.platformPath = basePath + PlatformEnum.WINDOWS.getCode();
+                break;
+            case LINUX:
+                this.platformPath = basePath + PlatformEnum.LINUX.getCode();
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
      * 复制基础文件到各平台的主目录中，如：`README.md`.
      *
      * @param source      源地址
@@ -94,7 +116,7 @@ public abstract class AbstractPackHandler implements PackHandler {
     /**
      * 复制配置的自定义资源到各平台的文件夹中.
      */
-    private void copyCustomResources() {
+    protected void copyCustomResources() {
         CopyResource[] copyResources = packInfo.getCopyResources();
         if (copyResources == null || copyResources.length == 0) {
             return;
@@ -103,28 +125,36 @@ public abstract class AbstractPackHandler implements PackHandler {
         // 遍历复制资源.
         for (CopyResource copyResource : copyResources) {
             String fromPath = copyResource.getFrom();
-            if (StringUtils.isNotBlank(fromPath)) {
-                // 复制网络url资源到目录中.
-                if (fromPath.startsWith("http://") || fromPath.startsWith("https://")) {
-                    String[] arr = fromPath.split("/");
-                    File dir = new File(this.platformPath + File.separator + copyResource.getTo());
-                    try {
-                        FileUtils.forceMkdir(dir);
-                        FileUtils.copyURLToFile(new URL(fromPath), new File(dir + arr[arr.length - 1]));
-                    } catch (IOException e) {
-                        Logger.error("复制配置的自定义网络资源到各平台的包中出错！", e);
-                    }
-                    continue;
-                }
-
-                // 不是网络资源，则代表是相对路径或绝对路径的资源，直接复制到对应的目录中即可.
-                try {
-                    FileUtils.copyFileToDirectory(copyResource.getFrom(),
-                            this.platformPath + File.separator + copyResource.getTo());
-                } catch (IOException e) {
-                    Logger.error("复制配置的自定义资源到各平台的包中出错！", e);
-                }
+            if (StringUtils.isBlank(fromPath)) {
+                continue;
             }
+
+            try {
+                this.copyCustomResources(fromPath, copyResource);
+            } catch (IOException e) {
+                Logger.error("复制配置的自定义资源【" + fromPath + "】到各平台的包中出错！", e);
+            }
+        }
+    }
+
+    /**
+     * 需要复制的资源路径.
+     *
+     * @param fromPath 待复制的资源路径
+     * @param copyResource 复制资源的实例
+     * @throws IOException IO异常
+     */
+    private void copyCustomResources(String fromPath, CopyResource copyResource) throws IOException {
+        // 复制网络url资源到目录中.
+        if (fromPath.startsWith("http://") || fromPath.startsWith("https://")) {
+            String[] arr = fromPath.split("/");
+            File dir = new File(this.platformPath + File.separator + copyResource.getTo());
+            FileUtils.forceMkdir(dir);
+            FileUtils.copyURLToFile(new URL(fromPath), new File(dir + File.separator + arr[arr.length - 1]));
+        } else {
+            // 不是网络资源，则代表是相对路径或绝对路径的资源，直接复制到对应的目录中即可.
+            FileUtils.copyFileToDirectory(copyResource.getFrom(),
+                    this.platformPath + File.separator + copyResource.getTo());
         }
     }
 
@@ -132,11 +162,8 @@ public abstract class AbstractPackHandler implements PackHandler {
      * 制作 linux 下的 tar.gz 压缩包.
      */
     protected void compress(PlatformEnum platformEnum) {
-        // 复制自定义资源到包中.
-        copyCustomResources();
-
         String platform = platformEnum.getCode();
-        Logger.info("正在制作 " + platform + " 下的部署压缩包...");
+        Logger.debug("正在制作 " + platform + " 下的部署压缩包...");
         try {
             // 制作压缩包.
             switch (platformEnum) {

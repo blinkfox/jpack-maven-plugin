@@ -26,11 +26,6 @@ public class WindowsPackHandler extends AbstractPackHandler {
     private static final String[] BAT_NAME_ARR = {"install", "uninstall", "start", "stop", "restart"};
 
     /**
-     * Windows 平台主目录的名称常量.
-     */
-    private static final String WINDOWS_DIR_NAME = "windows";
-
-    /**
      * 根据打包的相关参数，将该 Maven 项目打包成 Windows 中的可部署包的方法.
      *
      * @param packInfo 打包的相关参数实体
@@ -38,8 +33,7 @@ public class WindowsPackHandler extends AbstractPackHandler {
     @Override
     public void pack(PackInfo packInfo) {
         super.packInfo = packInfo;
-        super.platformPath = packInfo.getHomeDir().getAbsolutePath() + File.separator + WINDOWS_DIR_NAME;
-        super.createPlatformCommonDir();
+        super.createPlatformCommonDir(PlatformEnum.WINDOWS);
 
         // 复制或渲染对应的资源文件到 windows 所在的打包文件夾中.
         super.copyFiles("windows/README.md", "README.md");
@@ -50,6 +44,9 @@ public class WindowsPackHandler extends AbstractPackHandler {
 
         // 创建所有的 `.bat` 文件.
         this.createAllBatFiles(packInfo.getName());
+
+        // 复制自定义资源到包中.
+        copyCustomResources();
 
         // 制作 .zip 压缩包.
         super.compress(PlatformEnum.WINDOWS);

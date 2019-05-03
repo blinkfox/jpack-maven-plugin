@@ -10,12 +10,12 @@ public enum PlatformEnum {
     /**
      * windows.
      */
-    WINDOWS("Windows"),
+    WINDOWS("windows"),
 
     /**
      * linux.
      */
-    LINUX("Linux");
+    LINUX("linux");
 
     /**
      * 属性值.

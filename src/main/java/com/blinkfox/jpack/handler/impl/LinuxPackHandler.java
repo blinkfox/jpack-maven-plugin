@@ -21,11 +21,6 @@ import org.apache.commons.lang3.StringUtils;
 public class LinuxPackHandler extends AbstractPackHandler {
 
     /**
-     * Linux 平台主目录的名称常量.
-     */
-    private static final String LINUX_DIR_NAME = "linux";
-
-    /**
      * 根据打包的相关参数，将该 Maven 项目打包成 Windows 中的可部署包的方法.
      *
      * @param packInfo 打包的相关参数实体
@@ -33,12 +28,14 @@ public class LinuxPackHandler extends AbstractPackHandler {
     @Override
     public void pack(PackInfo packInfo) {
         super.packInfo = packInfo;
-        super.platformPath = packInfo.getHomeDir().getAbsolutePath() + File.separator + LINUX_DIR_NAME;
-        super.createPlatformCommonDir();
+        super.createPlatformCommonDir(PlatformEnum.LINUX);
         super.copyFiles("linux/README.md", "README.md");
 
         // 渲染并写入对应的资源文件到 linux 所在的打包文件夾中.
         this.renderShell(packInfo);
+
+        // 复制自定义资源到包中.
+        copyCustomResources();
 
         // 打 Linux 下 .tar.gz 的压缩包.
         super.compress(PlatformEnum.LINUX);

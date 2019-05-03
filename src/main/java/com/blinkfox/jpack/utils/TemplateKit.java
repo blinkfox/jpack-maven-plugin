@@ -1,7 +1,5 @@
 package com.blinkfox.jpack.utils;
 
-import com.blinkfox.jpack.exception.PackException;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -48,7 +46,7 @@ public final class TemplateKit {
             cfg.getResourceMap().put("autoCheck", "false");
             groupTemplate = new GroupTemplate(new ClasspathResourceLoader(path), cfg);
         } catch (IOException e) {
-            throw new PackException("使用 beetl 初始化配置模版出错！", e);
+            Logger.error("初始化 beetl 模版出错！", e);
         }
     }
 
@@ -59,7 +57,7 @@ public final class TemplateKit {
      * @param context 上下文参数
      * @return 渲染的字符串结果
      */
-    public static String render(String filePath, Map<String, Object> context) {
+    private static String render(String filePath, Map<String, Object> context) {
         Template template = groupTemplate.getTemplate(filePath);
         template.fastBinding(context);
         return template.render();
