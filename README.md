@@ -26,7 +26,6 @@
             <goals>
                 <goal>build</goal>
             </goals>
-            <phase>package</phase>
         </execution>
     </executions>
 </plugin>
