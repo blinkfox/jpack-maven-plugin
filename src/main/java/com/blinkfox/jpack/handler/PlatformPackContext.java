@@ -42,6 +42,7 @@ public class PlatformPackContext {
                 packHandler.pack(packInfo);
             }
             Logger.info("jpack 在各平台下打包完毕.");
+            return;
         }
 
         // 遍历各个平台的字符串，将其转换为 PlatformEnum 之后，进行打包.

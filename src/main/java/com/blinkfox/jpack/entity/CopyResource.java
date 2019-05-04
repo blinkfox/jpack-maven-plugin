@@ -17,6 +17,16 @@ public class CopyResource {
      */
     private String to;
 
+    /* getter and setter methods */
+
+    void setFrom(String from) {
+        this.from = from;
+    }
+
+    void setTo(String to) {
+        this.to = to;
+    }
+
     public String getFrom() {
         return from;
     }

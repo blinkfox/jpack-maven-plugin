@@ -87,7 +87,8 @@ public abstract class AbstractPackHandler implements PackHandler {
             FileUtils.copyFileToDirectory(packInfo.getTargetDir().getAbsolutePath() + File.separator + jar,
                     platformPath);
         } catch (IOException e) {
-            Logger.error("复制【" + jar + "】到【" + platformPath + "】目录中失败！应该还没有打包文件，将忽略此异常!" + e.getMessage());
+            Logger.error("复制【" + jar + "】到【" + platformPath + "】目录中失败！应该还没有打包此文件，"
+                    + "异常信息为：" + e.getMessage());
         }
     }
 

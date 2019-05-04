@@ -34,17 +34,6 @@
                 </executions>
                 <configuration>
                     <vmOptions>-Xms512m -Xmx1024m</vmOptions>
-                    <programArgs>--server.port=9090</programArgs>
-                    <platforms>
-                        <param>Windows</param>
-                        <param>Linux</param>
-                    </platforms>
-                    <copyResources>
-                        <copyResource>
-                            <from>LICENSE</from>
-                            <to>.</to>
-                        </copyResource>
-                    </copyResources>
                 </configuration>
             </plugin>
         </plugins>

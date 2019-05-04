@@ -25,7 +25,7 @@ public class PackBuildMojo extends AbstractMojo {
     /**
      * 用来存放 jpack 打包时的文件夹名称常量.
      */
-    private static final String HOME_DIR_NAME = "jpack";
+    static final String HOME_DIR_NAME = "jpack";
 
     /**
      * Maven 运行时的 target 目录的文件对象.
@@ -118,19 +118,20 @@ public class PackBuildMojo extends AbstractMojo {
 
     /* getter and setter methods. */
 
-    public void setTargetDir(File targetDir) {
+    void setTargetDir(File targetDir) {
         this.targetDir = targetDir;
     }
 
-    public void setArtifactId(String artifactId) {
+    void setArtifactId(String artifactId) {
         this.artifactId = artifactId;
     }
 
-    public void setFinalName(String finalName) {
+    void setFinalName(String finalName) {
         this.finalName = finalName;
     }
 
-    public void setDescription(String description) {
+    void setDescription(String description) {
         this.description = description;
     }
+
 }

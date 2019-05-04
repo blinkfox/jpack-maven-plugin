@@ -11,7 +11,7 @@ import org.beetl.core.resource.ClasspathResourceLoader;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
- * svg 模板生成工具类，这里使用高性能的 beetl 来输出模板.
+ * 模板生成工具类，这里使用高性能的 beetl 来输出模板.
  *
  * @author blinkfox on 2019-03-30.
  */
@@ -25,26 +25,11 @@ public final class TemplateKit {
     private static GroupTemplate groupTemplate;
 
     static {
-        initTemplate();
-    }
-
-    /**
-     * 初始化 svg 模板资源.
-     */
-    public static void initTemplate() {
-        initTemplateByPath("/");
-    }
-
-    /**
-     * 根据 path 初始化 beetl 的模板资源.
-     *
-     * @param path 资源路径
-     */
-    private static void initTemplateByPath(String path) {
+        // 初始化 beetl 模板.
         try {
             Configuration cfg = Configuration.defaultConfiguration();
             cfg.getResourceMap().put("autoCheck", "false");
-            groupTemplate = new GroupTemplate(new ClasspathResourceLoader(path), cfg);
+            groupTemplate = new GroupTemplate(new ClasspathResourceLoader("/"), cfg);
         } catch (IOException e) {
             Logger.error("初始化 beetl 模版出错！", e);
         }
