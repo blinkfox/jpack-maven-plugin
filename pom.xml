@@ -18,6 +18,29 @@
         </license>
     </licenses>
 
+    <issueManagement>
+        <system>Github Issues</system>
+        <url>https://github.com/blinkfox/jpack-maven-plugin/issues</url>
+    </issueManagement>
+
+    <prerequisites>
+        <maven>3.2.5</maven>
+    </prerequisites>
+
+    <inceptionYear>2019</inceptionYear>
+
+    <mailingLists>
+        <mailingList>
+            <name>blinkfox</name>
+            <post>chenjiayin1990@163.com</post>
+        </mailingList>
+    </mailingLists>
+
+    <organization>
+        <name>blinkfox</name>
+        <url>https://github.com/blinkfox</url>
+    </organization>
+
     <developers>
         <developer>
             <name>blinkfox</name>
@@ -151,6 +174,10 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
                 <version>2.9</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
