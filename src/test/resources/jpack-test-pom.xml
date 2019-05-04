@@ -33,15 +33,20 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <!-- JVM 运行所需的参数选项. -->
                     <vmOptions>-Xms512m -Xmx1024m</vmOptions>
+                    <!-- 所集成的 Java 服务程序运行所需的参数. -->
                     <programArgs>--server.port=9090</programArgs>
+                    <!-- 打包哪些平台的包，不填写则代表所有平台. 目前支持 Windows 和 Linux 两种(大小写均可). -->
                     <platforms>
                         <param>Windows</param>
                         <param>Linux</param>
                     </platforms>
+                    <!-- 需要copy 哪些资源(可以是目录或者具体的相对、绝对或网络资源路径)到部署包中的某个目录;
+                        to 的值只能是目录，为空或者 '.' 或者 '/' 符号则表示复制到各平台包的根目录中，否则就复制到具体的目录下 -->
                     <copyResources>
                         <copyResource>
-                            <from>LICENSE</from>
+                            <from>README.md</from>
                             <to>.</to>
                         </copyResource>
                     </copyResources>

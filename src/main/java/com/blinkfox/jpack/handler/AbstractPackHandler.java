@@ -164,9 +164,12 @@ public abstract class AbstractPackHandler implements PackHandler {
             FileUtils.forceMkdir(dir);
             FileUtils.copyURLToFile(new URL(fromPath), new File(dir + File.separator + arr[arr.length - 1]));
         } else {
-            // 不是网络资源，则代表是相对路径或绝对路径的资源，直接复制到对应的目录中即可.
-            FileUtils.copyFileToDirectory(copyResource.getFrom(),
-                    this.platformPath + File.separator + copyResource.getTo());
+            // 不是网络资源，则代表是相对路径或绝对路径的资源，
+            // 如果 to 是空的或者 `.`、'/', 则表示复制到各平台包的根目录中，否则复制到对应的目录中即可.
+            String to = copyResource.getTo();
+            String toDir = StringUtils.isBlank(to) || ".".equals(to) || "/".equals(to) ? this.platformPath
+                    : this.platformPath + File.separator + to;
+            FileUtils.copyFileToDirectory(copyResource.getFrom(), toDir);
         }
     }
 
