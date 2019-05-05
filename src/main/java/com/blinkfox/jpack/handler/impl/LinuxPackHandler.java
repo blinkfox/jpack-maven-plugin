@@ -54,9 +54,11 @@ public class LinuxPackHandler extends AbstractPackHandler {
         context.put("programArgs", StringUtils.isBlank(packInfo.getProgramArgs()) ? "" : packInfo.getProgramArgs());
 
         // 渲染出 winsw.xml 模板中的内容，并将内容写入到 bin 目录的文件中.
+        String bin = super.binPath + File.separator;
         try {
-            TemplateKit.renderFile("linux/bin/start.sh", context, super.binPath + File.separator + "start.sh");
-            TemplateKit.renderFile("linux/bin/stop.sh", context, super.binPath + File.separator + "stop.sh");
+            TemplateKit.renderFile("linux/bin/start.sh", context, bin + "start.sh");
+            TemplateKit.renderFile("linux/bin/stop.sh", context, bin + "stop.sh");
+            TemplateKit.renderFile("linux/bin/restart.sh", context, bin + "restart.sh");
         } catch (IOException e) {
             Logger.error("渲染 shell 模板内容并写入 bin 目录中出错！", e);
         }
