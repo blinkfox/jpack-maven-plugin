@@ -91,7 +91,7 @@ public class PackBuildMojo extends AbstractMojo {
                 .setVmOptions(this.vmOptions)
                 .setProgramArgs(this.programArgs)
                 .setCopyResources(this.copyResources);
-        Logger.info(packInfo.toString());
+        Logger.debug(packInfo.toString());
 
         // 在各平台下执行打包.
         new PlatformPackContext().pack(platforms, packInfo);
