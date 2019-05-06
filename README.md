@@ -102,6 +102,12 @@
                 <to>/</to>
             </copyResource>
         </copyResources>
+        <!-- 排除哪些文件或目录不需要打包进压缩包中，输入文件的相对路径即可. -->
+        <excludeFiles>
+            <param>logs</param>
+            <param>README.md</param>
+            <param>xxxxx.abc</param>
+        </excludeFiles>
     </configuration>
 </plugin>
 ```
