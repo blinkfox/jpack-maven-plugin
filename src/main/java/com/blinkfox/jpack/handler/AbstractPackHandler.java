@@ -201,7 +201,7 @@ public abstract class AbstractPackHandler implements PackHandler {
             String filePath = this.platformPath + File.separator + path;
             File file = new File(filePath);
             if (!file.exists()) {
-                Logger.warn("【警告】你配置的需要排除的资源文件【" + filePath + "】不存在，请检查！");
+                Logger.warn("【警告】你配置的需要排除的资源【" + filePath + "】不存在，请检查！");
                 continue;
             }
 
