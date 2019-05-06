@@ -71,6 +71,12 @@ public class PackBuildMojo extends AbstractMojo {
     private String[] platforms;
 
     /**
+     * 需要排除（即不生成）的文件或目录.
+     */
+    @Parameter(property = "excludeFiles")
+    private String[] excludeFiles;
+
+    /**
      * 复制相关资源到各平台包的中的自定义配置参数.
      */
     @Parameter(property = "copyResources")
@@ -90,6 +96,7 @@ public class PackBuildMojo extends AbstractMojo {
                 .setDescription(this.description)
                 .setVmOptions(this.vmOptions)
                 .setProgramArgs(this.programArgs)
+                .setExcludeFiles(this.excludeFiles)
                 .setCopyResources(this.copyResources);
         Logger.debug(packInfo.toString());
 

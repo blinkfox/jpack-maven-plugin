@@ -19,6 +19,17 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class PlatformPackContext {
 
+    private static final String START = "\n"
+            + "-------------------- jpack start packing... --------------------\n"
+            + "     __                          __    \n"
+            + "    |__|______  _____     ____  |  | __\n"
+            + "    |  |\\____ \\ \\__  \\  _/ ___\\ |  |/ /\n"
+            + "    |  ||  |_> > / __ \\_\\  \\___ |    < \n"
+            + "/\\__|  ||   __/ (____  / \\___  >|__|_ \\\n"
+            + "\\______||__|         \\/      \\/      \\/\n";
+
+    private static final String END = "\n---------------- jpack has been packaged to end. ---------------\n";
+
     /**
      * 用来存储各个平台打包的 map.
      */
@@ -36,12 +47,14 @@ public class PlatformPackContext {
      * @param packInfo 打包的相关参数实体
      */
     public void pack(String[] platforms, PackInfo packInfo) {
+        Logger.info(START);
+
         // 如果各个打包的平台为空，则默认视为所有平台都打包.
         if (ArrayUtils.isEmpty(platforms)) {
             for (PackHandler packHandler : packMap.values()) {
                 packHandler.pack(packInfo);
             }
-            Logger.info("jpack 在各平台下打包完毕.");
+            Logger.info(END);
             return;
         }
 
@@ -55,6 +68,7 @@ public class PlatformPackContext {
                 }
             }
         }
+        Logger.info(END);
     }
 
 }

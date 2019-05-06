@@ -45,9 +45,6 @@ public class WindowsPackHandler extends AbstractPackHandler {
         // 创建所有的 `.bat` 文件.
         this.createAllBatFiles(packInfo.getName());
 
-        // 复制自定义资源到包中.
-        copyCustomResources();
-
         // 制作 .zip 压缩包.
         super.compress(PlatformEnum.WINDOWS);
     }

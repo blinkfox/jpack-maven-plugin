@@ -50,6 +50,11 @@ public class PackInfo {
     private String programArgs;
 
     /**
+     * 需要排除（即不生成）的文件或目录.
+     */
+    private String[] excludeFiles;
+
+    /**
      * 复制相关资源到各平台包的中的自定义配置参数.
      */
     private CopyResource[] copyResources;
@@ -116,6 +121,15 @@ public class PackInfo {
 
     public PackInfo setProgramArgs(String programArgs) {
         this.programArgs = programArgs;
+        return this;
+    }
+
+    public String[] getExcludeFiles() {
+        return excludeFiles;
+    }
+
+    public PackInfo setExcludeFiles(String[] excludeFiles) {
+        this.excludeFiles = excludeFiles;
         return this;
     }
 

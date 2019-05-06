@@ -130,7 +130,7 @@ public abstract class AbstractPackHandler implements PackHandler {
     /**
      * 复制配置的自定义资源到各平台的文件夹中.
      */
-    protected void copyCustomResources() {
+    private void copyCustomResources() {
         CopyResource[] copyResources = packInfo.getCopyResources();
         if (ArrayUtils.isEmpty(copyResources)) {
             return;
@@ -188,9 +188,49 @@ public abstract class AbstractPackHandler implements PackHandler {
     }
 
     /**
+     * 排除（即删除）不需要的文件或目录.
+     */
+    private void excludeFiles() {
+        String[] excludeFiles = packInfo.getExcludeFiles();
+        if (ArrayUtils.isEmpty(excludeFiles)) {
+            return;
+        }
+
+        // 遍历需要删除的资源进行删除.
+        for (String path : excludeFiles) {
+            String filePath = this.platformPath + File.separator + path;
+            File file = new File(filePath);
+            if (!file.exists()) {
+                Logger.warn("【警告】你配置的需要排除的资源文件【" + filePath + "】不存在，请检查！");
+                continue;
+            }
+
+            try {
+                FileUtils.forceDelete(file);
+            } catch (IOException e) {
+                Logger.error("【错误】删除配置的需要排除的资源【" + filePath + "】出错！", e);
+            }
+        }
+    }
+
+    /**
+     * 在压缩之前需要做的一些处理.
+     */
+    private void handleBeforeCompress() {
+        // 复制自定义资源到包中.
+        this.copyCustomResources();
+
+        // 删除需要排除的资源.
+        this.excludeFiles();
+    }
+
+    /**
      * 制作 linux 下的 tar.gz 压缩包.
      */
     protected void compress(PlatformEnum platformEnum) {
+        // 在压缩各平台文件夾之前，需要做的一些公共处理操作.
+        this.handleBeforeCompress();
+
         String platform = platformEnum.getCode();
         Logger.debug("正在制作 " + platform + " 下的部署压缩包...");
         try {

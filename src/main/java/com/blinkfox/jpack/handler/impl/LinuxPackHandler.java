@@ -34,9 +34,6 @@ public class LinuxPackHandler extends AbstractPackHandler {
         // 渲染并写入对应的资源文件到 linux 所在的打包文件夾中.
         this.renderShell(packInfo);
 
-        // 复制自定义资源到包中.
-        copyCustomResources();
-
         // 打 Linux 下 .tar.gz 的压缩包.
         super.compress(PlatformEnum.LINUX);
     }
