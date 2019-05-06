@@ -165,11 +165,25 @@ public abstract class AbstractPackHandler implements PackHandler {
             FileUtils.copyURLToFile(new URL(fromPath), new File(dir + File.separator + arr[arr.length - 1]));
         } else {
             // 不是网络资源，则代表是相对路径或绝对路径的资源，
+            // 如果源文件不存在，则直接返回
+            String from = copyResource.getFrom();
+            File sourceFile = new File(from);
+            if (!sourceFile.exists()) {
+                Logger.warn("【警告】需要复制的源资源文件【" + from + "】不存在，请检查！");
+                return;
+            }
+
             // 如果 to 是空的或者 `.`、'/', 则表示复制到各平台包的根目录中，否则复制到对应的目录中即可.
             String to = copyResource.getTo();
-            String toDir = StringUtils.isBlank(to) || ".".equals(to) || "/".equals(to) ? this.platformPath
-                    : this.platformPath + File.separator + to;
-            FileUtils.copyFileToDirectory(copyResource.getFrom(), toDir);
+            File toDir = new File(StringUtils.isBlank(to) || ".".equals(to) || "/".equals(to) ? this.platformPath
+                    : this.platformPath + File.separator + to);
+
+            // 如果需要复制的资源是目录，则直接复制该目录及其下的子目录到目标目录中.
+            if (sourceFile.isDirectory()) {
+                FileUtils.copyDirectoryStructure(sourceFile, toDir);
+            } else {
+                FileUtils.copyFileToDirectory(sourceFile, toDir);
+            }
         }
     }
 

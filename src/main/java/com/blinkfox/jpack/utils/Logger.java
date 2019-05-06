@@ -47,6 +47,15 @@ public final class Logger {
     }
 
     /**
+     * 打印 warn 日志.
+     *
+     * @param content 日志内容
+     */
+    public static void warn(CharSequence content) {
+        log.warn(content);
+    }
+
+    /**
      * 打印 error 日志信息.
      *
      * @param content 日志内容
