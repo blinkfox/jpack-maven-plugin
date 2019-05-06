@@ -2,7 +2,7 @@
 
 [![HitCount](http://hits.dwyl.io/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin) [![Build Status](https://secure.travis-ci.org/blinkfox/jpack-maven-plugin.svg)](https://travis-ci.org/blinkfox/jpack-maven-plugin) [![GitHub license](https://img.shields.io/github/license/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin/blob/master/LICENSE) [![codecov](https://codecov.io/gh/blinkfox/jpack-maven-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/blinkfox/jpack-maven-plugin) ![Java Version](https://img.shields.io/badge/Java-%3E%3D%208-blue.svg)
 
-> 这是一个用于对 Java 服务打包为 Windows、Linux 下可部署包的 Maven 插件. 开发中...
+> 这是一个用于对 SpringBoot 服务打包为 Windows、Linux 下可部署包的 Maven 插件. 开发中...
 
 ## 特性
 
@@ -15,6 +15,8 @@
 > **注**：本插件还未发布，以下仅是集成使用的参考示例。
 
 ### 最简示例
+
+在 Maven 的 `pom.xml` 的 build -> plugins 节点中加入如下插件的配置即可。
 
 ```xml
 <plugin>
@@ -31,6 +33,25 @@
 </plugin>
 ```
 
+然后执行 Maven 的打包命令 `mvn package`。
+
+成功之后就可以在 `target` 目录中看到 `jpack` 的文件夹，`jpack` 文件夹中就包含了对应服务的 `zip` 和 `tar.gz` 压缩文件包。
+
+压缩包中的结构大体如下：
+
+```
+- `bin`: 可执行的文件目录
+  - `install.bat`: 仅 `.zip` 包中有此安装为 `windows` 服务的可执行文件
+  - `uninstall.bat`: 仅 `.zip` 包中有此卸载 `windows` 服务的可执行文件
+  - `start.sh (.bat)`: 启动服务的可执行文件
+  - `stop.sh (.bat)`: 停止服务的脚本
+  - `restart.sh (.bat)`: 重启服务的脚本
+- `docs`: 文档目录, 默认是空的, 可自己填充内容
+- `logs`: 日志文件目录, 默认是空的, 建议应用服务的日志生成到此目录中
+- `xxx-yyy.jar`: SpringBoot 打的 `jar` 包
+- `README.md`: 说明文件, 内嵌了部分默认的内容, 可覆盖
+```
+
 ### 最全示例及说明
 
 ```xml
@@ -39,7 +60,7 @@
     <artifactId>jpack-maven-plugin</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <executions>
-        <!-- 构建的目标是 build, 在打包阶段执行. -->
+        <!-- 构建的目标是 build, 默认是在打包阶段执行. -->
         <execution>
             <goals>
                 <goal>build</goal>
