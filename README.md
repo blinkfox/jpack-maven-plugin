@@ -1,8 +1,8 @@
-# jpack-maven-plugin (开发中...)
+# jpack-maven-plugin
 
 [![HitCount](http://hits.dwyl.io/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin) [![Build Status](https://secure.travis-ci.org/blinkfox/jpack-maven-plugin.svg)](https://travis-ci.org/blinkfox/jpack-maven-plugin) [![GitHub license](https://img.shields.io/github/license/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin/blob/master/LICENSE) [![codecov](https://codecov.io/gh/blinkfox/jpack-maven-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/blinkfox/jpack-maven-plugin) ![Java Version](https://img.shields.io/badge/Java-%3E%3D%208-blue.svg)
 
-> 这是一个用于对 SpringBoot 服务打包为 Windows、Linux 下可部署包的 Maven 插件. 开发中...
+> 这是一个用于对 SpringBoot 服务打包为 Windows、Linux 下可部署包的 Maven 插件。
 
 ## 特性
 
@@ -22,7 +22,7 @@
 <plugin>
     <groupId>com.blinkfox</groupId>
     <artifactId>jpack-maven-plugin</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <executions>
         <execution>
             <goals>
@@ -33,7 +33,11 @@
 </plugin>
 ```
 
-然后执行 Maven 的打包命令 `mvn package`。
+然后执行 Maven 的打包命令: 
+
+```bash
+mvn package
+```
 
 成功之后就可以在 `target` 目录中看到 `jpack` 的文件夹，`jpack` 文件夹中就包含了对应服务的 `zip` 和 `tar.gz` 压缩文件包。
 
