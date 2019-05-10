@@ -24,7 +24,7 @@ public class LoggerTest {
      */
     @Test
     public void error() {
-        Logger.error("My test error log.", new RuntimeException());
+        Logger.info("测试日志是否能正常打印.");
     }
 
 }

@@ -41,7 +41,11 @@
                     <platforms>
                         <param>Windows</param>
                         <param>Linux</param>
+                        <param>Docker</param>
                     </platforms>
+                    <docker>
+                        <dockerfile>Dockerfile</dockerfile>
+                    </docker>
                     <!-- 需要copy 哪些资源(可以是目录或者具体的相对、绝对或网络资源路径)到部署包中的某个目录;
                         to 的值只能是目录，为空或者 '.' 或者 '/' 符号则表示复制到各平台包的根目录中，否则就复制到具体的目录下 -->
                     <copyResources>

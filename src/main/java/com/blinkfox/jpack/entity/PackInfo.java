@@ -50,6 +50,11 @@ public class PackInfo {
     private String programArgs;
 
     /**
+     * 构建 Docker 发布包相关的参数实体.
+     */
+    private Docker docker;
+
+    /**
      * 需要排除（即不生成）的文件或目录.
      */
     private String[] excludeFiles;
@@ -121,6 +126,15 @@ public class PackInfo {
 
     public PackInfo setProgramArgs(String programArgs) {
         this.programArgs = programArgs;
+        return this;
+    }
+
+    public Docker getDocker() {
+        return docker;
+    }
+
+    public PackInfo setDocker(Docker docker) {
+        this.docker = docker;
         return this;
     }
 

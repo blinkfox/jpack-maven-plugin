@@ -1,6 +1,7 @@
 package com.blinkfox.jpack;
 
 import com.blinkfox.jpack.entity.CopyResource;
+import com.blinkfox.jpack.entity.Docker;
 import com.blinkfox.jpack.entity.PackInfo;
 import com.blinkfox.jpack.handler.PlatformPackContext;
 import com.blinkfox.jpack.utils.Logger;
@@ -71,6 +72,12 @@ public class PackBuildMojo extends AbstractMojo {
     private String[] platforms;
 
     /**
+     * 构建 Docker 发布包相关的参数.
+     */
+    @Parameter(property = "docker")
+    private Docker docker;
+
+    /**
      * 需要排除（即不生成）的文件或目录.
      */
     @Parameter(property = "excludeFiles")
@@ -96,6 +103,7 @@ public class PackBuildMojo extends AbstractMojo {
                 .setDescription(this.description)
                 .setVmOptions(this.vmOptions)
                 .setProgramArgs(this.programArgs)
+                .setDocker(this.docker)
                 .setExcludeFiles(this.excludeFiles)
                 .setCopyResources(this.copyResources);
         Logger.debug(packInfo.toString());

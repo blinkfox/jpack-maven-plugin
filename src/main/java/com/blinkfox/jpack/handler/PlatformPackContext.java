@@ -2,6 +2,7 @@ package com.blinkfox.jpack.handler;
 
 import com.blinkfox.jpack.consts.PlatformEnum;
 import com.blinkfox.jpack.entity.PackInfo;
+import com.blinkfox.jpack.handler.impl.DockerPackHandler;
 import com.blinkfox.jpack.handler.impl.LinuxPackHandler;
 import com.blinkfox.jpack.handler.impl.WindowsPackHandler;
 import com.blinkfox.jpack.utils.Logger;
@@ -38,6 +39,7 @@ public class PlatformPackContext {
     static {
         packMap.put(PlatformEnum.WINDOWS, new WindowsPackHandler());
         packMap.put(PlatformEnum.LINUX, new LinuxPackHandler());
+        packMap.put(PlatformEnum.DOCKER, new DockerPackHandler());
     }
 
     /**
@@ -64,7 +66,6 @@ public class PlatformPackContext {
                 PlatformEnum platformEnum = PlatformEnum.of(platform.trim().toLowerCase());
                 if (platformEnum != null) {
                     packMap.get(platformEnum).pack(packInfo);
-                    Logger.info("jpack 在 " + platformEnum.getCode() + " 平台下打包完毕.");
                 }
             }
         }

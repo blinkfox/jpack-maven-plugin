@@ -29,6 +29,7 @@ public class LinuxPackHandler extends AbstractPackHandler {
     public void pack(PackInfo packInfo) {
         super.packInfo = packInfo;
         super.createPlatformCommonDir(PlatformEnum.LINUX);
+        super.createBaseDirs();
         super.copyFiles("linux/README.md", "README.md");
 
         // 渲染并写入对应的资源文件到 linux 所在的打包文件夾中.

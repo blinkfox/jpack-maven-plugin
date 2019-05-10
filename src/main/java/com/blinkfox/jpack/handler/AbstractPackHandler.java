@@ -27,6 +27,10 @@ import org.codehaus.plexus.util.StringUtils;
  */
 public abstract class AbstractPackHandler implements PackHandler {
 
+    private static final String HTTP = "http://";
+
+    private static final String HTTPS = "https://";
+
     /**
      * bin 主目录的名称常量.
      */
@@ -65,16 +69,24 @@ public abstract class AbstractPackHandler implements PackHandler {
             // 创建或清空各平台的主目录.
             FileUtils.mkdir(this.platformPath);
 
-            // 在主目录下创建 bin, docs, logs 等目录.
-            this.binPath = this.platformPath + File.separator + AbstractPackHandler.BIN_DIR_NAME + File.separator;
+            // 复制 target 目录中的 jar 包到各平台目录中.
+            this.copyJar();
+        } catch (PlexusContainerException | ComponentLookupException e) {
+            Logger.error("创建【" + this.platformPath + "】目录或者复制相关的资源失败！请检查文件是否正在使用!", e);
+        }
+    }
+
+    /**
+     * 创建基础目录，如：bin, docs, logs等.
+     */
+    protected void createBaseDirs() {
+        this.binPath = this.platformPath + File.separator + AbstractPackHandler.BIN_DIR_NAME + File.separator;
+        try {
             FileUtils.forceMkdir(new File(binPath));
             FileUtils.forceMkdir(new File(this.platformPath + File.separator + "docs"));
             FileUtils.forceMkdir(new File(this.platformPath + File.separator + "logs"));
-
-            // 复制 target 目录中的 jar 包到各平台目录中.
-            this.copyJar();
-        } catch (IOException | PlexusContainerException | ComponentLookupException e) {
-            Logger.error("创建【" + platformPath + "】目录或者复制相关的资源失败！请检查文件是否正在使用!", e);
+        } catch (IOException e) {
+            Logger.error("创建【" + this.platformPath + "】目录下的 bin、docs、logs 等目录失败！请检查文件是否正在使用!", e);
         }
     }
 
@@ -98,18 +110,7 @@ public abstract class AbstractPackHandler implements PackHandler {
      * @param platformEnum 平台枚举类
      */
     private void initPlatformPath(PlatformEnum platformEnum) {
-        String basePath = packInfo.getHomeDir().getAbsolutePath() + File.separator;
-        // 制作压缩包.
-        switch (platformEnum) {
-            case WINDOWS:
-                this.platformPath = basePath + PlatformEnum.WINDOWS.getCode();
-                break;
-            case LINUX:
-                this.platformPath = basePath + PlatformEnum.LINUX.getCode();
-                break;
-            default:
-                break;
-        }
+        this.platformPath = packInfo.getHomeDir().getAbsolutePath() + File.separator + platformEnum.getCode();
     }
 
     /**
@@ -125,6 +126,16 @@ public abstract class AbstractPackHandler implements PackHandler {
         } catch (IOException | ResourceNotFoundException | FileResourceCreationException e) {
             Logger.error("复制默认资源到平台中出错！", e);
         }
+    }
+
+    /**
+     * 判断给定的文件路径是否是项目的根路径.
+     *
+     * @param filePath 文件路径.
+     * @return 布尔值
+     */
+    protected boolean isRootPath(String filePath) {
+        return StringUtils.isBlank(filePath) || ".".equals(filePath) || "/".equals(filePath);
     }
 
     /**
@@ -158,7 +169,7 @@ public abstract class AbstractPackHandler implements PackHandler {
      */
     private void copyCustomResources(String fromPath, CopyResource copyResource) throws IOException {
         // 复制网络url资源到目录中.
-        if (fromPath.startsWith("http://") || fromPath.startsWith("https://")) {
+        if (fromPath.startsWith(HTTP) || fromPath.startsWith(HTTPS)) {
             String[] arr = fromPath.split("/");
             File dir = new File(this.platformPath + File.separator + copyResource.getTo());
             FileUtils.forceMkdir(dir);
@@ -175,8 +186,7 @@ public abstract class AbstractPackHandler implements PackHandler {
 
             // 如果 to 是空的或者 `.`、'/', 则表示复制到各平台包的根目录中，否则复制到对应的目录中即可.
             String to = copyResource.getTo();
-            File toDir = new File(StringUtils.isBlank(to) || ".".equals(to) || "/".equals(to) ? this.platformPath
-                    : this.platformPath + File.separator + to);
+            File toDir = new File(this.isRootPath(to) ? this.platformPath : this.platformPath + File.separator + to);
 
             // 如果需要复制的资源是目录，则直接复制该目录及其下的子目录到目标目录中.
             if (sourceFile.isDirectory()) {

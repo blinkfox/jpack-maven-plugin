@@ -34,6 +34,7 @@ public class WindowsPackHandler extends AbstractPackHandler {
     public void pack(PackInfo packInfo) {
         super.packInfo = packInfo;
         super.createPlatformCommonDir(PlatformEnum.WINDOWS);
+        super.createBaseDirs();
 
         // 复制或渲染对应的资源文件到 windows 所在的打包文件夾中.
         super.copyFiles("windows/README.md", "README.md");
