@@ -30,6 +30,11 @@ public class PackInfo {
     private String artifactId;
 
     /**
+     * 所打包项目的 version.
+     */
+    private String version;
+
+    /**
      * 所打包项目的名称.
      */
     private String name;
@@ -90,6 +95,15 @@ public class PackInfo {
 
     public PackInfo setArtifactId(String artifactId) {
         this.artifactId = artifactId;
+        return this;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public PackInfo setVersion(String version) {
+        this.version = version;
         return this;
     }
 

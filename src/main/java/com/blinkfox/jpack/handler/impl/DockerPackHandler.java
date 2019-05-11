@@ -5,8 +5,13 @@ import com.blinkfox.jpack.entity.Docker;
 import com.blinkfox.jpack.entity.PackInfo;
 import com.blinkfox.jpack.handler.AbstractPackHandler;
 import com.blinkfox.jpack.utils.Logger;
+import com.spotify.docker.client.DefaultDockerClient;
+import com.spotify.docker.client.DockerClient;
+import com.spotify.docker.client.exceptions.DockerCertificateException;
+import com.spotify.docker.client.exceptions.DockerException;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 
 import org.codehaus.plexus.util.FileUtils;
 
@@ -16,6 +21,11 @@ import org.codehaus.plexus.util.FileUtils;
  * @author blinkfox on 2019/5/9.
  */
 public class DockerPackHandler extends AbstractPackHandler {
+
+    /**
+     * Docker 客户端.
+     */
+    private DockerClient dockerClient;
 
     /**
      * 根据打包的相关参数进行 Docker 构建和打包的方法.
@@ -33,7 +43,13 @@ public class DockerPackHandler extends AbstractPackHandler {
             return;
         }
 
-        Logger.info("开始进行 Docker 构建和打包了.");
+        Logger.info("开始进行 Docker 的镜像构建和打包了.");
+        try {
+            this.buildImage();
+        } catch (Exception e) {
+            Logger.error("构建 Docker 镜像出错，将返回!", e);
+        }
+        Logger.info("Docker 的镜像构建和打包完毕.");
     }
 
     /**
@@ -45,6 +61,21 @@ public class DockerPackHandler extends AbstractPackHandler {
         Docker docker = packInfo.getDocker();
         FileUtils.copyFileToDirectory(docker == null || super.isRootPath(docker.getDockerfile())
                 ? "Dockerfile" : docker.getDockerfile(), super.platformPath);
+    }
+
+    /**
+     * 构建 Docker 镜像.
+     *
+     * @throws DockerCertificateException DockerCertificateException
+     * @throws InterruptedException InterruptedException
+     * @throws DockerException DockerException
+     * @throws IOException IOException
+     */
+    private void buildImage() throws DockerCertificateException, InterruptedException, DockerException, IOException {
+        this.dockerClient = DefaultDockerClient.fromEnv().build();
+        String returnedImageId = dockerClient.build(Paths.get(super.platformPath),
+                super.packInfo.getArtifactId() + ":" + super.packInfo.getVersion());
+        Logger.info("构建出的 Docker 镜像ID: " + returnedImageId);
     }
 
 }

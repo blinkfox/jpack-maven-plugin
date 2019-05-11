@@ -41,6 +41,12 @@ public class PackBuildMojo extends AbstractMojo {
     private String artifactId;
 
     /**
+     * Maven 项目的版本 `version`.
+     */
+    @Parameter(defaultValue = "${project.version}", required = true)
+    private String version;
+
+    /**
      * 该 Maven 项目 pom.xml 中的 `finalName`，如果 Maven 中设置了此项，打包的名称前缀将是这个值，
      * 否则打包的名称前缀 Maven 默认就是 `artifactId + version`.
      */
@@ -99,6 +105,7 @@ public class PackBuildMojo extends AbstractMojo {
                 .setTargetDir(this.targetDir)
                 .setHomeDir(this.createHomeDir())
                 .setArtifactId(this.artifactId)
+                .setVersion(this.version)
                 .setName(this.finalName)
                 .setDescription(this.description)
                 .setVmOptions(this.vmOptions)
@@ -139,6 +146,10 @@ public class PackBuildMojo extends AbstractMojo {
 
     void setArtifactId(String artifactId) {
         this.artifactId = artifactId;
+    }
+
+    void setVersion(String version) {
+        this.version = version;
     }
 
     void setFinalName(String finalName) {
