@@ -14,6 +14,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * 打包的 Maven 插件主入口 Mojo 类.
@@ -33,6 +34,12 @@ public class PackBuildMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "${project.build.directory}", required = true)
     private File targetDir;
+
+    /**
+     * Maven 项目的 `groupId`.
+     */
+    @Parameter(defaultValue = "${project.groupId}", required = true)
+    private String groupId;
 
     /**
      * Maven 项目的 `artifactId`.
@@ -110,7 +117,7 @@ public class PackBuildMojo extends AbstractMojo {
                 .setDescription(this.description)
                 .setVmOptions(this.vmOptions)
                 .setProgramArgs(this.programArgs)
-                .setDocker(this.docker)
+                .setDocker(this.initDefaultDockerInfo())
                 .setExcludeFiles(this.excludeFiles)
                 .setCopyResources(this.copyResources);
         Logger.debug(packInfo.toString());
@@ -138,10 +145,36 @@ public class PackBuildMojo extends AbstractMojo {
         return file;
     }
 
+    /**
+     * 构建 Docker 镜像相关的默认信息.
+     *
+     * @return Docker实例
+     */
+    private Docker initDefaultDockerInfo() {
+        if (this.docker == null) {
+            this.docker = new Docker();
+        }
+
+        if (StringUtils.isBlank(this.docker.getRepo())) {
+            this.docker.setRepo(this.groupId);
+        }
+        if (StringUtils.isBlank(this.docker.getName())) {
+            this.docker.setName(this.artifactId);
+        }
+        if (StringUtils.isBlank(this.docker.getTag())) {
+            this.docker.setTag(this.version);
+        }
+        return this.docker;
+    }
+
     /* getter and setter methods. */
 
     void setTargetDir(File targetDir) {
         this.targetDir = targetDir;
+    }
+
+    void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 
     void setArtifactId(String artifactId) {

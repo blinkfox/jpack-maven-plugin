@@ -21,14 +21,14 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class PlatformPackContext {
 
-    private static final String START = "\n"
+    private static final String START = ""
             + "-------------------------- jpack start packing... -------------------------\n"
-            + "         __                          __    \n"
-            + "        |__|______  _____     ____  |  | __\n"
-            + "        |  |\\____ \\ \\__  \\  _/ ___\\ |  |/ /\n"
-            + "        |  ||  |_> > / __ \\_\\  \\___ |    < \n"
-            + "    /\\__|  ||   __/ (____  / \\___  >|__|_ \\\n"
-            + "    \\______||__|         \\/      \\/      \\/\n";
+            + "                             __                          __    \n"
+            + "                            |__|______  _____     ____  |  | __\n"
+            + "                            |  |\\____ \\ \\__  \\  _/ ___\\ |  |/ /\n"
+            + "                            |  ||  |_> > / __ \\_\\  \\___ |    < \n"
+            + "                        /\\__|  ||   __/ (____  / \\___  >|__|_ \\\n"
+            + "                        \\______||__|         \\/      \\/      \\/\n";
 
     /**
      * 用来存储各个平台打包的 map.
@@ -78,7 +78,7 @@ public class PlatformPackContext {
      * @param start 开始时间
      */
     private void printEndTimeLine(long start) {
-        Logger.info("\n------------- jpack has been packaged to end. [costs: "
+        Logger.info("------------- jpack has been packaged to end. [costs: "
                 + TimeKit.convertTime(System.nanoTime() - start) + "] -------------\n");
     }
 

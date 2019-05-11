@@ -96,6 +96,7 @@ public class PackBuildMojoTest {
      */
     private void setPackMojoProperties(String baseDir, PackBuildMojo packMojo) {
         packMojo.setTargetDir(new File(baseDir + File.separator + "target"));
+        packMojo.setGroupId("blinkfox");
         packMojo.setArtifactId("jpack-test");
         packMojo.setVersion("1.0.0-SNAPSHOT");
         packMojo.setFinalName("jpack-test-1.0.0-SNAPSHOT");
