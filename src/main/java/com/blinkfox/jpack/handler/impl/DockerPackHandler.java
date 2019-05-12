@@ -154,7 +154,7 @@ public class DockerPackHandler extends AbstractPackHandler {
      */
     private void saveImage() throws InterruptedException, DockerException, IOException {
         String imageTar = super.packInfo.getName() + ".tar";
-        Logger.info("正在导出 Docker 镜像包: " + imageTar);
+        Logger.info("正在导出 Docker 镜像包: " + imageTar + " ...");
         // 导出镜像为 `.tar` 文件.
         try (InputStream imageInput = dockerClient.save(this.imageName)) {
             FileUtils.copyStreamToFile(new RawInputStreamFacade(imageInput),
