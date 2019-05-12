@@ -36,7 +36,7 @@
                     <!-- JVM 运行所需的参数选项. -->
                     <vmOptions>-Xms512m -Xmx1024m</vmOptions>
                     <!-- 所集成的 Java 服务程序运行所需的参数. -->
-                    <programArgs>--server.port=9090</programArgs>
+                    <programArgs>--server.port=8080</programArgs>
                     <!-- 打包哪些平台的包，不填写则代表所有平台. 目前支持 Windows 和 Linux 两种(大小写均可). -->
                     <platforms>
                         <param>Windows</param>
