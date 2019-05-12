@@ -1,7 +1,6 @@
 package com.blinkfox.jpack;
 
 import com.blinkfox.jpack.handler.PlatformPackContext;
-import com.blinkfox.jpack.utils.Logger;
 
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -19,8 +18,8 @@ public class PackBuildMojo extends BaseMojo {
      */
     @Override
     public void execute() {
-        // 初始化系统日志.
-        Logger.initSetLog(super.getLog());
+        // 初始化系统日志和打印 logo.
+        super.initLogoAndPrintLogo();
 
         // 在各平台下执行打包.
         new PlatformPackContext().pack(super.platforms, super.buildPackInfo());

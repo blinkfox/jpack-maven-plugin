@@ -59,7 +59,7 @@ public abstract class AbstractPackHandler implements PackHandler {
     /**
      * 创建各个平台下的主目录和主目录中的 bin, docs, logs 等目录文件夹.
      */
-    protected void createPlatformCommonDir(PlatformEnum platformEnum) {
+    public void createPlatformCommonDir(PlatformEnum platformEnum) {
         this.initPlatformPath(platformEnum);
 
         try {

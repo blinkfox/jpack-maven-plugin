@@ -4,6 +4,7 @@ import com.blinkfox.jpack.entity.CopyResource;
 import com.blinkfox.jpack.entity.Docker;
 import com.blinkfox.jpack.entity.PackInfo;
 import com.blinkfox.jpack.utils.Logger;
+import com.blinkfox.jpack.utils.TimeKit;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +20,15 @@ import org.codehaus.plexus.util.StringUtils;
  * @author blinkfox on 2019-05-13.
  */
 public class BaseMojo extends AbstractMojo {
+
+    private static final String START = ""
+            + "-------------------------- jpack start packing... -------------------------\n"
+            + "                             __                          __    \n"
+            + "                            |__|______  _____     ____  |  | __\n"
+            + "                            |  |\\____ \\ \\__  \\  _/ ___\\ |  |/ /\n"
+            + "                            |  ||  |_> > / __ \\_\\  \\___ |    < \n"
+            + "                        /\\__|  ||   __/ (____  / \\___  >|__|_ \\\n"
+            + "                        \\______||__|         \\/      \\/      \\/\n";
 
     /**
      * 用来存放 jpack 打包时的文件夹名称常量.
@@ -106,6 +116,24 @@ public class BaseMojo extends AbstractMojo {
     @Override
     public void execute() {
         // no code.
+    }
+
+    /**
+     * 初始化加载日志对象实例和打印 jpack logo.
+     */
+    protected void initLogoAndPrintLogo() {
+        Logger.initSetLog(super.getLog());
+        Logger.info(START);
+    }
+
+    /**
+     * 打印结束符及打包花费的时间.
+     *
+     * @param start 开始时间
+     */
+    protected void printEndTimeLine(long start) {
+        Logger.info("------------- jpack has been packaged to end. [costs: "
+                + TimeKit.convertTime(System.nanoTime() - start) + "] -------------\n");
     }
 
     /**

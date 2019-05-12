@@ -39,6 +39,20 @@ public class DockerPackHandler extends AbstractPackHandler {
     private String imageName;
 
     /**
+     * 空构造方法.
+     */
+    public DockerPackHandler() {}
+
+    /**
+     * Docker 构建打包的处理类.
+     *
+     * @param packInfo PackInfo实例
+     */
+    public DockerPackHandler(PackInfo packInfo) {
+        super.packInfo = packInfo;
+    }
+
+    /**
      * 根据打包的相关参数进行 Docker 构建和打包的方法.
      *
      * @param packInfo 打包的相关参数实体
@@ -56,7 +70,7 @@ public class DockerPackHandler extends AbstractPackHandler {
         super.packInfo = packInfo;
         super.createPlatformCommonDir(PlatformEnum.DOCKER);
         try {
-            this.copyDockerfile(packInfo);
+            this.copyDockerfile();
         } catch (IOException e) {
             Logger.warn("Dockerfile 文件未找到，将忽略构建 Docker 镜像!");
             this.clean();
@@ -65,8 +79,6 @@ public class DockerPackHandler extends AbstractPackHandler {
 
         try {
             this.buildImage();
-            this.saveImage();
-            // this.pushImage();
         } catch (Exception e) {
             Logger.error("构建 Docker 镜像出错，将返回!", e);
         }
@@ -77,11 +89,9 @@ public class DockerPackHandler extends AbstractPackHandler {
 
     /**
      * 复制 Dockerfile 文件到docker平台的目录中.
-     *
-     * @param packInfo 包信息
      */
-    private void copyDockerfile(PackInfo packInfo) throws IOException {
-        Docker docker = packInfo.getDocker();
+    public void copyDockerfile() throws IOException {
+        Docker docker = super.packInfo.getDocker();
         FileUtils.copyFileToDirectory(docker == null || super.isRootPath(docker.getDockerfile())
                 ? "Dockerfile" : docker.getDockerfile(), super.platformPath);
     }
@@ -89,7 +99,7 @@ public class DockerPackHandler extends AbstractPackHandler {
     /**
      * 创建 DockerClient 对象实例.
      */
-    private void createDockerClient() throws DockerCertificateException {
+    public void createDockerClient() throws DockerCertificateException {
         this.dockerClient = DefaultDockerClient.fromEnv().build();
     }
 
@@ -100,7 +110,7 @@ public class DockerPackHandler extends AbstractPackHandler {
      * @throws DockerException DockerException
      * @throws IOException IOException
      */
-    private void buildImage() throws InterruptedException, DockerException, IOException {
+    public void buildImage() throws InterruptedException, DockerException, IOException {
         Docker docker = super.packInfo.getDocker();
         this.imageName = docker.getRepo() + "/" + docker.getName() + ":" + docker.getTag();
         Logger.info("正在构建 " + this.imageName + " 镜像...");
@@ -114,7 +124,7 @@ public class DockerPackHandler extends AbstractPackHandler {
      * @throws InterruptedException InterruptedException
      * @throws DockerException DockerException
      */
-    private void pushImage() throws InterruptedException, DockerException, IOException {
+    public void pushImage() throws InterruptedException, DockerException, IOException {
         // 构建 Registry 授权对象实例，并做校验.
         final String registry = super.packInfo.getDocker().getRegistry();
         Logger.info("正在校验推送镜像时需要的 registry 授权是否合法...");
@@ -154,7 +164,7 @@ public class DockerPackHandler extends AbstractPackHandler {
      * @throws DockerException DockerException
      * @throws IOException IOException
      */
-    private void saveImage() throws InterruptedException, DockerException, IOException {
+    public void saveImage() throws InterruptedException, DockerException, IOException {
         Docker dockerInfo = super.packInfo.getDocker();
         String imageTar =  dockerInfo.getName() + "-" + dockerInfo.getTag() + ".tar";
         Logger.info("正在导出 Docker 镜像包: " + imageTar + " ...");
@@ -169,16 +179,22 @@ public class DockerPackHandler extends AbstractPackHandler {
     /**
      * 关闭 Docker Client，删除 Docker 文件夹.
      */
-    private void clean() {
-        if (dockerClient != null) {
-            dockerClient.close();
+    public void clean() {
+        if (this.dockerClient != null) {
+            this.dockerClient.close();
         }
 
         try {
-            FileUtils.forceDelete(platformPath);
+            FileUtils.forceDelete(super.platformPath);
         } catch (IOException e) {
             Logger.error("删除清除 docker 下的临时文件失败.", e);
         }
+    }
+
+    /* getter 和 setter 方法. */
+
+    public DockerClient getDockerClient() {
+        return this.dockerClient;
     }
 
 }

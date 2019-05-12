@@ -89,12 +89,32 @@ public class PackBuildMojoTest {
     }
 
     /**
+     * 测试 jpack 插件.
+     *
+     * @throws Exception 异常
+     */
+    @Test
+    public void testExecute3WithDockerBuild() throws Exception {
+        // 获取测试的 pom.xml
+        String baseDir = PlexusTestCase.getBasedir();
+        File packPom = new File(baseDir, "src/test/resources/jpack-test-docker.xml");
+        Assert.assertTrue(packPom.exists());
+        this.copyDockerTestFiles(baseDir);
+
+        // 获取 mojo 并执行.
+        DockerBuildMojo dockerBuildMojo = (DockerBuildMojo) rule.lookupMojo("docker-build", packPom);
+        Assert.assertNotNull(dockerBuildMojo);
+        this.setPackMojoProperties(baseDir, dockerBuildMojo);
+        dockerBuildMojo.execute();
+    }
+
+    /**
      * 设置 PackBuildMojo 对象的一些用于测试的属性值.
      *
      * @param baseDir 项目基础目录
      * @param packMojo PackBuildMojo 对象
      */
-    private void setPackMojoProperties(String baseDir, PackBuildMojo packMojo) {
+    private void setPackMojoProperties(String baseDir, BaseMojo packMojo) {
         packMojo.setTargetDir(new File(baseDir + File.separator + "target"));
         packMojo.setGroupId("blinkfox");
         packMojo.setArtifactId("jpack-test");
