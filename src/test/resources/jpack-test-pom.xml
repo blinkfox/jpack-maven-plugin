@@ -44,7 +44,14 @@
                         <param>Docker</param>
                     </platforms>
                     <docker>
+                        <!-- 构建 Docker 镜像的 Dockerfile 文件的相对路径，不填写则认为其与 pom.xml 在统一目录. -->
                         <dockerfile>Dockerfile</dockerfile>
+                        <!-- 构建镜像的几个基础参数, registry远程仓库地址，不填写默认视为 Dockerhub 的地址;
+                            repo不填写则默认为 groupId，name 不填写则默认为 artifactId，tag不填写则默认为 version.-->
+                        <registry> </registry>
+                        <repo>blinkfox</repo>
+                        <name>jpack-test</name>
+                        <tag>1.0.0-SNAPSHOT</tag>
                     </docker>
                     <!-- 需要copy 哪些资源(可以是目录或者具体的相对、绝对或网络资源路径)到部署包中的某个目录;
                         to 的值只能是目录，为空或者 '.' 或者 '/' 符号则表示复制到各平台包的根目录中，否则就复制到具体的目录下 -->

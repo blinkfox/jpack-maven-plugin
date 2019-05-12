@@ -66,7 +66,7 @@ public class DockerPackHandler extends AbstractPackHandler {
         try {
             this.buildImage();
             this.saveImage();
-            this.pushImage();
+            // this.pushImage();
         } catch (Exception e) {
             Logger.error("构建 Docker 镜像出错，将返回!", e);
         }
@@ -102,7 +102,7 @@ public class DockerPackHandler extends AbstractPackHandler {
      */
     private void buildImage() throws InterruptedException, DockerException, IOException {
         Docker docker = super.packInfo.getDocker();
-        this.imageName = docker.getRepo() + "/" + super.packInfo.getArtifactId() + ":" + super.packInfo.getVersion();
+        this.imageName = docker.getRepo() + "/" + docker.getName() + ":" + docker.getTag();
         Logger.info("正在构建 " + this.imageName + " 镜像...");
         String imageId = dockerClient.build(Paths.get(super.platformPath), imageName, this::printProgress);
         Logger.info("构建 " + this.imageName + " 镜像完毕，镜像ID: " + imageId);
@@ -118,7 +118,10 @@ public class DockerPackHandler extends AbstractPackHandler {
         // 构建 Registry 授权对象实例，并做校验.
         final String registry = super.packInfo.getDocker().getRegistry();
         Logger.info("正在校验推送镜像时需要的 registry 授权是否合法...");
-        RegistryAuth auth = RegistryAuth.fromDockerConfig().build();
+
+        RegistryAuth auth = StringUtils.isBlank(registry)
+                ? RegistryAuth.fromDockerConfig().build()
+                : RegistryAuth.fromDockerConfig(registry).build();
         int statusCode = dockerClient.auth(auth);
         if (statusCode != 200) {
             Logger.warn("校验 registry 授权不通过，不能推送镜像到远程镜像仓库中.");
@@ -127,7 +130,6 @@ public class DockerPackHandler extends AbstractPackHandler {
 
         // 推送镜像到远程镜像仓库中
         Logger.info("正在推送 " + this.imageName + " 镜像到远程仓库中...");
-
         dockerClient.push(StringUtils.isBlank(registry) ? this.imageName : registry + "/" + this.imageName,
                 this::printProgress, auth);
         Logger.info("推送 " + this.imageName + " 镜像到远程仓库中成功.");
@@ -153,7 +155,8 @@ public class DockerPackHandler extends AbstractPackHandler {
      * @throws IOException IOException
      */
     private void saveImage() throws InterruptedException, DockerException, IOException {
-        String imageTar = super.packInfo.getName() + ".tar";
+        Docker dockerInfo = super.packInfo.getDocker();
+        String imageTar =  dockerInfo.getName() + "-" + dockerInfo.getTag() + ".tar";
         Logger.info("正在导出 Docker 镜像包: " + imageTar + " ...");
         // 导出镜像为 `.tar` 文件.
         try (InputStream imageInput = dockerClient.save(this.imageName)) {
