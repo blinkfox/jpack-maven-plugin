@@ -11,16 +11,13 @@ import org.apache.maven.plugins.annotations.Mojo;
  * @author blinkfox on 2019-04-28.
  */
 @Mojo(name = "build", defaultPhase = LifecyclePhase.PACKAGE)
-public class PackBuildMojo extends BaseMojo {
+public class PackBuildMojo extends AbstractBaseMojo {
 
     /**
-     * 执行该 Mojo 的方法.
+     * 正式执行构建各平台包的方法.
      */
     @Override
-    public void execute() {
-        // 初始化系统日志和打印 logo.
-        super.initLogoAndPrintLogo();
-
+    protected void exec() {
         // 在各平台下执行打包.
         new PlatformPackContext().pack(super.platforms, super.buildPackInfo());
     }

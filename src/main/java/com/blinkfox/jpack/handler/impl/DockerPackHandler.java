@@ -39,6 +39,11 @@ public class DockerPackHandler extends AbstractPackHandler {
     private String imageName;
 
     /**
+     * 镜像包.
+     */
+    private String imageTar;
+
+    /**
      * 空构造方法.
      */
     public DockerPackHandler() {}
@@ -63,6 +68,7 @@ public class DockerPackHandler extends AbstractPackHandler {
             this.createDockerClient();
             dockerClient.ping();
         } catch (DockerCertificateException | DockerException | InterruptedException e) {
+            this.clean();
             Logger.warn("未检测到或开启 Docker 环境，将跳过 Docker 的构建.");
             return;
         }
@@ -166,14 +172,14 @@ public class DockerPackHandler extends AbstractPackHandler {
      */
     public void saveImage() throws InterruptedException, DockerException, IOException {
         Docker dockerInfo = super.packInfo.getDocker();
-        String imageTar =  dockerInfo.getName() + "-" + dockerInfo.getTag() + ".tar";
-        Logger.info("正在导出 Docker 镜像包: " + imageTar + " ...");
+        this.imageTar =  dockerInfo.getName() + "-" + dockerInfo.getTag() + ".tar";
+        Logger.info("正在导出 Docker 镜像包: " + this.imageTar + " ...");
         // 导出镜像为 `.tar` 文件.
         try (InputStream imageInput = dockerClient.save(this.imageName)) {
             FileUtils.copyStreamToFile(new RawInputStreamFacade(imageInput),
-                    new File(super.packInfo.getHomeDir().getAbsolutePath() + File.separator + imageTar));
+                    new File(super.packInfo.getHomeDir().getAbsolutePath() + File.separator + this.imageTar));
         }
-        Logger.info("导出 Docker 镜像包成功.");
+        Logger.info("导出 Docker 镜像包 " + this.imageTar + " 成功.");
     }
 
     /**
@@ -195,6 +201,10 @@ public class DockerPackHandler extends AbstractPackHandler {
 
     public DockerClient getDockerClient() {
         return this.dockerClient;
+    }
+
+    public String getImageTar() {
+        return imageTar;
     }
 
 }

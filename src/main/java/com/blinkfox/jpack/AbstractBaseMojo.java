@@ -19,7 +19,7 @@ import org.codehaus.plexus.util.StringUtils;
  *
  * @author blinkfox on 2019-05-13.
  */
-public class BaseMojo extends AbstractMojo {
+public abstract class AbstractBaseMojo extends AbstractMojo {
 
     private static final String START = ""
             + "-------------------------- jpack start packing... -------------------------\n"
@@ -115,26 +115,20 @@ public class BaseMojo extends AbstractMojo {
      */
     @Override
     public void execute() {
-        // no code.
-    }
-
-    /**
-     * 初始化加载日志对象实例和打印 jpack logo.
-     */
-    protected void initLogoAndPrintLogo() {
         Logger.initSetLog(super.getLog());
         Logger.info(START);
-    }
+        final long start = System.nanoTime();
 
-    /**
-     * 打印结束符及打包花费的时间.
-     *
-     * @param start 开始时间
-     */
-    protected void printEndTimeLine(long start) {
+        this.exec();
+
         Logger.info("------------- jpack has been packaged to end. [costs: "
                 + TimeKit.convertTime(System.nanoTime() - start) + "] -------------\n");
     }
+
+    /**
+     * 正式执行构建的方法.
+     */
+    protected abstract void exec();
 
     /**
      * 构建 PackInfo 对象实例，便于传递复用此对象属性.
