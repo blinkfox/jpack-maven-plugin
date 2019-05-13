@@ -32,7 +32,12 @@ public class Docker {
      */
     private String tag;
 
-    /* getter 方法. */
+    /**
+     * Docker 构建支持的目标类型，目前仅 build, save, push 三种.
+     */
+    private String[] goalTypes;
+
+    /* getter 和 setter 方法. */
 
     public String getDockerfile() {
         return dockerfile;
@@ -68,6 +73,14 @@ public class Docker {
 
     public void setTag(String tag) {
         this.tag = tag;
+    }
+
+    public String[] getGoalTypes() {
+        return goalTypes;
+    }
+
+    public void setGoalTypes(String[] goalTypes) {
+        this.goalTypes = goalTypes;
     }
 
 }

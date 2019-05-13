@@ -55,6 +55,11 @@ public class PackInfo {
     private String programArgs;
 
     /**
+     * 执行过程中是否跳过异常或错误，如果为true则直接return，否则抛出异常，默认值是default，会折中做了默认处理.
+     */
+    private String skipError;
+
+    /**
      * 构建 Docker 发布包相关的参数实体.
      */
     private Docker docker;
@@ -143,6 +148,14 @@ public class PackInfo {
         return this;
     }
 
+    public String getSkipError() {
+        return skipError;
+    }
+
+    public void setSkipError(String skipError) {
+        this.skipError = skipError;
+    }
+
     public Docker getDocker() {
         return docker;
     }
@@ -196,13 +209,15 @@ public class PackInfo {
     @Override
     public String toString() {
         return "PackInfo = {"
-                + "targetDir: '" + targetDir + '\''
-                + ", homeDir: '" + homeDir + '\''
-                + ", artifactId: '" + artifactId + '\''
-                + ", name: '" + name + '\''
-                + ", description: '" + description + '\''
-                + ", vmOptions: '" + vmOptions + '\''
-                + ", programArgs: '" + programArgs + '\''
+                + "targetDir: '" + this.targetDir + '\''
+                + ", homeDir: '" + this.homeDir + '\''
+                + ", artifactId: '" + this.artifactId + '\''
+                + ", name: '" + this.name + '\''
+                + ", description: '" + this.description + '\''
+                + ", vmOptions: '" + this.vmOptions + '\''
+                + ", programArgs: '" + this.programArgs + '\''
+                + ", skipError: '" + this.skipError + '\''
                 + '}';
     }
+
 }

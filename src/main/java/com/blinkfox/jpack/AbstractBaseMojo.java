@@ -91,6 +91,12 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
     protected String[] platforms;
 
     /**
+     * 执行过程中是否跳过异常或错误，如果为true则直接return，否则抛出异常，默认值是default，会折中做了默认处理.
+     */
+    @Parameter(property = "skipError")
+    private String skipError;
+
+    /**
      * 构建 Docker 发布包相关的参数.
      */
     @Parameter(property = "docker")
