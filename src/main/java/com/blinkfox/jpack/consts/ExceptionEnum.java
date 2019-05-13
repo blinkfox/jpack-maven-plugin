@@ -15,17 +15,17 @@ public enum ExceptionEnum {
     /**
      * 没有 Dockerfile 文件的枚举实例.
      */
-    NO_DOCKERFILE("no_dockerfile", "Dockerfile 文件未找到，将忽略构建 Docker 镜像!"),
+    NO_DOCKERFILE("no_dockerfile", "Dockerfile 文件未找到，构建 Docker 镜像失败!"),
 
     /**
      * 使用 jpack 构建 Docker 镜像出错的枚举实例.
      */
-    DOCKER_BUILD_EXCEPTION("docker_build_exception", "jpack 构建 Docker 镜像出错！"),
+    DOCKER_BUILD_EXCEPTION("docker_build_exception", "jpack 构建 Docker 镜像失败！"),
 
     /**
      * 使用 jpack 导出 Docker 镜像出错的枚举实例.
      */
-    DOCKER_SAVE_EXCEPTION("docker_save_exception", "jpack 导出 Docker 镜像出错！"),
+    DOCKER_SAVE_EXCEPTION("docker_save_exception", "jpack 导出 Docker 镜像失败！"),
 
     /**
      * 一个通用的 jpack 执行异常.

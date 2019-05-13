@@ -86,7 +86,7 @@ public class DockerPackHandler extends AbstractPackHandler {
         try {
             this.buildImage();
         } catch (Exception e) {
-            Logger.error("构建 Docker 镜像出错，将返回!", e);
+            Logger.error("构建 Docker 镜像失败，将返回!", e);
         }
 
         this.clean();
@@ -201,6 +201,10 @@ public class DockerPackHandler extends AbstractPackHandler {
 
     public DockerClient getDockerClient() {
         return this.dockerClient;
+    }
+
+    public String getImageName() {
+        return imageName;
     }
 
     public String getImageTar() {
