@@ -33,9 +33,9 @@ public class Docker {
     private String tag;
 
     /**
-     * Docker 构建支持的目标类型，目前仅可以配置 save, push 两种，不配置的话，默认只构建镜像.
+     * Docker 构建支持的额外目标，目前仅可以配置 save, push 两种，不配置的话，默认目标是只构建镜像.
      */
-    private String[] goalTypes;
+    private String[] extraGoals;
 
     /* getter 和 setter 方法. */
 
@@ -75,12 +75,12 @@ public class Docker {
         this.tag = tag;
     }
 
-    public String[] getGoalTypes() {
-        return goalTypes;
+    public String[] getExtraGoals() {
+        return extraGoals;
     }
 
-    public void setGoalTypes(String[] goalTypes) {
-        this.goalTypes = goalTypes;
+    public void setExtraGoals(String[] extraGoals) {
+        this.extraGoals = extraGoals;
     }
 
 }

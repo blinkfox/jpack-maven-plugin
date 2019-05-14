@@ -208,7 +208,7 @@ public class DockerPackHandler extends AbstractPackHandler {
         // 如果 docker 的配置信息为空，则直接视为指构建镜像.
         String[] goalTypes;
         Docker dockerInfo = super.packInfo.getDocker();
-        if (dockerInfo == null || (goalTypes = dockerInfo.getGoalTypes()) == null || goalTypes.length == 0) {
+        if (dockerInfo == null || (goalTypes = dockerInfo.getExtraGoals()) == null || goalTypes.length == 0) {
             Logger.debug("在 jpack 中未配置  docker 额外构建目标类型'goalTypes'的值，只会构建镜像.");
             return;
         }
