@@ -1,5 +1,7 @@
 package com.blinkfox.jpack.entity;
 
+import com.blinkfox.jpack.consts.SkipErrorEnum;
+
 import java.io.File;
 
 /**
@@ -55,9 +57,9 @@ public class PackInfo {
     private String programArgs;
 
     /**
-     * 执行过程中是否跳过异常或错误，如果为true则直接return，否则抛出异常，默认值是default，会折中做了默认处理.
+     * 执行过程中是否跳过异常或错误，如果为true则直跳过不抛异常，否则抛出异常，默认值是default，会折中做了默认处理.
      */
-    private String skipError;
+    private SkipErrorEnum skipError;
 
     /**
      * 构建 Docker 发布包相关的参数实体.
@@ -148,12 +150,13 @@ public class PackInfo {
         return this;
     }
 
-    public String getSkipError() {
+    public SkipErrorEnum getSkipError() {
         return skipError;
     }
 
-    public void setSkipError(String skipError) {
+    public PackInfo setSkipError(SkipErrorEnum skipError) {
         this.skipError = skipError;
+        return this;
     }
 
     public Docker getDocker() {

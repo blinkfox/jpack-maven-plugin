@@ -89,12 +89,12 @@ public class PackBuildMojoTest {
     }
 
     /**
-     * 指定构建 Dokcer 的某个目标.
+     * 测试 jpack 插件 docker-build 的目标构建.
      *
-     * @param goal 目标
      * @throws Exception 异常
      */
-    private void dockerBuildWithGoal(String goal) throws Exception {
+    @Test
+    public void testExecute3WithDockerBuild() throws Exception {
         // 获取测试的 pom.xml
         String baseDir = PlexusTestCase.getBasedir();
         File packPom = new File(baseDir, "src/test/resources/jpack-test-docker.xml");
@@ -102,40 +102,10 @@ public class PackBuildMojoTest {
         this.copyDockerTestFiles(baseDir);
 
         // 获取 mojo 并执行.
-        DockerBuildMojo dockerBuildMojo = (DockerBuildMojo) rule.lookupMojo(goal, packPom);
+        PackBuildMojo dockerBuildMojo = (PackBuildMojo) rule.lookupMojo("build", packPom);
         Assert.assertNotNull(dockerBuildMojo);
         this.setPackMojoProperties(baseDir, dockerBuildMojo);
         dockerBuildMojo.execute();
-    }
-
-    /**
-     * 测试 jpack 插件 docker-build 的目标构建.
-     *
-     * @throws Exception 异常
-     */
-    @Test
-    public void testExecute3WithDockerBuild() throws Exception {
-        this.dockerBuildWithGoal("docker-build");
-    }
-
-    /**
-     * 测试 jpack 插件 docker-save 的目标构建.
-     *
-     * @throws Exception 异常
-     */
-    @Test
-    public void testExecute4WithDockerSave() throws Exception {
-        this.dockerBuildWithGoal("docker-save");
-    }
-
-    /**
-     * 测试 jpack 插件 docker-push 的目标构建.
-     *
-     * @throws Exception 异常
-     */
-    @Test
-    public void testExecute5WithDockerPush() throws Exception {
-        this.dockerBuildWithGoal("docker-push");
     }
 
     /**

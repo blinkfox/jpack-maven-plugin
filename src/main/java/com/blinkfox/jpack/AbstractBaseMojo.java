@@ -1,5 +1,6 @@
 package com.blinkfox.jpack;
 
+import com.blinkfox.jpack.consts.SkipErrorEnum;
 import com.blinkfox.jpack.entity.CopyResource;
 import com.blinkfox.jpack.entity.Docker;
 import com.blinkfox.jpack.entity.PackInfo;
@@ -91,7 +92,7 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
     protected String[] platforms;
 
     /**
-     * 执行过程中是否跳过异常或错误，如果为true则直接return，否则抛出异常，默认值是default，会折中做了默认处理.
+     * 执行过程中是否跳过异常或错误，如果为true则直跳过不抛异常，否则抛出异常，默认值是default，会折中做了默认处理.
      */
     @Parameter(property = "skipError")
     private String skipError;
@@ -151,6 +152,7 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
                 .setDescription(this.description)
                 .setVmOptions(this.vmOptions)
                 .setProgramArgs(this.programArgs)
+                .setSkipError(SkipErrorEnum.of(this.skipError))
                 .setDocker(this.initDefaultDockerInfo())
                 .setExcludeFiles(this.excludeFiles)
                 .setCopyResources(this.copyResources);

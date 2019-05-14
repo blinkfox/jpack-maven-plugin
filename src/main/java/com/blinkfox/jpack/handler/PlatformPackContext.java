@@ -5,8 +5,6 @@ import com.blinkfox.jpack.entity.PackInfo;
 import com.blinkfox.jpack.handler.impl.DockerPackHandler;
 import com.blinkfox.jpack.handler.impl.LinuxPackHandler;
 import com.blinkfox.jpack.handler.impl.WindowsPackHandler;
-import com.blinkfox.jpack.utils.Logger;
-import com.blinkfox.jpack.utils.TimeKit;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -39,14 +37,11 @@ public class PlatformPackContext {
      * @param packInfo 打包的相关参数实体
      */
     public void pack(String[] platforms, PackInfo packInfo) {
-        final long start = System.nanoTime();
-
         // 如果各个打包的平台为空，则默认视为所有平台都打包.
         if (ArrayUtils.isEmpty(platforms)) {
             for (PackHandler packHandler : packMap.values()) {
                 packHandler.pack(packInfo);
             }
-            this.printEndTimeLine(start);
             return;
         }
 
@@ -59,17 +54,6 @@ public class PlatformPackContext {
                 }
             }
         }
-        this.printEndTimeLine(start);
-    }
-
-    /**
-     * 打印结束符及打包花费的时间.
-     *
-     * @param start 开始时间
-     */
-    private void printEndTimeLine(long start) {
-        Logger.info("------------- jpack has been packaged to end. [costs: "
-                + TimeKit.convertTime(System.nanoTime() - start) + "] -------------\n");
     }
 
 }

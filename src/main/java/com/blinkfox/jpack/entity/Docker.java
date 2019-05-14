@@ -33,7 +33,7 @@ public class Docker {
     private String tag;
 
     /**
-     * Docker 构建支持的目标类型，目前仅 build, save, push 三种.
+     * Docker 构建支持的目标类型，目前仅可以配置 save, push 两种，不配置的话，默认只构建镜像.
      */
     private String[] goalTypes;
 
