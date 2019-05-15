@@ -255,15 +255,21 @@ public class DockerPackHandler extends AbstractPackHandler {
         // 如果未配置 Dockerfile 文件，则默认生成一个简单的 SpringBoot 服务需要的 Dockerfile 文件.
         Docker docker = super.packInfo.getDocker();
         if (docker == null || StringUtils.isBlank(docker.getDockerfile())) {
-            Logger.info("你未配置自定义的 Dockerfile 文件，将使用 jpack 默认提供的 Dockerfile 文件来构建 Docker 镜像.");
+            Logger.info("将使用 jpack 默认提供的 Dockerfile 文件来构建 Docker 镜像.");
             TemplateKit.renderFile("docker/" + DOCKER_FILE, super.buildBaseTemplateContextMap(),
                     super.platformPath + File.separator + DOCKER_FILE);
             return;
         }
 
+        // 判断配置的 Dockerfile 文件是否有效.
         Logger.info("开始渲染你自定义的 Dockerfile 文件中的内容.");
-        FileUtils.copyFileToDirectory(super.isRootPath(docker.getDockerfile())
-                ? DOCKER_FILE : docker.getDockerfile(), super.platformPath);
+        String dockerFilePath = docker.getDockerfile();
+        File dockerFile = new File(super.isRootPath(dockerFilePath) ? DOCKER_FILE : dockerFilePath);
+        if (!dockerFile.exists() || dockerFile.isDirectory()) {
+            throw new DockerPackException(ExceptionEnum.NO_DOCKERFILE.getMsg());
+        }
+
+        FileUtils.copyFileToDirectory(dockerFile, new File(super.platformPath));
     }
 
     /**

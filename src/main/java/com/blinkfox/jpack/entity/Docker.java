@@ -43,6 +43,10 @@ public class Docker {
         return dockerfile;
     }
 
+    public void setDockerfile(String dockerfile) {
+        this.dockerfile = dockerfile;
+    }
+
     public String getRegistry() {
         return registry;
     }

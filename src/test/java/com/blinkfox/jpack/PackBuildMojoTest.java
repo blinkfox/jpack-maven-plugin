@@ -89,12 +89,12 @@ public class PackBuildMojoTest {
     }
 
     /**
-     * 测试 jpack 插件 docker-build 的目标构建.
+     * 测试 jpack 插件 docker 的构建.
      *
      * @throws Exception 异常
      */
     @Test
-    public void testExecute3WithDockerBuild() throws Exception {
+    public void testExecute3WithDocker() throws Exception {
         // 获取测试的 pom.xml
         String baseDir = PlexusTestCase.getBasedir();
         File packPom = new File(baseDir, "src/test/resources/jpack-test-docker.xml");
@@ -106,6 +106,31 @@ public class PackBuildMojoTest {
         Assert.assertNotNull(dockerBuildMojo);
         this.setPackMojoProperties(baseDir, dockerBuildMojo);
         dockerBuildMojo.execute();
+    }
+
+    /**
+     * 测试 jpack 插件 自定义 Dockerfile 的构建.
+     *
+     * @throws Exception 异常
+     */
+    @Test
+    public void testExecute4WithCustomDockerfile() throws Exception {
+        // 获取测试的 pom.xml
+        String baseDir = PlexusTestCase.getBasedir();
+        File packPom = new File(baseDir, "src/test/resources/jpack-test-docker.xml");
+        Assert.assertTrue(packPom.exists());
+        this.copyDockerTestFiles(baseDir);
+        FileUtils.copyFileToDirectory("src/test/resources/dockers/Dockerfile", baseDir);
+
+        // 获取 mojo 并执行.
+        PackBuildMojo dockerBuildMojo = (PackBuildMojo) rule.lookupMojo("build", packPom);
+        Assert.assertNotNull(dockerBuildMojo);
+        dockerBuildMojo.getDocker().setDockerfile("Dockerfile");
+        this.setPackMojoProperties(baseDir, dockerBuildMojo);
+        dockerBuildMojo.execute();
+
+        // 执行结束后删除根目录下的 Dockerfile 文件.
+        FileUtils.forceDelete(baseDir + File.separator + "Dockerfile");
     }
 
     /**
@@ -126,14 +151,9 @@ public class PackBuildMojoTest {
     /**
      * 复制测试 Docker 相关的一些文件.
      */
-    private void copyDockerTestFiles(String baseDir) {
-        try {
-            // FileUtils.copyFileToDirectory("src/test/resources/docker/Dockerfile", baseDir);
-            FileUtils.copyFileToDirectory("src/test/resources/docker/jpack-test-1.0.0-SNAPSHOT.jar",
-                    baseDir + File.separator + "target");
-        } catch (IOException e) {
-            Logger.error("复制 Dockerfile 文件到文件根目录出错！", e);
-        }
+    private void copyDockerTestFiles(String baseDir) throws IOException {
+        FileUtils.copyFileToDirectory("src/test/resources/dockers/jpack-test-1.0.0-SNAPSHOT.jar",
+                baseDir + File.separator + "target");
     }
 
 }

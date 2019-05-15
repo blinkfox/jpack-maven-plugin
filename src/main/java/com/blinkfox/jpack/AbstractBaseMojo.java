@@ -227,4 +227,8 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
         this.description = description;
     }
 
+    public Docker getDocker() {
+        return docker;
+    }
+
 }

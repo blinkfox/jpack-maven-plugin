@@ -15,12 +15,7 @@ public enum ExceptionEnum {
     /**
      * 没有 Dockerfile 文件的枚举实例.
      */
-    NO_DOCKERFILE("Dockerfile 文件未找到，构建 Docker 镜像失败!"),
-
-    /**
-     * 读取或渲染 Dockerfile 文件失败.
-     */
-    RENDER_DOCKERFILE_ERROR("读取或渲染 Dockerfile 文件失败!"),
+    NO_DOCKERFILE("Dockerfile 文件未找到！"),
 
     /**
      * 使用 jpack 构建 Docker 镜像出错的枚举实例.

@@ -46,7 +46,7 @@
                     <skipError>default</skipError>
                     <docker>
                         <!-- 构建 Docker 镜像的 'Dockerfile' 文件的相对路径，不填写则认为其与 pom.xml 在统一目录. -->
-                        <!--<dockerfile>Dockerfile</dockerfile>-->
+                        <dockerfile> </dockerfile>
                         <!-- 构建镜像的几个基础参数, registry远程仓库地址，不填写默认视为 Dockerhub 的地址;
                             repo不填写则默认为 groupId，name 不填写则默认为 artifactId，tag不填写则默认为 version.-->
                         <registry> </registry>
