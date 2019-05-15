@@ -128,7 +128,7 @@ public class PackBuildMojoTest {
      */
     private void copyDockerTestFiles(String baseDir) {
         try {
-            FileUtils.copyFileToDirectory("src/test/resources/docker/Dockerfile", baseDir);
+            // FileUtils.copyFileToDirectory("src/test/resources/docker/Dockerfile", baseDir);
             FileUtils.copyFileToDirectory("src/test/resources/docker/jpack-test-1.0.0-SNAPSHOT.jar",
                     baseDir + File.separator + "target");
         } catch (IOException e) {

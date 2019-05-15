@@ -45,8 +45,8 @@
                         如：Docker 环境检查，如果没有 Docker 环境,则跳过 Docker 的构建. -->
                     <skipError>default</skipError>
                     <docker>
-                        <!-- 构建 Docker 镜像的 Dockerfile 文件的相对路径，不填写则认为其与 pom.xml 在统一目录. -->
-                        <dockerfile>Dockerfile</dockerfile>
+                        <!-- 构建 Docker 镜像的 'Dockerfile' 文件的相对路径，不填写则认为其与 pom.xml 在统一目录. -->
+                        <!--<dockerfile>Dockerfile</dockerfile>-->
                         <!-- 构建镜像的几个基础参数, registry远程仓库地址，不填写默认视为 Dockerhub 的地址;
                             repo不填写则默认为 groupId，name 不填写则默认为 artifactId，tag不填写则默认为 version.-->
                         <registry> </registry>
@@ -56,7 +56,7 @@
                         <!-- jpack 的 Docker 构建的默认目标是构建镜像，如果你需要其他目标的话，可以再此配置（可配多个）.
                             目前这里支持导出镜像为 .tar 包(save)和 推送镜像到远程仓库(push) 两种. -->
                         <extraGoals>
-                            <param>save</param>
+                            <!--<param>save</param>-->
                             <!--<param>push</param>-->
                         </extraGoals>
                     </docker>

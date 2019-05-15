@@ -9,6 +9,7 @@ import com.blinkfox.jpack.entity.PackInfo;
 import com.blinkfox.jpack.exception.DockerPackException;
 import com.blinkfox.jpack.handler.AbstractPackHandler;
 import com.blinkfox.jpack.utils.Logger;
+import com.blinkfox.jpack.utils.TemplateKit;
 import com.spotify.docker.client.DefaultDockerClient;
 import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.messages.ProgressMessage;
@@ -31,6 +32,11 @@ import org.codehaus.plexus.util.io.RawInputStreamFacade;
  * @author blinkfox on 2019/5/9.
  */
 public class DockerPackHandler extends AbstractPackHandler {
+
+    /**
+     * Dockerfile 配置文件的名称常量.
+     */
+    private static final String DOCKER_FILE = "Dockerfile";
 
     /**
      * Docker 客户端.
@@ -245,10 +251,19 @@ public class DockerPackHandler extends AbstractPackHandler {
     /**
      * 复制 Dockerfile 文件到docker平台的目录中.
      */
-    public void copyDockerfile() throws IOException {
+    private void copyDockerfile() throws IOException {
+        // 如果未配置 Dockerfile 文件，则默认生成一个简单的 SpringBoot 服务需要的 Dockerfile 文件.
         Docker docker = super.packInfo.getDocker();
-        FileUtils.copyFileToDirectory(docker == null || super.isRootPath(docker.getDockerfile())
-                ? "Dockerfile" : docker.getDockerfile(), super.platformPath);
+        if (docker == null || StringUtils.isBlank(docker.getDockerfile())) {
+            Logger.info("你未配置自定义的 Dockerfile 文件，将使用 jpack 默认提供的 Dockerfile 文件来构建 Docker 镜像.");
+            TemplateKit.renderFile("docker/" + DOCKER_FILE, super.buildBaseTemplateContextMap(),
+                    super.platformPath + File.separator + DOCKER_FILE);
+            return;
+        }
+
+        Logger.info("开始渲染你自定义的 Dockerfile 文件中的内容.");
+        FileUtils.copyFileToDirectory(super.isRootPath(docker.getDockerfile())
+                ? DOCKER_FILE : docker.getDockerfile(), super.platformPath);
     }
 
     /**

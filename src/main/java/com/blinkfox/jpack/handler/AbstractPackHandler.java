@@ -9,6 +9,8 @@ import com.blinkfox.jpack.utils.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.codehaus.plexus.DefaultPlexusContainer;
@@ -126,6 +128,20 @@ public abstract class AbstractPackHandler implements PackHandler {
         } catch (IOException | ResourceNotFoundException | FileResourceCreationException e) {
             Logger.error("复制默认资源到平台中出错！", e);
         }
+    }
+
+    /**
+     * 构建基础的渲染模板引擎的上下文参数的 Map.
+     *
+     * @return map
+     */
+    protected Map<String, Object> buildBaseTemplateContextMap() {
+        Map<String, Object> context = new HashMap<>(8);
+        context.put("name", packInfo.getName());
+        context.put("jarName", packInfo.getFullJarName());
+        context.put("vmOptions", StringUtils.isBlank(packInfo.getVmOptions()) ? "" : packInfo.getVmOptions());
+        context.put("programArgs", StringUtils.isBlank(packInfo.getProgramArgs()) ? "" : packInfo.getProgramArgs());
+        return context;
     }
 
     /**
