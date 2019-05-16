@@ -7,7 +7,6 @@ VOLUME /tmp
 
 # 添加 jar.
 ADD ${jarName} /${jarName}
-# RUN bash -c 'touch /${jarName}'
 
 ENV JVM_OPTS="${vmOptions}" PROGRAM_ARGS="${programArgs}"
 
