@@ -1,5 +1,6 @@
 package com.blinkfox.jpack.entity;
 
+import com.blinkfox.jpack.consts.PlatformEnum;
 import com.blinkfox.jpack.consts.SkipErrorEnum;
 
 import java.io.File;
@@ -202,6 +203,17 @@ public class PackInfo {
      */
     public String getPackName() {
         return this.homeDir.getAbsolutePath() + File.separator + this.name;
+    }
+
+    /**
+     * 获取打包的完整文件路径名称，但不含文件扩展名.
+     * <p>如：`/home/xxx/target/jpack/docker/test-1.2.5-docker.tar.gz`(实际结果没有 .tar.gz 的扩展名)</p>
+     *
+     * @return 包名称
+     */
+    public String getDockerPackName() {
+        return this.homeDir.getAbsolutePath() + File.separator
+                + this.docker.getImageTarName() + "-" + PlatformEnum.DOCKER.getCode();
     }
 
     /**

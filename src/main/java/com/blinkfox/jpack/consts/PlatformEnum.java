@@ -52,21 +52,6 @@ public enum PlatformEnum {
     }
 
     /**
-     * 根据 platform 的字符串值转换为 PlatformEnum 的值.
-     *
-     * @param platform 平台字符串
-     * @return PlatformEnum实例
-     */
-    public static PlatformEnum contains(String platform) {
-        for (PlatformEnum platformEnum : PlatformEnum.values()) {
-            if (platformEnum.code.equals(platform)) {
-                return platformEnum;
-            }
-        }
-        return null;
-    }
-
-    /**
      * 获取该平台的 code 值.
      *
      * @return code

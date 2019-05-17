@@ -56,10 +56,13 @@
                         <!-- jpack 的 Docker 构建的默认目标是构建镜像，如果你需要其他目标的话，可以再此配置（可配多个）.
                             目前这里支持导出镜像为 .tar 包(save)和 推送镜像到远程仓库(push) 两种. -->
                         <extraGoals>
-                            <!--<param>save</param>-->
+                            <param>save</param>
                             <!--<param>push</param>-->
                         </extraGoals>
                     </docker>
+                    <excludeFiles>
+                        <param>README.md</param>
+                    </excludeFiles>
                 </configuration>
             </plugin>
         </plugins>

@@ -149,17 +149,30 @@ public class DockerPackHandler extends AbstractPackHandler {
     private void saveImage() {
         try {
             Docker dockerInfo = super.packInfo.getDocker();
-            String imageTar =  dockerInfo.getName() + "-" + dockerInfo.getTag() + ".tar";
+            String imageTar =  dockerInfo.getImageTarName() + ".tar";
             Logger.info("正在导出 Docker 镜像包: " + imageTar + " ...");
             // 导出镜像为 `.tar` 文件.
             try (InputStream imageInput = dockerClient.save(this.imageName)) {
                 FileUtils.copyStreamToFile(new RawInputStreamFacade(imageInput),
-                        new File(super.packInfo.getHomeDir().getAbsolutePath() + File.separator + imageTar));
+                        new File(super.platformPath + File.separator + imageTar));
             }
-            Logger.info("导出 Docker 镜像包 " + imageTar + " 成功.");
+            Logger.info("从 Docker 中导出镜像包 " + imageTar + " 成功.");
+            this.handleFilesAndCompress();
         } catch (Exception  e) {
             throw new DockerPackException(ExceptionEnum.DOCKER_SAVE_EXCEPTION.getMsg(), e);
         }
+    }
+
+    /**
+     * 将需要打包的相关文件压缩成 tar.gz 格式的压缩包.
+     *
+     * <p>需要生成 docs 目录，复制默认的 README.md，将这些相关文件压缩成 .tar.gz 压缩包.</p>
+     * <p>文件包括：镜像包 xxx.tar, docs, README.md 等.</p>
+     */
+    private void handleFilesAndCompress() throws IOException {
+        FileUtils.forceMkdir(new File(super.platformPath + File.separator + "docs"));
+        super.copyFiles("docker/README.md", "README.md");
+        super.compress(PlatformEnum.DOCKER);
     }
 
     /**

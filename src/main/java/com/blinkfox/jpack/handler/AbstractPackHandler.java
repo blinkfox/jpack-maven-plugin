@@ -268,6 +268,9 @@ public abstract class AbstractPackHandler implements PackHandler {
                 case LINUX:
                     CompressKit.tarGz(platformPath, packInfo.getPackName() + ".tar.gz");
                     break;
+                case DOCKER:
+                    CompressKit.tarGz(platformPath, packInfo.getDockerPackName() + ".tar.gz");
+                    break;
                 default:
                     break;
             }

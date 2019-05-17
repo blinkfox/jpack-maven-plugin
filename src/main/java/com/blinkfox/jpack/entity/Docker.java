@@ -37,6 +37,15 @@ public class Docker {
      */
     private String[] extraGoals;
 
+    /**
+     * 获取镜像的 tar 包的名称.
+     *
+     * @return 名称字符串
+     */
+    public String getImageTarName() {
+        return this.name + "-" + this.tag;
+    }
+
     /* getter 和 setter 方法. */
 
     public String getDockerfile() {
