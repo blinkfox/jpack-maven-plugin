@@ -301,7 +301,7 @@ public class DockerPackHandler extends AbstractPackHandler {
      * 打印完成信息.
      */
     private void printFinished() {
-        Logger.info("jpack 关于 Docker 的相关构建操作执行完毕.");
+        Logger.debug("jpack 关于 Docker 的相关构建操作执行完毕.");
     }
 
     /**
