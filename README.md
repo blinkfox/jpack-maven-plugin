@@ -239,7 +239,7 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
         <!-- JVM 运行所需的参数选项. -->
         <vmOptions>-Xms1024m -Xmx2048m</vmOptions>
         <!-- 所集成的 SpringBoot 服务程序运行所需的参数. -->
-        <programArgs>--server.port=9090</programArgs>
+        <programArgs>--server.port=7070</programArgs>
         <!-- 打包哪些平台的包，不填写则代表所有平台. 目前支持 Windows、Linux 和 Dokcer 三种（大小写均可）. -->
         <platforms>
             <param>Windows</param>
@@ -251,10 +251,10 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
             <dockerfile>Dockerfile</dockerfile>
             <!-- 构建镜像的几个基础参数, registry远程仓库地址，不填写默认视为 Dockerhub 的地址;
                 repo 不填写则默认为 groupId，name 不填写则默认为 artifactId，tag不填写则默认为 version.-->
-            <registry> </registry>
+            <registry></registry>
             <repo>blinkfox</repo>
             <name>web-demo</name>
-            <tag>1.0.0-SNAPSHOT</tag>
+            <tag>1.0.0</tag>
         </docker>
         <!-- 需要copy 哪些资源(from 的值可以是目录或者具体的相对、绝对或网络资源路径)到部署包中的某个目录;
             to 的值只能是目录，为空或者 '.' 或者 '/' 符号则表示复制到各平台包的根目录中，否则就复制到具体的目录下 -->
