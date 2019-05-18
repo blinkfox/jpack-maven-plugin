@@ -60,8 +60,10 @@ public abstract class AbstractPackHandler implements PackHandler {
 
     /**
      * 创建各个平台下的主目录和主目录中的 bin, docs, logs 等目录文件夹.
+     *
+     * @param platformEnum 平台
      */
-    public void createPlatformCommonDir(PlatformEnum platformEnum) {
+    protected void createPlatformCommonDir(PlatformEnum platformEnum) {
         this.initPlatformPath(platformEnum);
 
         try {
@@ -252,6 +254,8 @@ public abstract class AbstractPackHandler implements PackHandler {
 
     /**
      * 制作 linux 下的 tar.gz 压缩包.
+     *
+     * @param platformEnum 平台
      */
     protected void compress(PlatformEnum platformEnum) {
         // 在压缩各平台文件夾之前，需要做的一些公共处理操作.

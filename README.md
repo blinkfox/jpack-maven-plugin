@@ -9,7 +9,7 @@
 - 简单易用
 - 支持打包为 `Windows`、 `Linux` 和 `Docker` 下的发布部署包，也可单独选择打某些平台下的部署包
 - `Windows`部署包可以安装为服务，从 `Windows` 的服务界面中来启动和停止应用服务，且默认为开机自启动
-- 支持 `Docker` 的镜像构建、导出镜像 `tar` 包、推送到远程镜像等功能
+- 支持 `Docker` 的镜像构建、导出镜像 `tar` 包等功能
 - jpack 内部默认提供了一个简单通用的 `Dockerfile` 来构建 SpringBoot 服务的镜像，也支持自定义 `Dockerfile` 来构建镜像
 - 可自定义复制文件资源到部署包中，例如通常发布时需要的：数据库脚本、文档说明等
 - 可自定义排除不需要的文件资源被打包到部署包中，例如默认生成的文件目录资源你可以选择性排除掉
@@ -29,7 +29,7 @@
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            <version>1.1.0-SNAPSHOT</version>
+            <version>1.1.0</version>
         </plugin>
     </plugins>
 </build>
@@ -46,7 +46,7 @@ mvn clean package jpack:build
 然后，执行成功之后，你将在 Maven 控制台看到如下输出：
 
 ```bash
-[INFO] --- jpack-maven-plugin:1.1.0-SNAPSHOT:build (default-cli) @ web-demo ---
+[INFO] --- jpack-maven-plugin:1.1.0:build (default-cli) @ web-demo ---
 [INFO] -------------------------- jpack start packing... -------------------------
                              __                          __
                             |__|______  _____     ____  |  | __
@@ -91,7 +91,7 @@ openjdk                        8-jdk-alpine        a3562aa0b991        6 days ag
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            <version>1.1.0-SNAPSHOT</version>
+            <version>1.1.0</version>
             <executions>
                 <execution>
                     <goals>
@@ -161,7 +161,7 @@ openjdk                        8-jdk-alpine        a3562aa0b991        6 days ag
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            <version>1.1.0-SNAPSHOT</version>
+            <version>1.1.0</version>
             <executions>
                 <execution>
                     <goals>
@@ -172,8 +172,8 @@ openjdk                        8-jdk-alpine        a3562aa0b991        6 days ag
             <configuration>
                 <docker>
                     <extraGoals>
-                        <!-- 构建 docker 镜像之外的额外目标，可以填写 save 和 push 两个值.
-                            save 表示导出镜像的离线包，push 表示推送到远程镜像仓库. -->
+                        <!-- 构建 docker 镜像之外的额外目标，可以填写 save 值.
+                            save 表示导出镜像的离线包. -->
                         <param>save</param>
                     </extraGoals>
                 </docker>
@@ -246,6 +246,7 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
             <param>Linux</param>
             <param>Docker</param>
         </platforms>
+        <skipError>default</skipError>
         <docker>
             <!-- 构建 Docker 镜像的 Dockerfile 文件的相对路径，没有此配置项或者不填写则使用 jpack 默认的 Dockerfile 文件. -->
             <dockerfile>Dockerfile</dockerfile>
@@ -255,11 +256,10 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
             <repo>blinkfox</repo>
             <name>web-demo</name>
             <tag>1.0.0</tag>
-            <!-- jpack 的 Docker 构建的默认目标是构建镜像，如果你需要其他目标的话，可以在此配置（可配多个）.
-                目前这里支持导出镜像为 .tar 包(save)和推送镜像到远程仓库(push) 两种. -->
+            <!-- jpack 的 Docker 构建的默认目标是构建镜像，如果你需要其他目标的话，可以在此配置）.
+                目前这里只支持导出镜像为 .tar 包(save). -->
             <extraGoals>
                 <param>save</param>
-                <!-- <param>push</param> -->
             </extraGoals>
         </docker>
         <!-- 需要copy 哪些资源(from 的值可以是目录或者具体的相对、绝对或网络资源路径)到部署包中的某个目录;

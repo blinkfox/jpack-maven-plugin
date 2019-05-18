@@ -35,6 +35,7 @@ public final class CompressKit {
      *
      * @param dir 文件夹
      * @param zipPath zip全路径名
+     * @throws IOException IO异常
      */
     public static void zip(String dir, String zipPath) throws IOException {
         compressFilesZip(getDirFiles(dir), zipPath, dir);
@@ -83,6 +84,7 @@ public final class CompressKit {
      * @param filePaths 需要压缩的文件数组
      * @param zipFilePath 压缩后的 zip 文件路径,如"D:/test/aa.zip";
      * @param dir 待压缩的目录
+     * @throws IOException IO异常
      */
     private static void compressFilesZip(List<String> filePaths, String zipFilePath, String dir) throws IOException {
         if (filePaths == null || filePaths.isEmpty()) {
@@ -131,6 +133,7 @@ public final class CompressKit {
      *
      * @param zaos ZipArchiveOutputStream对象
      * @param file 单个的文件对象
+     * @throws IOException IO异常
      */
     private static void compressFile(ZipArchiveOutputStream zaos, File file) throws IOException {
         try (
@@ -176,6 +179,7 @@ public final class CompressKit {
      * @param taos TarArchiveOutputStream实例
      * @param dirPath 文件夹路径
      * @param base 基础路径
+     * @throws IOException IO异常
      */
     private static void addFileToTarGz(TarArchiveOutputStream taos, String dirPath, String base) throws IOException {
         File f = new File(dirPath);
