@@ -6,11 +6,11 @@
 
 本压缩包的文件结构说明：
 
-- `docs`: 存放文档的目录；
-- `xxx-yyy.tar`: 可导入 Docker 的离线镜像包；
-- `Dockerfile`: 构建镜像的源 `Dockerfile` 文件（可以再自定义修改，用于二次构建）；
-- `xxx-yyy.jar`: 构建镜像的源 `jar` 包（可以用于二次构建）；
-- `README.md`: 主入口说明文件；
+- `docs`: 存放文档的目录
+- `xxx-yyy.tar`: 可导入 Docker 的离线镜像包
+- `Dockerfile`: 用于构建镜像的源 `Dockerfile` 文件（可以再自定义修改，用于二次构建）
+- `xxx-yyy.jar`: 用于构建镜像的源 `jar` 包（可以用于二次构建）
+- `README.md`: 主入口说明文件
 
 ## 注意事项
 

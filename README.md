@@ -69,7 +69,7 @@ mvn clean package jpack:build
 - `web-demo-1.0.0.tar.gz`: Linux 下的服务部署包
 - `web-demo-1.0.0-docker.tar.gz`: Docker 下的可离线导入的部署包（此时应该没有这个包）
 
-> **注**：不做额外配置的话，Docker 平台下默认只是构建 docker 镜像，不会导出和生成压缩包。且如果你的执行环境中没有安装 Docker、Docker 没有开启或者 Docker 无根执行权限，将默认跳过 Docker 的构建环节。
+> **注**：不做额外配置的话，Docker 平台下默认只是构建 docker 镜像，不会导出和生成压缩包。而且如果你的执行环境中没有安装 Docker、没有开启 Docker 或者 Docker 无根执行权限，将默认跳过 Docker 的构建环节。
 
 构建成功之后，可以在 docker 中键入 `docker images` 命令，将看到构建的 docker 镜像：
 
@@ -108,22 +108,117 @@ openjdk                        8-jdk-alpine        a3562aa0b991        6 days ag
 
 ## 各平台包结构介绍
 
-待续...
+### Windows
 
-压缩包中的结构大体如下：
+生成的 Windows 下的 `web-demo-1.0.0.zip` 包，解压之后的文件结构说明：
 
-- `bin`: 可执行的文件目录
-  - `install.bat`: 仅 `.zip` 包中有此安装为 `windows` 服务的可执行文件
-  - `uninstall.bat`: 仅 `.zip` 包中有此卸载 `windows` 服务的可执行文件
-  - `start.sh (.bat)`: 启动服务的可执行文件
-  - `stop.sh (.bat)`: 停止服务的脚本
-  - `restart.sh (.bat)`: 重启服务的脚本
-- `docs`: 文档目录, 默认是空的, 可自己填充内容
-- `logs`: 日志文件目录, 默认是空的, 建议应用服务的日志生成到此目录中
-- `xxx-yyy.jar`: SpringBoot 打的 `jar` 包
-- `README.md`: 说明文件, 内嵌了部分默认的内容, 可覆盖
+- `bin`: 存放可执行脚本的目录
+  - `install.bat`: 安装为 `windows` 服务的可执行脚本
+  - `uninstall.bat`: 卸载本 `windows` 服务的可执行脚本
+  - `start.bat`: 启动服务的可执行脚本
+  - `stop.bat`: 停止服务的可执行脚本
+  - `restart.bat`: 重启服务的可执行脚本
+  - `web-demo-1.0.0.exe`: 可执行的二进制文件，可不用管
+  - `web-demo-1.0.0.exe.config`: 也可不用管
+  - `web-demo-1.0.0.xml`: 服务执行相关的配置文件，一般情况下不需要修改
+- `docs`: 存放文档的目录
+- `logs`: 存放日志的目录
+- `web-demo-1.0.0.jar`: 可执行的 jar 文件
+- `README.md`: 主入口说明文件
 
-### 最全示例及说明
+**注意事项**：
+
+- 5个 `.bat` 可执行脚本，请以管理员的身份运行，；
+- 请先执行 `install.bat` 来安装为 `windows` 服务，安装服务只需要执行一次即可，以后就可以通过 `Windows` 服务界面来启动了，且默认是开机自启动；
+- `bin` 目录下的文件不要移动，各文件的文件名无特殊情况也不要修改；
+- 命令运行时，可能会提示安装 `.NET`, 安装完成就可运行命令了，不过现在大部分的 Windows 服务器或者个人电脑都会默认安装了 `.NET`, 没有的话启用一下就好了;
+
+### Linux
+
+生成的 Linux 下的 `web-demo-1.0.0.tar.gz` 包，解压之后的文件结构说明：
+
+- `bin`: 存放可执行脚本的目录
+  - `start.sh`: 启动服务的 shell 脚本
+  - `stop.sh`: 停止服务的 shell 脚本
+  - `restart.sh`: 重启服务的 shell 脚本
+- `docs`: 存放文档的目录
+- `logs`: 存放日志的目录
+- `web-demo-1.0.0.jar`: 可执行的 jar 文件
+- `README.md`: 主入口说明文件
+
+**注意事项**：
+
+- 各个可执行脚本请以 `sh` 命令来执行，如：`sh start.sh`。
+
+### Docker
+
+如果不做任何配置的话，默认只是构建最新的 Docker 镜像，而不会生成部署需要的 `.tar` 包和相关资源文件。你需要做下 docker 的额外导出 (`save`) 配置即可在执行 `mvn package` 之后生成 docker 的 `.tar.gz` 包，该包中包含了可导入Docker 的离线镜像 `.tar` 包和其他你配置的资源。
+
+```xml
+<build>
+    <plugins>
+        <!-- 引入 jpack-maven-plugin 插件 -->
+        <plugin>
+            <groupId>com.blinkfox</groupId>
+            <artifactId>jpack-maven-plugin</artifactId>
+            <version>1.1.0-SNAPSHOT</version>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>build</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <docker>
+                    <extraGoals>
+                        <!-- 构建 docker 镜像之外的额外目标，可以填写 save 和 push 两个值.
+                            save 表示导出镜像的离线包，push 表示推送到远程镜像仓库. -->
+                        <param>save</param>
+                    </extraGoals>
+                </docker>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+```
+
+Maven 构建成功之后，就可以在 `jpack` 目录中看到一个 `web-demo-1.0.0-docker.tar.gz` 的压缩包，即为 docker 的离线导入相关的资源包。该包解压之后的文件结构说明：
+
+- `docs`: 存放文档的目录
+- `web-demo-1.0.0.tar`: 可导入 Docker 的离线镜像包
+- `Dockerfile`: 用于构建镜像的源 `Dockerfile` 文件（可以再自定义修改，用于二次构建）
+- `web-demo-1.0.0.jar`: 用于构建镜像的源 `jar` 包（可以用于二次构建）
+- `README.md`: 主入口说明文件
+
+**注意事项**：
+
+- 使用 `docker load < web-demo-1.0.0.tar` 命令来将本离线镜像包导入到 Docker 中；
+- `Dockerfile` 和 `web-demo-1.0.0.jar` 让开发者或部署人员，可以根据自己的需要再做自定义修改，构建出符合自己需要的新镜像；
+
+**命令参考**：
+
+使用以下命令是用来启动镜像的，仅供参考：
+
+**简单的方式**：
+
+```bash
+docker run -d -p 8080:8080 com.blinkfox/web-demo:1.0.0
+```
+
+稍等一会儿，访问 <http://127.0.0.1:8080> 即可访问服务。
+
+**带参数的方式**：
+
+```bash
+docker run -d -p 7070:7070 -e JVM_OPTS="-Xms1024m -Xmx2048m" -e PROGRAM_ARGS="--server.port=7070" com.blinkfox/web-demo:1.0.0
+```
+
+稍等一会儿，访问 <http://127.0.0.1:7070> 即可访问服务。
+
+## jpack 配置最全示例及说明
+
+jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Maven 插件的所有配置项即详细说明，供你参考：
 
 ```xml
 <plugin>
@@ -131,25 +226,37 @@ openjdk                        8-jdk-alpine        a3562aa0b991        6 days ag
     <artifactId>jpack-maven-plugin</artifactId>
     <version>1.0.0</version>
     <executions>
-        <!-- 构建的目标是 build, 默认是在打包阶段执行. -->
         <execution>
             <goals>
+                <!-- 只能是 build. -->
                 <goal>build</goal>
             </goals>
+            <!-- 默认执行阶段是 package，你可以根据情况写为 install 或 deploy 等. -->
             <phase>package</phase>
         </execution>
     </executions>
     <configuration>
         <!-- JVM 运行所需的参数选项. -->
-        <vmOptions>-Xms512m -Xmx1024m</vmOptions>
-        <!-- 所集成的 Java 服务程序运行所需的参数. -->
+        <vmOptions>-Xms1024m -Xmx2048m</vmOptions>
+        <!-- 所集成的 SpringBoot 服务程序运行所需的参数. -->
         <programArgs>--server.port=9090</programArgs>
-        <!-- 打包哪些平台的包，不填写则代表所有平台. 目前支持 Windows 和 Linux 两种(大小写均可). -->
+        <!-- 打包哪些平台的包，不填写则代表所有平台. 目前支持 Windows、Linux 和 Dokcer 三种（大小写均可）. -->
         <platforms>
             <param>Windows</param>
             <param>Linux</param>
+            <param>Docker</param>
         </platforms>
-        <!-- 需要copy 哪些资源(可以是目录或者具体的相对、绝对或网络资源路径)到部署包中的某个目录;
+        <docker>
+            <!-- 构建 Docker 镜像的 Dockerfile 文件的相对路径，没有此配置项或者不填写则使用 jpack 默认的 Dockerfile 文件. -->
+            <dockerfile>Dockerfile</dockerfile>
+            <!-- 构建镜像的几个基础参数, registry远程仓库地址，不填写默认视为 Dockerhub 的地址;
+                repo 不填写则默认为 groupId，name 不填写则默认为 artifactId，tag不填写则默认为 version.-->
+            <registry> </registry>
+            <repo>blinkfox</repo>
+            <name>web-demo</name>
+            <tag>1.0.0-SNAPSHOT</tag>
+        </docker>
+        <!-- 需要copy 哪些资源(from 的值可以是目录或者具体的相对、绝对或网络资源路径)到部署包中的某个目录;
             to 的值只能是目录，为空或者 '.' 或者 '/' 符号则表示复制到各平台包的根目录中，否则就复制到具体的目录下 -->
         <copyResources>
             <!-- 复制本项目根目录的 README.md 到各平台包的根目录中. -->
@@ -162,7 +269,7 @@ openjdk                        8-jdk-alpine        a3562aa0b991        6 days ag
                 <from>docs</from>
                 <to>docs</to>
             </copyResource>
-            <!-- 复制本项目上层目录的 hello.pdf 文件到各平台包的 abc/def 目录中. -->
+            <!-- 复制本项目上层目录的 hello.pdf 文件到各平台包的 abc/def 目录中（会自动创建此目录）. -->
             <copyResource>
                 <from>../test-dir/hello.pdf</from>
                 <to>abc/def</to>
