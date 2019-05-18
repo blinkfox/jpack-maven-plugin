@@ -55,12 +55,12 @@ mvn clean package jpack:build
                         /\__|  ||   __/ (____  / \___  >|__|_ \
                         \______||__|         \/      \/      \/
 
-[INFO] 制作 windows 下的部署压缩包完成.
-[INFO] 制作 linux 下的部署压缩包完成.
 [INFO] 将使用 jpack 默认提供的 Dockerfile 文件来构建 Docker 镜像.
 [INFO] 正在构建 com.blinkfox/web-demo:1.0.0 镜像...
+[INFO] 制作 windows 下的部署压缩包完成.
+[INFO] 制作 linux 下的部署压缩包完成.
 [INFO] 构建 com.blinkfox/web-demo:1.0.0 镜像完毕，镜像ID: c8f91718f286
-[INFO] ------------- jpack has been packaged to end. [costs: 8.49 s] -------------
+[INFO] ------------- jpack has been packaged to end. [costs: 2.45 s] -------------
 ```
 
 成功之后就可以在 `target` 目录中看到 `jpack` 的文件夹，`jpack` 文件夹中就包含了对应各个平台下的可部署服务包, Docker 下的包除外，因为 Docker 构建不做额外配置的话，默认只是构建镜像，想要可导入的离线镜像部署包，可以参看下面的介绍。

@@ -1,5 +1,9 @@
 package com.blinkfox.jpack.consts;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * 平台的枚举类.
  *
@@ -49,6 +53,17 @@ public enum PlatformEnum {
             }
         }
         return null;
+    }
+
+    /**
+     * 获取所有平台的List集合.
+     *
+     * @return 集合
+     */
+    public static List<PlatformEnum> getPlatformList() {
+        List<PlatformEnum> platformList = new ArrayList<>(PlatformEnum.values().length);
+        Collections.addAll(platformList, PlatformEnum.values());
+        return platformList;
     }
 
     /**
