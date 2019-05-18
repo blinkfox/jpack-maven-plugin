@@ -9,6 +9,7 @@ import com.blinkfox.jpack.handler.impl.WindowsPackHandler;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.blinkfox.jpack.utils.Logger;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -37,6 +38,7 @@ public class PlatformPackContext {
      * @param packInfo 打包的相关参数实体
      */
     public void pack(String[] platforms, PackInfo packInfo) {
+        new Thread(() -> Logger.info("Hello Thread!")).start();
         // 如果各个打包的平台为空，则默认视为所有平台都打包.
         if (ArrayUtils.isEmpty(platforms)) {
             for (PackHandler packHandler : packMap.values()) {

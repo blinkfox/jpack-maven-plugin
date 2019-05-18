@@ -255,6 +255,12 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
             <repo>blinkfox</repo>
             <name>web-demo</name>
             <tag>1.0.0</tag>
+            <!-- jpack 的 Docker 构建的默认目标是构建镜像，如果你需要其他目标的话，可以在此配置（可配多个）.
+                目前这里支持导出镜像为 .tar 包(save)和推送镜像到远程仓库(push) 两种. -->
+            <extraGoals>
+                <param>save</param>
+                <!-- <param>push</param> -->
+            </extraGoals>
         </docker>
         <!-- 需要copy 哪些资源(from 的值可以是目录或者具体的相对、绝对或网络资源路径)到部署包中的某个目录;
             to 的值只能是目录，为空或者 '.' 或者 '/' 符号则表示复制到各平台包的根目录中，否则就复制到具体的目录下 -->
