@@ -63,7 +63,7 @@ public class DockerPackHandler extends AbstractPackHandler {
         try {
             this.doPack();
         } catch (Exception e) {
-            Logger.error("jpack 执行 Docker 构建失败！");
+            Logger.error("jpack 执行 Docker 构建失败！", e);
             throw e;
         } finally {
             this.clean();

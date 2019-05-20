@@ -8,5 +8,5 @@
     <startmode>Automatic</startmode>
 
     <executable>java</executable>
-    <arguments> -server ${arguments}</arguments>
+    <arguments> -server ${arguments} --spring.config.location=..\config\</arguments>
 </service>

@@ -58,6 +58,11 @@ public class PackInfo {
     private String programArgs;
 
     /**
+     * 运行 SpringBoot 程序所需要的配置文件路径，可以是相对路径或者绝对路径.
+     */
+    private String configFile;
+
+    /**
      * 执行过程中是否跳过异常或错误，如果为true则直跳过不抛异常，否则抛出异常，默认值是default，会折中做了默认处理.
      */
     private SkipErrorEnum skipError;
@@ -148,6 +153,15 @@ public class PackInfo {
 
     public PackInfo setProgramArgs(String programArgs) {
         this.programArgs = programArgs;
+        return this;
+    }
+
+    public String getConfigFile() {
+        return configFile;
+    }
+
+    public PackInfo setConfigFile(String configFile) {
+        this.configFile = configFile;
         return this;
     }
 

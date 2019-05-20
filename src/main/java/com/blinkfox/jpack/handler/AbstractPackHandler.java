@@ -73,35 +73,37 @@ public abstract class AbstractPackHandler implements PackHandler {
             // 创建或清空各平台的主目录.
             FileUtils.mkdir(this.platformPath);
 
-            // 复制 target 目录中的 jar 包到各平台目录中.
-            this.copyJar();
+            // 复制 target 目录中的 jar 包到各平台目录中，复制 application.yml 等文件到 config 目录中.
+            this.copyJarAndConfigFile();
         } catch (PlexusContainerException | ComponentLookupException e) {
             Logger.error("创建【" + this.platformPath + "】目录或者复制相关的资源失败！请检查文件是否正在使用!", e);
         }
     }
 
     /**
-     * 创建基础目录，如：bin, docs, logs等.
+     * 创建基础目录，如：bin, config, docs, logs等.
      */
     protected void createBaseDirs() {
         this.binPath = this.platformPath + File.separator + AbstractPackHandler.BIN_DIR_NAME + File.separator;
         try {
             FileUtils.forceMkdir(new File(binPath));
+            FileUtils.forceMkdir(new File(this.platformPath + File.separator + "config"));
             FileUtils.forceMkdir(new File(this.platformPath + File.separator + "docs"));
             FileUtils.forceMkdir(new File(this.platformPath + File.separator + "logs"));
         } catch (IOException e) {
-            Logger.error("创建【" + this.platformPath + "】目录下的 bin、docs、logs 等目录失败！请检查文件是否正在使用!", e);
+            Logger.error("创建【" + this.platformPath + "】目录下的 bin、config、docs、logs 等目录失败！请检查文件是否正在使用!", e);
         }
     }
 
     /**
-     * 复制 jar 包到平台目录中.
+     * 分别复制 jar 包和 application.yml 等配置文件到平台目录和 config 目录中.
      */
-    private void copyJar() {
+    private void copyJarAndConfigFile() {
         String jar = packInfo.getFullJarName();
         try {
             FileUtils.copyFileToDirectory(packInfo.getTargetDir().getAbsolutePath() + File.separator + jar,
                     platformPath);
+            this.copyCustomResources(this.packInfo.getConfigFile(), "config");
         } catch (IOException e) {
             Logger.error("复制【" + jar + "】到【" + platformPath + "】目录中失败！应该还没有打包此文件，"
                     + "异常信息为：" + e.getMessage());
@@ -168,12 +170,10 @@ public abstract class AbstractPackHandler implements PackHandler {
         // 遍历复制资源.
         for (CopyResource copyResource : copyResources) {
             String fromPath = copyResource.getFrom();
-            if (StringUtils.isNotBlank(fromPath)) {
-                try {
-                    this.copyCustomResources(fromPath, copyResource);
-                } catch (IOException e) {
-                    Logger.error("复制配置的自定义资源【" + fromPath + "】到各平台的包中出错！", e);
-                }
+            try {
+                this.copyCustomResources(fromPath, copyResource.getTo());
+            } catch (IOException e) {
+                Logger.error("复制配置的自定义资源【" + fromPath + "】到各平台的包中出错！", e);
             }
         }
     }
@@ -181,21 +181,24 @@ public abstract class AbstractPackHandler implements PackHandler {
     /**
      * 需要复制的资源路径.
      *
-     * @param fromPath 待复制的资源路径
-     * @param copyResource 复制资源的实例
+     * @param from 待复制的资源路径
+     * @param to 复制到目的地的目录路径
      * @throws IOException IO异常
      */
-    private void copyCustomResources(String fromPath, CopyResource copyResource) throws IOException {
+    private void copyCustomResources(String from, String to) throws IOException {
+        if (StringUtils.isBlank(from)) {
+            return;
+        }
+
         // 复制网络url资源到目录中.
-        if (fromPath.startsWith(HTTP) || fromPath.startsWith(HTTPS)) {
-            String[] arr = fromPath.split("/");
-            File dir = new File(this.platformPath + File.separator + copyResource.getTo());
+        if (from.startsWith(HTTP) || from.startsWith(HTTPS)) {
+            String[] arr = from.split("/");
+            File dir = new File(this.platformPath + File.separator + to);
             FileUtils.forceMkdir(dir);
-            FileUtils.copyURLToFile(new URL(fromPath), new File(dir + File.separator + arr[arr.length - 1]));
+            FileUtils.copyURLToFile(new URL(from), new File(dir + File.separator + arr[arr.length - 1]));
         } else {
             // 不是网络资源，则代表是相对路径或绝对路径的资源，
             // 如果源文件不存在，则直接返回
-            String from = copyResource.getFrom();
             File sourceFile = new File(from);
             if (!sourceFile.exists()) {
                 Logger.warn("【警告】需要复制的源资源文件【" + from + "】不存在，请检查！");
@@ -203,7 +206,6 @@ public abstract class AbstractPackHandler implements PackHandler {
             }
 
             // 如果 to 是空的或者 `.`、'/', 则表示复制到各平台包的根目录中，否则复制到对应的目录中即可.
-            String to = copyResource.getTo();
             File toDir = new File(this.isRootPath(to) ? this.platformPath : this.platformPath + File.separator + to);
 
             // 如果需要复制的资源是目录，则直接复制该目录及其下的子目录到目标目录中.

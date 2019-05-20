@@ -37,13 +37,16 @@
                     <vmOptions>-Xms512m -Xmx1024m</vmOptions>
                     <!-- 所集成的 Java 服务程序运行所需的参数. -->
                     <programArgs>--server.port=8080</programArgs>
+                    <!-- 需要复制到部署包中 config 目录下的 yml 或者 .properties 文件的配置文件路径，
+                        它的值必须是一个具体的文件，可以是相对路径、绝对路径或网络资源. -->
+                    <configFile>src/test/resources/application.yml</configFile>
                     <!-- 打包哪些平台的包，不填写则代表所有平台. 目前支持 Windows 和 Linux 两种(大小写均可). -->
                     <platforms>
                         <param>Docker</param>
                     </platforms>
                     <!-- 是否跳过构建期间的错误情况，可以填写true, false, default, 默认是default，此时会视情况忽略某些异常，
                         如：Docker 环境检查，如果没有 Docker 环境,则跳过 Docker 的构建. -->
-                    <skipError>default</skipError>
+                    <skipError>false</skipError>
                     <docker>
                         <!-- 构建 Docker 镜像的 'Dockerfile' 文件的相对路径，不填写则认为其与 pom.xml 在统一目录. -->
                         <dockerfile> </dockerfile>
