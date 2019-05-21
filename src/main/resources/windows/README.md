@@ -15,6 +15,7 @@
   - `web-demo-1.0.0.exe`: 可执行的二进制文件，可不用管
   - `web-demo-1.0.0.exe.config`: 也可不用管
   - `web-demo-1.0.0.xml`: 服务执行相关的配置文件，一般情况下不需要修改
+- `config`: 存放 `application.yml` 等配置文件的目录
 - `docs`: 存放文档的目录
 - `logs`: 存放日志的目录
 - `xxx-yyy.jar`: 可执行的 jar 文件

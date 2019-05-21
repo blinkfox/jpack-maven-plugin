@@ -10,6 +10,7 @@
   - `start.sh`: 启动服务的 shell 脚本
   - `stop.sh`: 停止服务的 shell 脚本
   - `restart.sh`: 重启服务的 shell 脚本
+- `config`: 存放 `application.yml` 等配置文件的目录
 - `docs`: 存放文档的目录
 - `logs`: 存放日志的目录
 - `xxx-yyy.jar`: 可执行的 jar 文件

@@ -6,6 +6,7 @@
 
 本压缩包的文件结构说明：
 
+- `config`: 存放 `application.yml` 等配置文件的目录
 - `docs`: 存放文档的目录
 - `xxx-yyy.tar`: 可导入 Docker 的离线镜像包
 - `Dockerfile`: 用于构建镜像的源 `Dockerfile` 文件（可以再自定义修改，用于二次构建）
