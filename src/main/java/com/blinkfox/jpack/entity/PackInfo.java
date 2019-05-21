@@ -68,7 +68,17 @@ public class PackInfo {
     private SkipErrorEnum skipError;
 
     /**
-     * 构建 Docker 发布包相关的参数实体.
+     * 构建 Windowns 发布包相关的个性化参数配置.
+     */
+    private Windows windows;
+
+    /**
+     * 构建 Linux 发布包相关的个性化参数配置.
+     */
+    private Linux linux;
+
+    /**
+     * 构建 Docker 发布包相关的个性化参数配置.
      */
     private Docker docker;
 
@@ -81,6 +91,79 @@ public class PackInfo {
      * 复制相关资源到各平台包的中的自定义配置参数.
      */
     private CopyResource[] copyResources;
+
+    /**
+     * 创建一个新的、具有公共信息的 PackInfo 对象实例.
+     *
+     * @param packInfo PackInfo 对象
+     * @return 新的 PackInfo 对象
+     */
+    public static PackInfo newCommonPackInfo(PackInfo packInfo) {
+        return new PackInfo()
+                .setTargetDir(packInfo.getTargetDir())
+                .setHomeDir(packInfo.getHomeDir())
+                .setArtifactId(packInfo.getArtifactId())
+                .setVersion(packInfo.getVersion())
+                .setName(packInfo.getName())
+                .setDescription(packInfo.getDescription())
+                .setVmOptions(packInfo.getVmOptions())
+                .setProgramArgs(packInfo.getProgramArgs())
+                .setConfigFile(packInfo.getConfigFile())
+                .setSkipError(packInfo.getSkipError())
+                .setWindows(packInfo.getWindows())
+                .setLinux(packInfo.getLinux())
+                .setDocker(packInfo.getDocker())
+                .setExcludeFiles(packInfo.getExcludeFiles())
+                .setCopyResources(packInfo.getCopyResources());
+    }
+
+    /**
+     * 获取完整的打包时 jar 包的名称.
+     *
+     * @return jar 包名称
+     */
+    public String getFullJarName() {
+        return this.name + JAR;
+    }
+
+    /**
+     * 获取打包的完整文件路径名称，但不含文件扩展名.
+     *
+     * @return 包名称
+     */
+    public String getPackName() {
+        return this.homeDir.getAbsolutePath() + File.separator + this.name;
+    }
+
+    /**
+     * 获取打包的完整文件路径名称，但不含文件扩展名.
+     * <p>如：`/home/xxx/target/jpack/docker/test-1.2.5-docker.tar.gz`(实际结果没有 .tar.gz 的扩展名)</p>
+     *
+     * @return 包名称
+     */
+    public String getDockerPackName() {
+        return this.homeDir.getAbsolutePath() + File.separator
+                + this.docker.getImageTarName() + "-" + PlatformEnum.DOCKER.getCode();
+    }
+
+    /**
+     * 重写的 toString 方法.
+     *
+     * @return String
+     */
+    @Override
+    public String toString() {
+        return "PackInfo = {"
+                + "targetDir: '" + this.targetDir + '\''
+                + ", homeDir: '" + this.homeDir + '\''
+                + ", artifactId: '" + this.artifactId + '\''
+                + ", name: '" + this.name + '\''
+                + ", description: '" + this.description + '\''
+                + ", vmOptions: '" + this.vmOptions + '\''
+                + ", programArgs: '" + this.programArgs + '\''
+                + ", skipError: '" + this.skipError + '\''
+                + '}';
+    }
 
     /* 以下是 getter 和 setter 方法. */
 
@@ -174,6 +257,24 @@ public class PackInfo {
         return this;
     }
 
+    public Windows getWindows() {
+        return windows;
+    }
+
+    public PackInfo setWindows(Windows windows) {
+        this.windows = windows;
+        return this;
+    }
+
+    public Linux getLinux() {
+        return linux;
+    }
+
+    public PackInfo setLinux(Linux linux) {
+        this.linux = linux;
+        return this;
+    }
+
     public Docker getDocker() {
         return docker;
     }
@@ -199,54 +300,6 @@ public class PackInfo {
     public PackInfo setCopyResources(CopyResource[] copyResources) {
         this.copyResources = copyResources;
         return this;
-    }
-
-    /**
-     * 获取完整的打包时 jar 包的名称.
-     *
-     * @return jar 包名称
-     */
-    public String getFullJarName() {
-        return this.name + JAR;
-    }
-
-    /**
-     * 获取打包的完整文件路径名称，但不含文件扩展名.
-     *
-     * @return 包名称
-     */
-    public String getPackName() {
-        return this.homeDir.getAbsolutePath() + File.separator + this.name;
-    }
-
-    /**
-     * 获取打包的完整文件路径名称，但不含文件扩展名.
-     * <p>如：`/home/xxx/target/jpack/docker/test-1.2.5-docker.tar.gz`(实际结果没有 .tar.gz 的扩展名)</p>
-     *
-     * @return 包名称
-     */
-    public String getDockerPackName() {
-        return this.homeDir.getAbsolutePath() + File.separator
-                + this.docker.getImageTarName() + "-" + PlatformEnum.DOCKER.getCode();
-    }
-
-    /**
-     * 重写的 toString 方法.
-     *
-     * @return String
-     */
-    @Override
-    public String toString() {
-        return "PackInfo = {"
-                + "targetDir: '" + this.targetDir + '\''
-                + ", homeDir: '" + this.homeDir + '\''
-                + ", artifactId: '" + this.artifactId + '\''
-                + ", name: '" + this.name + '\''
-                + ", description: '" + this.description + '\''
-                + ", vmOptions: '" + this.vmOptions + '\''
-                + ", programArgs: '" + this.programArgs + '\''
-                + ", skipError: '" + this.skipError + '\''
-                + '}';
     }
 
 }

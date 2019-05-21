@@ -1,11 +1,11 @@
 package com.blinkfox.jpack.entity;
 
 /**
- * 构建 Docker 发布包相关的参数实体.
+ * 构建 Docker 发布包相关的参数实体，继承自 BaseConfig.
  *
  * @author blinkfox on 2019/5/9.
  */
-public class Docker {
+public class Docker extends BaseConfig {
 
     /**
      * Dockerfile 路径地址，不配置的话，则默认与　pom.xml　在统一路径.

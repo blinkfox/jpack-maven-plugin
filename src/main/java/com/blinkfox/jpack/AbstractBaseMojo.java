@@ -3,7 +3,9 @@ package com.blinkfox.jpack;
 import com.blinkfox.jpack.consts.SkipErrorEnum;
 import com.blinkfox.jpack.entity.CopyResource;
 import com.blinkfox.jpack.entity.Docker;
+import com.blinkfox.jpack.entity.Linux;
 import com.blinkfox.jpack.entity.PackInfo;
+import com.blinkfox.jpack.entity.Windows;
 import com.blinkfox.jpack.utils.Logger;
 import com.blinkfox.jpack.utils.TimeKit;
 
@@ -106,6 +108,18 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
     /**
      * 构建 Docker 发布包相关的参数.
      */
+    @Parameter(property = "windows")
+    private Windows windows;
+
+    /**
+     * 构建 Docker 发布包相关的参数.
+     */
+    @Parameter(property = "linux")
+    private Linux linux;
+
+    /**
+     * 构建 Docker 发布包相关的参数.
+     */
     @Parameter(property = "docker")
     private Docker docker;
 
@@ -160,6 +174,8 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
                 .setProgramArgs(this.programArgs)
                 .setConfigFile(this.configFile)
                 .setSkipError(SkipErrorEnum.of(this.skipError))
+                .setWindows(this.windows)
+                .setLinux(this.linux)
                 .setDocker(this.initDefaultDockerInfo())
                 .setExcludeFiles(this.excludeFiles)
                 .setCopyResources(this.copyResources);

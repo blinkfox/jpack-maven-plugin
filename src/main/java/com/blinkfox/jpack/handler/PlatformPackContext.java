@@ -55,7 +55,7 @@ public class PlatformPackContext {
         for (PlatformEnum platformEnum : platformEnums) {
             executorService.submit(() -> {
                 try {
-                    packMap.get(platformEnum).pack(packInfo);
+                    packMap.get(platformEnum).pack(platformEnum.mergeNewPackInfo(packInfo));
                 } finally {
                     countDownLatch.countDown();
                 }

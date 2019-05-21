@@ -46,6 +46,34 @@
                         <param>Linux</param>
                         <param>Docker</param>
                     </platforms>
+                    <windows>
+                        <vmOptions>-Xms1024m -Xmx2048m</vmOptions>
+                        <programArgs>--server.port=7070</programArgs>
+                        <configFile>src/test/resources/application-dev.yml</configFile>
+                        <copyResources>
+                            <copyResource>
+                                <from>README.pdf</from>
+                                <to>.</to>
+                            </copyResource>
+                        </copyResources>
+                        <excludeFiles>
+                            <param>logs</param>
+                        </excludeFiles>
+                    </windows>
+                    <linux>
+                        <vmOptions>-Xms512m -Xmx2048m</vmOptions>
+                        <programArgs>--server.port=9090</programArgs>
+                        <configFile>src/test/resources/application-prod.yml</configFile>
+                        <copyResources>
+                            <copyResource>
+                                <from>README.doc</from>
+                                <to>.</to>
+                            </copyResource>
+                        </copyResources>
+                        <excludeFiles>
+                            <param>docs</param>
+                        </excludeFiles>
+                    </linux>
                     <docker>
                         <!-- 构建 Docker 镜像的 Dockerfile 文件的相对路径，没有此配置项或者不填写则使用 jpack 默认的 Dockerfile 文件. -->
                         <!--<dockerfile>Dockerfile</dockerfile>-->
@@ -55,6 +83,18 @@
                         <repo>blinkfox</repo>
                         <name>jpack-test</name>
                         <tag>1.0.0-SNAPSHOT</tag>
+                        <vmOptions>-Xms512m -Xmx1536m</vmOptions>
+                        <programArgs>--server.port=6060</programArgs>
+                        <configFile>src/test/resources/application-test.yml</configFile>
+                        <copyResources>
+                            <copyResource>
+                                <from>README.html</from>
+                                <to>.</to>
+                            </copyResource>
+                        </copyResources>
+                        <excludeFiles>
+                            <param>config</param>
+                        </excludeFiles>
                     </docker>
                     <!-- 需要copy 哪些资源(可以是目录或者具体的相对、绝对或网络资源路径)到部署包中的某个目录;
                         to 的值只能是目录，为空或者 '.' 或者 '/' 符号则表示复制到各平台包的根目录中，否则就复制到具体的目录下 -->

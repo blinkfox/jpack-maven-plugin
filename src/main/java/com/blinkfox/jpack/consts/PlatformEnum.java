@@ -1,8 +1,14 @@
 package com.blinkfox.jpack.consts;
 
+import com.blinkfox.jpack.entity.BaseConfig;
+import com.blinkfox.jpack.entity.PackInfo;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * 平台的枚举类.
@@ -14,17 +20,32 @@ public enum PlatformEnum {
     /**
      * windows.
      */
-    WINDOWS("windows"),
+    WINDOWS("windows") {
+        @Override
+        public PackInfo mergeNewPackInfo(PackInfo packInfo) {
+            return newBaseConfigPackInfo(packInfo, packInfo.getWindows());
+        }
+    },
 
     /**
      * linux.
      */
-    LINUX("linux"),
+    LINUX("linux") {
+        @Override
+        public PackInfo mergeNewPackInfo(PackInfo packInfo) {
+            return newBaseConfigPackInfo(packInfo, packInfo.getLinux());
+        }
+    },
 
     /**
      * docker.
      */
-    DOCKER("docker");
+    DOCKER("docker") {
+        @Override
+        public PackInfo mergeNewPackInfo(PackInfo packInfo) {
+            return newBaseConfigPackInfo(packInfo, packInfo.getDocker());
+        }
+    };
 
     /**
      * 属性值.
@@ -65,6 +86,47 @@ public enum PlatformEnum {
         Collections.addAll(platformList, PlatformEnum.values());
         return platformList;
     }
+
+    /**
+     * 创建一个新的 PackInfo 实例，且赋予了各个平台自己的一些配置信息数据.
+     *
+     * @param packInfo PackInfo
+     * @param baseConfig baseConfig
+     * @return PackInfo 实例
+     */
+    public static PackInfo newBaseConfigPackInfo(PackInfo packInfo, BaseConfig baseConfig) {
+        PackInfo newPackInfo = PackInfo.newCommonPackInfo(packInfo);
+        if (StringUtils.isNotBlank(baseConfig.getVmOptions())) {
+            newPackInfo.setVmOptions(baseConfig.getVmOptions());
+        }
+        if (StringUtils.isNotBlank(baseConfig.getProgramArgs())) {
+            newPackInfo.setProgramArgs(baseConfig.getProgramArgs());
+        }
+        if (StringUtils.isNotBlank(baseConfig.getConfigFile())) {
+            newPackInfo.setConfigFile(baseConfig.getConfigFile());
+        }
+        if (ArrayUtils.isNotEmpty(baseConfig.getCopyResources())) {
+            newPackInfo.setCopyResources(
+                    ArrayUtils.addAll(packInfo.getCopyResources(), baseConfig.getCopyResources()));
+        }
+        if (ArrayUtils.isNotEmpty(baseConfig.getExcludeFiles())) {
+            newPackInfo.setExcludeFiles(ArrayUtils.addAll(packInfo.getExcludeFiles(), baseConfig.getExcludeFiles()));
+        }
+        return newPackInfo;
+    }
+
+    /**
+     * 根据 PackInfo 对象信息合并出适合各个平台自己的一个新的 PackInfo 对象，用于覆盖通用的配置信息.
+     * <p>合并策略如下：</p>
+     * <ul>
+     *     <li>针对配置项只有一个值的情况，使用"覆盖"的方式来合并配置项，各平台自己的配置项优先级最高，为空时使用公用的配置项. </li>
+     *     <li>针对配置项有多个值的情况，使用取"并集"的方式来合并配置项，各平台自己的配置项和公用的配置项取并集. </li>
+     * </ul>
+     *
+     * @param packInfo PackInfo对象
+     * @return PackInfo对象
+     */
+    public abstract PackInfo mergeNewPackInfo(PackInfo packInfo);
 
     /**
      * 获取该平台的 code 值.
