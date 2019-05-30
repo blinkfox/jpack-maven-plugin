@@ -39,7 +39,10 @@
                     <programArgs>--server.port=8080</programArgs>
                     <!-- 需要复制到部署包中 config 目录下的 yml 或者 .properties 文件的配置文件路径，
                         它的值必须是一个具体的文件，可以是相对路径、绝对路径或网络资源. -->
-                    <configFile>src/test/resources/application.yml</configFile>
+                    <configFiles>
+                        <param>src/test/resources/application.yml</param>
+                        <param>src/test/resources/application-local.yml</param>
+                    </configFiles>
                     <!-- 打包哪些平台的包，不填写则代表所有平台. 目前支持 Windows 和 Linux 两种(大小写均可). -->
                     <platforms>
                         <param>Docker</param>

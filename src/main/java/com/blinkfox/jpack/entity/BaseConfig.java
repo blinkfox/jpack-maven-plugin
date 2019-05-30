@@ -20,7 +20,7 @@ public class BaseConfig {
     /**
      * 运行 SpringBoot 程序所需要的配置文件路径，可以是相对路径、绝对路径或者网站资源文件.
      */
-    private String configFile;
+    private String[] configFiles;
 
     /**
      * 复制相关资源到各平台包的中的自定义配置参数.
@@ -50,12 +50,12 @@ public class BaseConfig {
         this.programArgs = programArgs;
     }
 
-    public String getConfigFile() {
-        return configFile;
+    public String[] getConfigFiles() {
+        return configFiles;
     }
 
-    public void setConfigFile(String configFile) {
-        this.configFile = configFile;
+    public void setConfigFiles(String[] configFiles) {
+        this.configFiles = configFiles;
     }
 
     public CopyResource[] getCopyResources() {

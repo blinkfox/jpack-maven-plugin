@@ -88,10 +88,10 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
     private String programArgs;
 
     /**
-     * 运行 SpringBoot 程序所需要的配置文件路径，可以是相对路径或者绝对路径.
+     * 运行 SpringBoot 程序所需要的配置文件路径，可以是相对路径或者绝对路径，可填写多个.
      */
-    @Parameter(property = "configFile")
-    private String configFile;
+    @Parameter(property = "configFiles")
+    private String[] configFiles;
 
     /**
      * 支持的打包平台数组，如果没有或者为空，则视为支持所有平台.
@@ -172,7 +172,7 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
                 .setDescription(this.description)
                 .setVmOptions(this.vmOptions)
                 .setProgramArgs(this.programArgs)
-                .setConfigFile(this.configFile)
+                .setConfigFiles(this.configFiles)
                 .setSkipError(SkipErrorEnum.of(this.skipError))
                 .setWindows(this.windows)
                 .setLinux(this.linux)

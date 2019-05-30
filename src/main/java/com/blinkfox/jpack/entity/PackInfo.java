@@ -60,7 +60,7 @@ public class PackInfo {
     /**
      * 运行 SpringBoot 程序所需要的配置文件路径，可以是相对路径或者绝对路径.
      */
-    private String configFile;
+    private String[] configFiles;
 
     /**
      * 执行过程中是否跳过异常或错误，如果为true则直跳过不抛异常，否则抛出异常，默认值是default，会折中做了默认处理.
@@ -108,7 +108,7 @@ public class PackInfo {
                 .setDescription(packInfo.getDescription())
                 .setVmOptions(packInfo.getVmOptions())
                 .setProgramArgs(packInfo.getProgramArgs())
-                .setConfigFile(packInfo.getConfigFile())
+                .setConfigFiles(packInfo.getConfigFiles())
                 .setSkipError(packInfo.getSkipError())
                 .setWindows(packInfo.getWindows())
                 .setLinux(packInfo.getLinux())
@@ -239,12 +239,12 @@ public class PackInfo {
         return this;
     }
 
-    public String getConfigFile() {
-        return configFile;
+    public String[] getConfigFiles() {
+        return configFiles;
     }
 
-    public PackInfo setConfigFile(String configFile) {
-        this.configFile = configFile;
+    public PackInfo setConfigFiles(String[] configFiles) {
+        this.configFiles = configFiles;
         return this;
     }
 

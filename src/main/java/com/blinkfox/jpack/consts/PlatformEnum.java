@@ -102,8 +102,8 @@ public enum PlatformEnum {
         if (StringUtils.isNotBlank(baseConfig.getProgramArgs())) {
             newPackInfo.setProgramArgs(baseConfig.getProgramArgs());
         }
-        if (StringUtils.isNotBlank(baseConfig.getConfigFile())) {
-            newPackInfo.setConfigFile(baseConfig.getConfigFile());
+        if (ArrayUtils.isNotEmpty(baseConfig.getConfigFiles())) {
+            newPackInfo.setConfigFiles(ArrayUtils.addAll(packInfo.getConfigFiles(), baseConfig.getConfigFiles()));
         }
         if (ArrayUtils.isNotEmpty(baseConfig.getCopyResources())) {
             newPackInfo.setCopyResources(

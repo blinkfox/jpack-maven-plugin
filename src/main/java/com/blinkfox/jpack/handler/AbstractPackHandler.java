@@ -9,6 +9,7 @@ import com.blinkfox.jpack.utils.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -103,7 +104,14 @@ public abstract class AbstractPackHandler implements PackHandler {
         try {
             FileUtils.copyFileToDirectory(packInfo.getTargetDir().getAbsolutePath() + File.separator + jar,
                     platformPath);
-            this.copyCustomResources(this.packInfo.getConfigFile(), "config");
+
+            // 复制配置的 configFiles 配置.
+            String[] configFiles = this.packInfo.getConfigFiles();
+            if (ArrayUtils.isNotEmpty(configFiles)) {
+                for (String configFile : configFiles) {
+                    this.copyCustomResources(configFile, "config");
+                }
+            }
         } catch (IOException e) {
             Logger.error("复制【" + jar + "】到【" + platformPath + "】目录中失败！应该还没有打包此文件，"
                     + "异常信息为：" + e.getMessage());
