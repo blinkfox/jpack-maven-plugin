@@ -133,8 +133,7 @@ public class DockerPackHandler extends AbstractPackHandler {
      */
     private void buildImage() {
         try {
-            Docker docker = super.packInfo.getDocker();
-            this.imageName = docker.getRepo() + "/" + docker.getName() + ":" + docker.getTag();
+            this.imageName = super.packInfo.getDocker().getImageName();
             Logger.info("正在构建 " + this.imageName + " 镜像...");
             String imageId = dockerClient.build(Paths.get(super.platformPath), imageName, this::printProgress);
             Logger.info("构建 " + this.imageName + " 镜像完毕，镜像ID: " + imageId);
@@ -148,8 +147,7 @@ public class DockerPackHandler extends AbstractPackHandler {
      */
     private void saveImage() {
         try {
-            Docker dockerInfo = super.packInfo.getDocker();
-            String imageTar =  dockerInfo.getImageTarName() + ".tar";
+            String imageTar =  super.packInfo.getDocker().getImageTarName() + ".tar";
             Logger.info("正在导出 Docker 镜像包: " + imageTar + " ...");
             // 导出镜像为 `.tar` 文件.
             try (InputStream imageInput = dockerClient.save(this.imageName)) {
@@ -176,33 +174,49 @@ public class DockerPackHandler extends AbstractPackHandler {
     }
 
     /**
+     * 给镜像打含`registry`前缀的标签，便于后续的镜像推送.
+     *
+     * @param registry 远程仓库地址
+     * @return 打了含`registry`前缀的标签
+     */
+    private String tagImage(String registry) {
+        try {
+            String imageTagName = registry + "/" + this.imageName;
+            dockerClient.tag(this.imageName, imageTagName, true);
+            Logger.info("已对本次构建的镜像打了标签，标签为：【" + imageTagName + "】.");
+            return imageTagName;
+        } catch (Exception e) {
+            throw new DockerPackException(ExceptionEnum.DOCKER_TAG_EXCEPTION.getMsg(), e);
+        }
+    }
+
+    /**
      * 推送像 Docker 镜像到远程仓库.
      */
     private void pushImage() {
+        final String registry = super.packInfo.getDocker().getRegistry();
+
         // 构建 Registry 授权对象实例，并做校验.
-        Docker dockerInfo = super.packInfo.getDocker();
-        final String registry = dockerInfo == null ? "" : dockerInfo.getRegistry();
         Logger.info("正在校验推送镜像时需要的 registry 授权是否合法...");
-
         try {
-            RegistryAuth auth = StringUtils.isBlank(registry)
-                    ? RegistryAuth.fromDockerConfig().build()
-                    : RegistryAuth.fromDockerConfig(registry).build();
-
+            RegistryAuth auth = RegistryAuth.fromDockerConfig().build();
             int statusCode = dockerClient.auth(auth);
             if (statusCode != 200) {
                 Logger.warn("校验 registry 授权不通过，不能推送镜像到远程镜像仓库中.");
                 return;
             }
 
+            // 判断 registry 是否配置，如果没有配置就认为默认推送到 dockerhub,就不需要打标签，
+            // 否则就需要打含 `registry` 前缀的标签.
+            final String imageTagName = StringUtils.isBlank(registry) ? this.imageName : this.tagImage(registry);
+
             // 推送镜像到远程镜像仓库中.
-            Logger.info("正在推送 " + this.imageName + " 镜像到远程仓库中...");
-            dockerClient.push(StringUtils.isBlank(registry) ? this.imageName : registry + "/" + this.imageName,
-                    this::printProgress, auth);
+            Logger.info("正在推送标签为【" + imageTagName + "】的镜像到远程仓库中...");
+            dockerClient.push(imageTagName, this::printProgress, auth);
+            Logger.info("推送标签为【" + imageTagName + "】的镜像到远程仓库中成功.");
         } catch (Exception e) {
             throw new DockerPackException(ExceptionEnum.DOCKER_PUSH_EXCEPTION.getMsg(), e);
         }
-        Logger.info("推送 " + this.imageName + " 镜像到远程仓库中成功.");
     }
 
     /**

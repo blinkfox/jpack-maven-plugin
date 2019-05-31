@@ -28,6 +28,11 @@ public enum ExceptionEnum {
     DOCKER_SAVE_EXCEPTION("jpack 导出 Docker 镜像失败！"),
 
     /**
+     * 使用 jpack 对镜像打标签出错的枚举实例.
+     */
+    DOCKER_TAG_EXCEPTION("jpack 对镜像进行打标签失败！"),
+
+    /**
      * 使用 jpack 推送 Docker 镜像出错的枚举实例.
      */
     DOCKER_PUSH_EXCEPTION("jpack 推送 Docker 镜像失败！");

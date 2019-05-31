@@ -46,6 +46,15 @@ public class Docker extends BaseConfig {
         return this.name + "-" + this.tag;
     }
 
+    /**
+     * 获取镜像名.
+     *
+     * @return 镜像名
+     */
+    public String getImageName() {
+        return this.repo + "/" + this.name + ":" + this.tag;
+    }
+
     /* getter 和 setter 方法. */
 
     public String getDockerfile() {

@@ -55,7 +55,7 @@
                         <dockerfile> </dockerfile>
                         <!-- 构建镜像的几个基础参数, registry远程仓库地址，不填写默认视为 Dockerhub 的地址;
                             repo不填写则默认为 groupId，name 不填写则默认为 artifactId，tag不填写则默认为 version.-->
-                        <registry> </registry>
+                        <registry>127.0.0.1:5000</registry>
                         <repo>blinkfox</repo>
                         <name>jpack-test</name>
                         <tag>1.0.0-SNAPSHOT</tag>
