@@ -29,7 +29,7 @@
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            <version>1.2.0</version>
+            <version>1.2.1</version>
         </plugin>
     </plugins>
 </build>
@@ -46,7 +46,7 @@ mvn clean package jpack:build
 然后，执行成功之后，你将在 Maven 控制台看到如下输出：
 
 ```bash
-[INFO] --- jpack-maven-plugin:1.2.0:build (default-cli) @ web-demo ---
+[INFO] --- jpack-maven-plugin:1.2.1:build (default-cli) @ web-demo ---
 [INFO] -------------------------- jpack start packing... -------------------------
                              __                          __
                             |__|______  _____     ____  |  | __
@@ -91,7 +91,7 @@ openjdk                        8-jdk-alpine        a3562aa0b991        6 days ag
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            <version>1.2.0</version>
+            <version>1.2.1</version>
             <executions>
                 <execution>
                     <goals>
@@ -163,7 +163,7 @@ openjdk                        8-jdk-alpine        a3562aa0b991        6 days ag
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            <version>1.2.0</version>
+            <version>1.2.1</version>
             <executions>
                 <execution>
                     <goals>
@@ -270,7 +270,7 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 
 用于配置 SpringBoot 运行所需的参数，作用于各个平台下。默认为空，如果配置了对应的值，生成的部署包命令行中将会追加这些程序运行参数。
 
-> **注**：不太建议使用此配置项来使参数生效，这是命令行级别的生效，不便于运维人员修改，容易出错，建议使用 `configFile` 配置文件的方式。
+> **注**：不太建议使用此配置项来使参数生效，这是命令行级别的生效，不便于运维人员修改，容易出错，建议使用 `configFiles` 配置文件的方式。
 
 示例如下：
 
@@ -286,7 +286,7 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 </plugin>
 ```
 
-### configFile
+### configFiles
 
 用来复制诸如 `application.yml` 等类似的配置文件到部署包的 `config` 目录中。针对所有平台生效。默认为空，如果配置了对应的值，生成的部署包的 `config` 目录中将会有你复制的配置文件。该值只能配置一个，可以是相对于 `pom.xml` 的相对路径或绝对路径的目录或文件，也可以是网络资源。
 
@@ -301,8 +301,11 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
        ...
     <configuration>
         <!-- 需要复制到部署包中 config 目录下的 yml 或者 .properties 文件的配置文件路径，
-            它的值可以是一个相对路径、绝对路径具体的目录或文件，也可以是网络资源. -->
-        <configFile>src/test/resources/application.yml</configFile>
+            它的值可以配置多个，可以是相对路径、绝对路径具体的目录或文件，也可以是网络资源. -->
+        <configFiles>
+            <param>src/test/resources/application.yml</param>
+            <param>src/test/resources/application-local.yml</param>
+        </configFiles>
     </configuration>
 </plugin>
 ```
@@ -401,7 +404,7 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 
 - `vmOptions`: 针对 Windows 平台的 JVM 选项参数配置。如果你配置了这个值，那么在 Windows 下将会覆盖通用的 `vmOptions` 的值。
 - `programArgs`: 针对 Windows 平台的程序参数配置。如果你配置了这个值，那么在 Windows 下将会覆盖通用的 `programArgs` 的值。
-- `configFile`: 针对 Windows 平台的配置文件配置。如果你配置了这个值，那么在 Windows 下将会覆盖通用的 `configFile` 的值。
+- `configFiles`: 针对 Windows 平台的配置文件配置。如果你配置了这个值，那么在 Windows 下将会覆盖通用的 `configFiles` 的值。
 - `copyResources`: 针对 Windows 平台的资源复制。如果你配置了这个值，那么会额外复制这些资源到 Windows 平台的包中。
 - `excludeFiles`: 针对 Windows 平台的资源排除。如果你配置了这个值，那么会额外从 Windows 平台的包中排除这些资源。
 
@@ -417,7 +420,10 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
         <windows>
             <vmOptions>-Xms1024m -Xmx2048m</vmOptions>
             <programArgs>--server.port=7070</programArgs>
-            <configFile>src/test/resources/application-dev.yml</configFile>
+            <configFiles>
+                <param>src/test/resources/application.yml</param>
+                <param>src/test/resources/application-dev.yml</param>
+            </configFiles>
             <copyResources>
                 <copyResource>
                     <from>README.pdf</from>
@@ -438,7 +444,7 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 
 - `vmOptions`: 针对 Linux 平台的 JVM 选项参数配置。如果你配置了这个值，那么在 Linux 下将会覆盖通用的 `vmOptions` 的值。
 - `programArgs`: 针对 Linux 平台的程序参数配置。如果你配置了这个值，那么在 Linux 下将会覆盖通用的 `programArgs` 的值。
-- `configFile`: 针对 Linux 平台的配置文件配置。如果你配置了这个值，那么在 Linux 下将会覆盖通用的 `configFile` 的值。
+- `configFiles`: 针对 Linux 平台的配置文件配置。如果你配置了这个值，那么在 Linux 下将会覆盖通用的 `configFiles` 的值。
 - `copyResources`: 针对 Linux 平台的资源复制。如果你配置了这个值，那么会额外复制这些资源到 Linux 平台的包中。
 - `excludeFiles`: 针对 Linux 平台的资源排除。如果你配置了这个值，那么会额外从 Linux 平台的包中排除这些资源。
 
@@ -456,7 +462,7 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 - `extraGoals`: 额外的构建目标，默认只是构建镜像，如果你需要配置导出镜像包可以再填写 `save`，推送到 Dockerhub 可以再填写 `push`。
 - `vmOptions`: 针对 Docker 平台的 JVM 选项参数配置。如果你配置了这个值，那么在 Docker 下将会覆盖通用的 `vmOptions` 的值。
 - `programArgs`: 针对 Docker 平台的程序参数配置。如果你配置了这个值，那么在 Docker 下将会覆盖通用的 `programArgs` 的值。
-- `configFile`: 针对 Docker 平台的配置文件配置。如果你配置了这个值，那么在 Docker 下将会覆盖通用的 `configFile` 的值。
+- `configFiles`: 针对 Docker 平台的配置文件配置。如果你配置了这个值，那么在 Docker 下将会覆盖通用的 `configFiles` 的值。
 - `copyResources`: 针对 Docker 平台的资源复制。如果你配置了这个值，那么会额外复制这些资源到 Docker 平台的包中。
 - `excludeFiles`: 针对 Docker 平台的资源排除。如果你配置了这个值，那么会额外从 Docker 平台的包中排除这些资源。
 
@@ -485,7 +491,10 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
             </extraGoals>
             <vmOptions>-Xms1024m -Xmx2048m</vmOptions>
             <programArgs>--server.port=7070</programArgs>
-            <configFile>src/test/resources/application-dev.yml</configFile>
+            <configFiles>
+                <param>src/test/resources/application.yml</param>
+                <param>src/test/resources/application-dev.yml</param>
+            </configFiles>
             <copyResources>
                 <copyResource>
                     <from>README.pdf</from>
@@ -595,6 +604,9 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
 
 ## 版本记录
 
+- v1.2.1(2019-06-01)
+  - 修改了 `configFile` 改为了 `configFiles`，支持配置多个配置文件地址；
+  - 新增了推送到自定义仓库时的打标签功能；
 - v1.2.0(2019-05-22)
   - 修复了 Windows 下的 SpringBoot 配置文件不生效的问题；
   - 新增了 `configFile` 的配置支持；
