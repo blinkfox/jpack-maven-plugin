@@ -29,7 +29,7 @@
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            <version>1.2.1</version>
+            <version>1.3.0</version>
         </plugin>
     </plugins>
 </build>
@@ -46,7 +46,7 @@ mvn clean package jpack:build
 然后，执行成功之后，你将在 Maven 控制台看到如下输出：
 
 ```bash
-[INFO] --- jpack-maven-plugin:1.2.1:build (default-cli) @ web-demo ---
+[INFO] --- jpack-maven-plugin:1.3.0:build (default-cli) @ web-demo ---
 [INFO] -------------------------- jpack start packing... -------------------------
                              __                          __
                             |__|______  _____     ____  |  | __
@@ -91,7 +91,7 @@ openjdk                        8-jdk-alpine        a3562aa0b991        6 days ag
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            <version>1.2.1</version>
+            <version>1.3.0</version>
             <executions>
                 <execution>
                     <goals>
@@ -163,7 +163,7 @@ openjdk                        8-jdk-alpine        a3562aa0b991        6 days ag
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            <version>1.2.1</version>
+            <version>1.3.0</version>
             <executions>
                 <execution>
                     <goals>
@@ -459,6 +459,10 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 - `repo`: 构建镜像的仓库名，类似于 `groupId`，不填写则默认使用 `groupId`。
 - `name`: 构建镜像的名称，类似于 `artifactId`，不填写则默认使用 `artifactId`。
 - `tag`: 构建镜像的版本标签，不填写则默认使用 `version`。
+- `fromImage`: Dockerfile 文件中 FROM 引用的基础镜像，如果没有配置该值，将默认使用 `openjdk:8-jdk-alpine`。
+- `expose`: 对外暴露的端口，不配置该值，将不会在 Dockerfile 中生成 `EXPOSE` 指令。
+- `volumes`: 挂载的数据卷，不填写则默认挂载 "/tmp" 和 "/logs" 目录。
+- `customCommands`: 自定义的 Dockerfile 指令选项，可以填写多个值，每个值在 Dockerfile 中占一行，充当Dockerfile 中的一条指令。
 - `extraGoals`: 额外的构建目标，默认只是构建镜像，如果你需要配置导出镜像包可以再填写 `save`，推送到 Dockerhub 可以再填写 `push`。
 - `vmOptions`: 针对 Docker 平台的 JVM 选项参数配置。如果你配置了这个值，那么在 Docker 下将会覆盖通用的 `vmOptions` 的值。
 - `programArgs`: 针对 Docker 平台的程序参数配置。如果你配置了这个值，那么在 Docker 下将会覆盖通用的 `programArgs` 的值。
@@ -484,10 +488,26 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
             <repo>blinkfox</repo>
             <name>jpack-test</name>
             <tag>1.0.0-SNAPSHOT</tag>
+            <!-- FROM 的镜像，如果没有配置该值，将默认是 openjdk:8-jdk-alpine. -->
+            <fromImage>openjdk:8-jdk-alpine</fromImage>
+            <!-- 对外暴露的端口，不配置该值，将不会在 Dockerfile 中生成 EXPOSE 指令. -->
+            <expose>8080</expose>
+            <!-- 挂载的数据卷，不填写则默认挂载 "/tmp" 和 "/logs" 目录. -->
+            <volumes>
+                <param>/tmp</param>
+                <param>/logs</param>
+            </volumes>
+            <!-- 自定义的 Dockerfile 指令选项，可以填写多个值，每个值在 Dockerfile 中占一行，充当Dockerfile中的一条指令，例如：下面设置时区的一个指令. -->
+            <customCommands>
+                <param>RUN echo 'Asia/Shanghai' >/etc/timezone</param>
+            </customCommands>
             <!-- jpack 的 Docker 构建的默认目标是构建镜像，如果你需要其他目标的话，可以在此配置）.
                 目前这里只支持导出镜像为 .tar 包(save). -->
+            <!-- jpack 的 Docker 构建的默认目标是构建镜像，如果你需要其他目标的话，可以再此配置（可配多个）.
+                目前这里支持导出镜像为 .tar 包(save)和 推送镜像到远程仓库(push) 两种. -->
             <extraGoals>
                 <param>save</param>
+                <param>push</param>
             </extraGoals>
             <vmOptions>-Xms1024m -Xmx2048m</vmOptions>
             <programArgs>--server.port=7070</programArgs>
@@ -557,10 +577,26 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
             <repo>blinkfox</repo>
             <name>web-demo</name>
             <tag>1.0.0</tag>
+            <!-- FROM 的镜像，如果没有配置该值，将默认是 openjdk:8-jdk-alpine. -->
+            <fromImage>openjdk:8-jdk-alpine</fromImage>
+            <!-- 对外暴露的端口，不配置该值，将不会在 Dockerfile 中生成 EXPOSE 指令. -->
+            <expose>8080</expose>
+            <!-- 挂载的数据卷，不填写则默认挂载 "/tmp" 和 "/logs" 目录. -->
+            <volumes>
+                <param>/tmp</param>
+                <param>/logs</param>
+            </volumes>
+            <!-- 自定义的 Dockerfile 指令选项，可以填写多个值，每个值在 Dockerfile 中占一行，充当Dockerfile中的一条指令，例如：下面设置时区的一个指令. -->
+            <customCommands>
+                <param>RUN echo 'Asia/Shanghai' >/etc/timezone</param>
+            </customCommands>
             <!-- jpack 的 Docker 构建的默认目标是构建镜像，如果你需要其他目标的话，可以在此配置）.
                 目前这里只支持导出镜像为 .tar 包(save). -->
+            <!-- jpack 的 Docker 构建的默认目标是构建镜像，如果你需要其他目标的话，可以再此配置（可配多个）.
+                目前这里支持导出镜像为 .tar 包(save)和 推送镜像到远程仓库(push) 两种. -->
             <extraGoals>
                 <param>save</param>
+                <param>push</param>
             </extraGoals>
             ...
         </docker>
@@ -604,6 +640,9 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
 
 ## 版本记录
 
+- v1.3.0(2019-06-04)
+  - 修改了 jpack 默认的 Dockerfile 的一些指令为从配置文件读取；
+  - 新增了 `fromImage`, `expose`, `volumes`, `customCommands` 4项 jpack 默认提供的 Dockerfile 的指令配置；
 - v1.2.1(2019-06-01)
   - 修改了 `configFile` 改为了 `configFiles`，支持配置多个配置文件地址；
   - 新增了推送到自定义仓库时的打标签功能；
