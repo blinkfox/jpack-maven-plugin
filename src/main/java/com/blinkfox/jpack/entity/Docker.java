@@ -33,6 +33,21 @@ public class Docker extends BaseConfig {
     private String tag;
 
     /**
+     * 引用的基础镜像.
+     */
+    private String fromImage;
+
+    /**
+     * 容器暴露出来的端口.
+     */
+    private String expose;
+
+    /**
+     * 自定义的 Dockerfile 的命令集合，每一条就是一行，会插入到 Dockerfile 文件之中.
+     */
+    private String[] customCommands;
+
+    /**
      * Docker 构建支持的额外目标，目前仅可以配置 save, push 两种，不配置的话，默认目标是只构建镜像.
      */
     private String[] extraGoals;
@@ -95,6 +110,30 @@ public class Docker extends BaseConfig {
 
     public void setTag(String tag) {
         this.tag = tag;
+    }
+
+    public String getFromImage() {
+        return fromImage;
+    }
+
+    public void setFromImage(String fromImage) {
+        this.fromImage = fromImage;
+    }
+
+    public String getExpose() {
+        return expose;
+    }
+
+    public void setExpose(String expose) {
+        this.expose = expose;
+    }
+
+    public String[] getCustomCommands() {
+        return customCommands;
+    }
+
+    public void setCustomCommands(String[] customCommands) {
+        this.customCommands = customCommands;
     }
 
     public String[] getExtraGoals() {
