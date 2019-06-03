@@ -59,6 +59,15 @@
                         <repo>blinkfox</repo>
                         <name>jpack-test</name>
                         <tag>1.0.0-SNAPSHOT</tag>
+                        <!-- FROM 的镜像，如果没有配置该值，将默认是 openjdk:8-jdk-alpine. -->
+                        <fromImage>openjdk:8-jdk-alpine</fromImage>
+                        <!-- 暴露的端口，不配置该值，将不会在 Dockerfile 中生成 EXPOSE 指令. -->
+                        <expose>8080</expose>
+                        <!-- 自定义的 Dockerfile 指令选项，可以填写多个值，每个值在 Dockerfile 中占一行，充当Dockerfile中的一条指令，
+                            例如：以下是设置时区的一个指令. -->
+                        <customOptions>
+                            <param>RUN /bin/cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shanghai' >/etc/timezone</param>
+                        </customOptions>
                         <!-- jpack 的 Docker 构建的默认目标是构建镜像，如果你需要其他目标的话，可以再此配置（可配多个）.
                             目前这里支持导出镜像为 .tar 包(save)和 推送镜像到远程仓库(push) 两种. -->
                         <extraGoals>
