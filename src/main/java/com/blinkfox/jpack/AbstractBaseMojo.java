@@ -12,6 +12,7 @@ import com.blinkfox.jpack.utils.TimeKit;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.FileUtils;
@@ -37,6 +38,16 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
      * 用来存放 jpack 打包时的文件夹名称常量.
      */
     static final String HOME_DIR_NAME = "jpack";
+
+    /**
+     * JDK8 的镜像名称常量.
+     */
+    private static final String JDK8_IMAGE = "openjdk:8-jdk-alpine";
+
+    /**
+     * 默认需要挂载出来的数据卷字符串数组常量.
+     */
+    private static final String[] DEFAULT_VOLUMES = new String[] {"/tmp", "logs"};
 
     /**
      * Maven 运行时的 target 目录的文件对象.
@@ -220,6 +231,12 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
         }
         if (StringUtils.isBlank(this.docker.getTag())) {
             this.docker.setTag(this.version);
+        }
+        if (StringUtils.isBlank(this.docker.getFromImage())) {
+            this.docker.setFromImage(JDK8_IMAGE);
+        }
+        if (ArrayUtils.isEmpty(this.docker.getVolumes())) {
+            this.docker.setVolumes(DEFAULT_VOLUMES);
         }
         return this.docker;
     }

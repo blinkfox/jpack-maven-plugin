@@ -51,7 +51,8 @@
                         如：Docker 环境检查，如果没有 Docker 环境,则跳过 Docker 的构建. -->
                     <skipError>false</skipError>
                     <docker>
-                        <!-- 构建 Docker 镜像的 'Dockerfile' 文件的相对路径，不填写则认为其与 pom.xml 在统一目录. -->
+                        <!-- 构建 Docker 镜像的 Dockerfile 文件的相对路径，没有此配置项或者不填写则使用 jpack 默认的 Dockerfile 文件.
+                            ，如果填写了自己的 Dockerfile 文件地址，则后面的`fromImage`、`expose`、`volumes`、`customCommands` 配置就不会被使用.-->
                         <dockerfile> </dockerfile>
                         <!-- 构建镜像的几个基础参数, registry远程仓库地址，不填写默认视为 Dockerhub 的地址;
                             repo不填写则默认为 groupId，name 不填写则默认为 artifactId，tag不填写则默认为 version.-->
@@ -60,13 +61,18 @@
                         <name>jpack-test</name>
                         <tag>1.0.0-SNAPSHOT</tag>
                         <!-- FROM 的镜像，如果没有配置该值，将默认是 openjdk:8-jdk-alpine. -->
-                        <fromImage>openjdk:8-jdk-alpine</fromImage>
+                        <!--<fromImage>openjdk:8-jdk-alpine</fromImage>-->
                         <!-- 暴露的端口，不配置该值，将不会在 Dockerfile 中生成 EXPOSE 指令. -->
                         <expose>8080</expose>
+                        <!-- 挂载的数据卷，不填写则默认挂载 "/tmp" 和 "/logs" 目录. -->
+                        <volumes>
+                            <param>/tmp</param>
+                            <param>/logs</param>
+                        </volumes>
                         <!-- 自定义的 Dockerfile 指令选项，可以填写多个值，每个值在 Dockerfile 中占一行，充当Dockerfile中的一条指令，
                             例如：以下是设置时区的一个指令. -->
                         <customCommands>
-                            <param>RUN /bin/cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shanghai' >/etc/timezone</param>
+                            <param>RUN echo 'Asia/Shanghai' >/etc/timezone</param>
                         </customCommands>
                         <!-- jpack 的 Docker 构建的默认目标是构建镜像，如果你需要其他目标的话，可以再此配置（可配多个）.
                             目前这里支持导出镜像为 .tar 包(save)和 推送镜像到远程仓库(push) 两种. -->

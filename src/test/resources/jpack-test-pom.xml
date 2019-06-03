@@ -81,7 +81,8 @@
                         </excludeFiles>
                     </linux>
                     <docker>
-                        <!-- 构建 Docker 镜像的 Dockerfile 文件的相对路径，没有此配置项或者不填写则使用 jpack 默认的 Dockerfile 文件. -->
+                        <!-- 构建 Docker 镜像的 Dockerfile 文件的相对路径，没有此配置项或者不填写则使用 jpack 默认的 Dockerfile 文件.
+                            ，如果填写了自己的 Dockerfile 文件地址，则后面的`fromImage`、`expose`、`volumes`、`customCommands` 配置就不会被使用.-->
                         <!--<dockerfile>Dockerfile</dockerfile>-->
                         <!-- 构建镜像的几个基础参数, registry远程仓库地址，不填写默认视为 Dockerhub 的地址;
                             repo不填写则默认为 groupId，name 不填写则默认为 artifactId，tag不填写则默认为 version.-->

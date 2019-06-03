@@ -20,8 +20,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.io.RawInputStreamFacade;
@@ -134,9 +136,9 @@ public class DockerPackHandler extends AbstractPackHandler {
     private void buildImage() {
         try {
             this.imageName = super.packInfo.getDocker().getImageName();
-            Logger.info("正在构建 " + this.imageName + " 镜像...");
+            Logger.info("正在构建【" + this.imageName + "】镜像...");
             String imageId = dockerClient.build(Paths.get(super.platformPath), imageName, this::printProgress);
-            Logger.info("构建 " + this.imageName + " 镜像完毕，镜像ID: " + imageId);
+            Logger.info("构建【" + this.imageName + "】镜像完毕，镜像ID: " + imageId);
         } catch (Exception e) {
             throw new DockerPackException(ExceptionEnum.DOCKER_BUILD_EXCEPTION.getMsg(), e);
         }
@@ -279,11 +281,16 @@ public class DockerPackHandler extends AbstractPackHandler {
      * 复制 Dockerfile 文件到docker平台的目录中.
      */
     private void copyDockerfile() throws IOException {
-        // 如果未配置 Dockerfile 文件，则默认生成一个简单的 SpringBoot 服务需要的 Dockerfile 文件.
+        // 如果未配置 Dockerfile 文件，则默认生成一个简单的 SpringBoot 服务需要的 Dockerfile 文件，用于构建镜像.
         Docker docker = super.packInfo.getDocker();
-        if (docker == null || StringUtils.isBlank(docker.getDockerfile())) {
-            Logger.info("将使用 jpack 默认提供的 Dockerfile 文件来构建 Docker 镜像.");
-            TemplateKit.renderFile("docker/" + DOCKER_FILE, super.buildBaseTemplateContextMap(),
+        if (StringUtils.isBlank(docker.getDockerfile())) {
+            Logger.info("将使用 jpack 默认提供的 Dockerfile 文件来构建镜像.");
+            Map<String, Object> context = super.buildBaseTemplateContextMap();
+            context.put("jdkImage", docker.getFromImage());
+            context.put("valume", this.buildVolumes(docker.getVolumes()));
+            context.put("customCommands", this.buildCustomCommands(docker.getCustomCommands()));
+            context.put("expose", this.buildExpose(docker.getExpose()));
+            TemplateKit.renderFile("docker/" + DOCKER_FILE, context,
                     super.platformPath + File.separator + DOCKER_FILE);
             return;
         }
@@ -297,6 +304,45 @@ public class DockerPackHandler extends AbstractPackHandler {
         }
 
         FileUtils.copyFileToDirectory(dockerFile, new File(super.platformPath));
+    }
+
+    /**
+     * 根据 volumes 数组拼接 VOLUME 的字符串.
+     * <p>如果输入为：`{"/tmp", "/logs"}` 数组，则输出的是`VOLUME ["/temp", "/logs"]` 字符串.</p>
+     *
+     * @param volumes volumes 数组
+     * @return VOLUME 的字符串
+     */
+    private String buildVolumes(String[] volumes) {
+        return ArrayUtils.isNotEmpty(volumes)
+                ? "VOLUME [\"" + StringUtils.join(volumes, "\", \"") + "\"]\n" : "";
+    }
+
+    /**
+     * 根据要暴露的端口 expose 的值来拼接 EXPOSE 的字符串.
+     *
+     * @param expose 暴露的端口
+     * @return EXPOSE 的字符串
+     */
+    private String buildExpose(String expose) {
+        return StringUtils.isEmpty(expose) ? "" : "\nEXPOSE " + expose.trim() + "\n";
+    }
+
+    /**
+     * 根据自定义命令数组 customCommands 来拼接 Dockerfile 文件中的各种命令字符串，一条命令就独占一行.
+     *
+     * @param customCommands 自定义命令数组
+     * @return 多条命令的字符串
+     */
+    private String buildCustomCommands(String[] customCommands) {
+        StringBuilder sb = new StringBuilder();
+        if (ArrayUtils.isNotEmpty(customCommands)) {
+            // 每条命令独占一行.
+            for (String command : customCommands) {
+                sb.append(command).append("\n");
+            }
+        }
+        return sb.toString();
     }
 
     /**

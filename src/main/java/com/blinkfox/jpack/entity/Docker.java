@@ -43,6 +43,11 @@ public class Docker extends BaseConfig {
     private String expose;
 
     /**
+     * 自定义挂载的数据卷集合，不填写则默认挂载 `/tmp` 和 `/logs` 两个目录.
+     */
+    private String[] volumes;
+
+    /**
      * 自定义的 Dockerfile 的命令集合，每一条就是一行，会插入到 Dockerfile 文件之中.
      */
     private String[] customCommands;
@@ -126,6 +131,14 @@ public class Docker extends BaseConfig {
 
     public void setExpose(String expose) {
         this.expose = expose;
+    }
+
+    public String[] getVolumes() {
+        return volumes;
+    }
+
+    public void setVolumes(String[] volumes) {
+        this.volumes = volumes;
     }
 
     public String[] getCustomCommands() {
