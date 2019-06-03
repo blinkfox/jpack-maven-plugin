@@ -196,7 +196,8 @@ public class DockerPackHandler extends AbstractPackHandler {
      * 推送像 Docker 镜像到远程仓库.
      */
     private void pushImage() {
-        final String registry = super.packInfo.getDocker().getRegistry();
+        // 初始化 ~/.dockercfg 文件，防止进行授权时报文件找不到的异常！
+        this.initDockercfgFile();
 
         // 构建 Registry 授权对象实例，并做校验.
         Logger.info("正在校验推送镜像时需要的 registry 授权是否合法...");
@@ -210,6 +211,7 @@ public class DockerPackHandler extends AbstractPackHandler {
 
             // 判断 registry 是否配置，如果没有配置就认为默认推送到 dockerhub,就不需要打标签，
             // 否则就需要打含 `registry` 前缀的标签.
+            String registry = super.packInfo.getDocker().getRegistry();
             final String imageTagName = StringUtils.isBlank(registry) ? this.imageName : this.tagImage(registry);
 
             // 推送镜像到远程镜像仓库中.
@@ -343,6 +345,21 @@ public class DockerPackHandler extends AbstractPackHandler {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * 在当前操作系统的用户目录下初始化创建一个 `.dockercfg` 文件，如果没有就初始化一个空文件，否则就不管.
+     * <p>注意：这个操作的目的是防止校验授权时报错.</p>
+     */
+    private void initDockercfgFile() {
+        File dockercfgFile = new File(System.getProperty("user.home") + File.separator + ".dockercfg");
+        if (!dockercfgFile.exists()) {
+            try {
+                org.apache.commons.io.FileUtils.touch(dockercfgFile);
+            } catch (IOException e) {
+                Logger.error("初始化 ~/.dockercfg 文件失败！", e);
+            }
+        }
     }
 
     /**
