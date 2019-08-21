@@ -41,6 +41,11 @@ public class DockerPackHandler extends AbstractPackHandler {
     private static final String DOCKER_FILE = "Dockerfile";
 
     /**
+     * 正确情况下的编码.
+     */
+    private static final int SUCC_CODE = 200;
+
+    /**
      * Docker 客户端.
      */
     private DockerClient dockerClient;
@@ -124,6 +129,9 @@ public class DockerPackHandler extends AbstractPackHandler {
     private void initDockerfileAndJar() {
         super.createPlatformCommonDir(PlatformEnum.DOCKER);
         try {
+            // 再复制 jar 包到 target 目录下，编译构建.
+            FileUtils.copyFileToDirectory(this.getJpackTargetDir() + File.separator + packInfo.getFullJarName(),
+                    platformPath);
             this.copyDockerfile();
         } catch (IOException e) {
             throw new DockerPackException(ExceptionEnum.NO_DOCKERFILE.getMsg(), e);
@@ -139,9 +147,19 @@ public class DockerPackHandler extends AbstractPackHandler {
             Logger.info("正在构建【" + this.imageName + "】镜像...");
             String imageId = dockerClient.build(Paths.get(super.platformPath), imageName, this::printProgress);
             Logger.info("构建【" + this.imageName + "】镜像完毕，镜像ID: " + imageId);
+            FileUtils.deleteDirectory(this.getJpackTargetDir());
         } catch (Exception e) {
             throw new DockerPackException(ExceptionEnum.DOCKER_BUILD_EXCEPTION.getMsg(), e);
         }
+    }
+
+    /**
+     * 获取 jpack 中的 target 目录.
+     *
+     * @return target 路径.
+     */
+    private String getJpackTargetDir() {
+        return packInfo.getTargetDir().getAbsolutePath() + File.separator + "target";
     }
 
     /**
@@ -204,7 +222,7 @@ public class DockerPackHandler extends AbstractPackHandler {
         try {
             RegistryAuth auth = RegistryAuth.fromDockerConfig().build();
             int statusCode = dockerClient.auth(auth);
-            if (statusCode != 200) {
+            if (statusCode != SUCC_CODE) {
                 Logger.warn("校验 registry 授权不通过，不能推送镜像到远程镜像仓库中.");
                 return;
             }
@@ -246,7 +264,7 @@ public class DockerPackHandler extends AbstractPackHandler {
         String[] goalTypes;
         Docker dockerInfo = super.packInfo.getDocker();
         if (dockerInfo == null || (goalTypes = dockerInfo.getExtraGoals()) == null || goalTypes.length == 0) {
-            Logger.debug("在 jpack 中未配置  docker 额外构建目标类型'goalTypes'的值，只会构建镜像.");
+            Logger.debug("在 jpack 中未配置 docker 额外构建目标类型'goalTypes'的值，只会构建镜像.");
             return;
         }
 

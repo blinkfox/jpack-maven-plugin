@@ -6,7 +6,7 @@ MAINTAINER jpack
 ${valume}
 ${customCommands}
 # 添加 jar.
-ADD ${jarName} /${jarName}
+ADD target/${jarName} /${jarName}
 
 ENV JVM_OPTS="${vmOptions}" PROGRAM_ARGS="${programArgs}"
 ${expose}
