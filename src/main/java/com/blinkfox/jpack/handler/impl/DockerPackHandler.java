@@ -128,13 +128,23 @@ public class DockerPackHandler extends AbstractPackHandler {
      */
     private void initDockerfileAndJar() {
         super.createPlatformCommonDir(PlatformEnum.DOCKER);
+        this.copyJarToDockerTargetDir();
         try {
-            // 再复制 jar 包到 target 目录下，编译构建.
-            FileUtils.copyFileToDirectory(this.getJpackTargetDir() + File.separator + packInfo.getFullJarName(),
-                    platformPath);
             this.copyDockerfile();
         } catch (IOException e) {
             throw new DockerPackException(ExceptionEnum.NO_DOCKERFILE.getMsg(), e);
+        }
+    }
+
+    /**
+     * 复制 jar 包到 target 目录下，方便默认的 Dockerfile 构建.
+     */
+    private void copyJarToDockerTargetDir() {
+        try {
+            FileUtils.copyFileToDirectory(packInfo.getTargetDir().getAbsolutePath() + File.separator
+                    + packInfo.getFullJarName(), this.getJpackTargetDir());
+        } catch (IOException e) {
+            throw new DockerPackException(ExceptionEnum.COPY_JAR_TO_TARGET_EXCEPTION.getMsg(), e);
         }
     }
 
@@ -159,7 +169,7 @@ public class DockerPackHandler extends AbstractPackHandler {
      * @return target 路径.
      */
     private String getJpackTargetDir() {
-        return packInfo.getTargetDir().getAbsolutePath() + File.separator + "target";
+        return super.platformPath + File.separator + "target";
     }
 
     /**

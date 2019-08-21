@@ -18,6 +18,11 @@ public enum ExceptionEnum {
     NO_DOCKERFILE("Dockerfile 文件未找到！"),
 
     /**
+     * 复制 jar 包异常.
+     */
+    COPY_JAR_TO_TARGET_EXCEPTION("复制 jar 包到 jpack docker 目录下的 target 目录中失败！"),
+
+    /**
      * 使用 jpack 构建 Docker 镜像出错的枚举实例.
      */
     DOCKER_BUILD_EXCEPTION("jpack 构建 Docker 镜像失败！"),
