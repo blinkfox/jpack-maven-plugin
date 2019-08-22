@@ -1,6 +1,6 @@
 # jpack-maven-plugin
 
-[![HitCount](http://hits.dwyl.io/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin) [![Build Status](https://secure.travis-ci.org/blinkfox/jpack-maven-plugin.svg)](https://travis-ci.org/blinkfox/jpack-maven-plugin) [![GitHub license](https://img.shields.io/github/license/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin/blob/master/LICENSE) [![codecov](https://codecov.io/gh/blinkfox/jpack-maven-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/blinkfox/jpack-maven-plugin) ![Java Version](https://img.shields.io/badge/Java-%3E%3D%208-blue.svg) [![Maven Central](https://img.shields.io/maven-central/v/com.blinkfox/jpack-maven-plugin.svg)](https://search.maven.org/artifact/com.blinkfox/jpack-maven-plugin/1.3.0/maven-plugin) [![Javadocs](https://img.shields.io/badge/javadoc-1.3.0-brightgreen.svg)](https://www.javadoc.io/doc/com.blinkfox/jpack-maven-plugin/1.3.0)
+[![HitCount](http://hits.dwyl.io/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin) [![Build Status](https://secure.travis-ci.org/blinkfox/jpack-maven-plugin.svg)](https://travis-ci.org/blinkfox/jpack-maven-plugin) [![GitHub license](https://img.shields.io/github/license/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin/blob/master/LICENSE) [![codecov](https://codecov.io/gh/blinkfox/jpack-maven-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/blinkfox/jpack-maven-plugin) ![Java Version](https://img.shields.io/badge/Java-%3E%3D%208-blue.svg) [![Maven Central](https://img.shields.io/maven-central/v/com.blinkfox/jpack-maven-plugin.svg)](https://search.maven.org/artifact/com.blinkfox/jpack-maven-plugin/1.3.1/maven-plugin) [![Javadocs](https://img.shields.io/badge/javadoc-1.3.1-brightgreen.svg)](https://www.javadoc.io/doc/com.blinkfox/jpack-maven-plugin/1.3.1)
 
 > 这是一个用于对 SpringBoot 服务打包为 Windows、Linux 和 Docker 下可发布部署包的 Maven 插件。
 
@@ -29,7 +29,7 @@
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            <version>1.3.0</version>
+            <version>1.3.1</version>
         </plugin>
     </plugins>
 </build>
@@ -46,7 +46,7 @@ mvn clean package jpack:build
 然后，执行成功之后，你将在 Maven 控制台看到如下输出：
 
 ```bash
-[INFO] --- jpack-maven-plugin:1.3.0:build (default-cli) @ web-demo ---
+[INFO] --- jpack-maven-plugin:1.3.1:build (default-cli) @ web-demo ---
 [INFO] -------------------------- jpack start packing... -------------------------
                              __                          __
                             |__|______  _____     ____  |  | __
@@ -91,7 +91,7 @@ openjdk                        8-jdk-alpine        a3562aa0b991        6 days ag
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            <version>1.3.0</version>
+            <version>1.3.1</version>
             <executions>
                 <execution>
                     <goals>
@@ -163,7 +163,7 @@ openjdk                        8-jdk-alpine        a3562aa0b991        6 days ag
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            <version>1.3.0</version>
+            <version>1.3.1</version>
             <executions>
                 <execution>
                     <goals>
@@ -537,7 +537,7 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
 <plugin>
     <groupId>com.blinkfox</groupId>
     <artifactId>jpack-maven-plugin</artifactId>
-    <version>1.0.0</version>
+    <version>1.3.1</version>
     <executions>
         <execution>
             <goals>
@@ -640,6 +640,8 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
 
 ## 版本记录
 
+- v1.3.1(2019-08-21)
+  - 修改默认构建的 `Dockerfile` 从 `target` 目录下读取 jar 包；
 - v1.3.0(2019-06-04)
   - 修改了 jpack 默认的 Dockerfile 的一些指令为从配置文件读取；
   - 新增了 `fromImage`, `expose`, `volumes`, `customCommands` 4项 jpack 默认提供的 Dockerfile 的指令配置；
