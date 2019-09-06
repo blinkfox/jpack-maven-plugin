@@ -1,4 +1,4 @@
-#! /bin/shell
+#! /bin/bash
 
 #=====================================================================
 # 项目重启的 shell 脚本;
@@ -14,8 +14,8 @@ BIN_PATH=$(cd `dirname $0`; pwd)
 
 # 关闭服务.
 echo 正在关闭 \${APPLICATION} 服务...
-sh \${BIN_PATH}/stop.sh
+bash \${BIN_PATH}/stop.sh
 
 # 启动服务.
 echo 正在启动 \${APPLICATION} 服务...
-sh \${BIN_PATH}/start.sh
+bash \${BIN_PATH}/start.sh
