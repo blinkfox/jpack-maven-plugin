@@ -1,9 +1,8 @@
 #! /bin/bash
 
 #=====================================================================
-# 应用服务停止的 shell 脚本
-# 通过项目名称查找到PID
-# 然后 kill -9 pid
+# 查看应用服务是否启动或停止状态的 shell 脚本
+# 通过项目名称查找到 PID
 #=====================================================================
 
 # 项目名称
@@ -17,9 +16,8 @@ else
 fi
 
 if [[ -z "$pid" ]] ; then
-    echo "\${APPLICATION} 服务并没有运行."
+    echo "未监测到 \${APPLICATION} 服务. [not running!]"
     exit 0;
 fi
 
-kill -9 \${pid}
-echo "已成功关闭了 \${APPLICATION} 服务 (PID: \${pid})."
+echo "\${APPLICATION} 服务正在运行中 (PID: \${pid}). [is running ...]"

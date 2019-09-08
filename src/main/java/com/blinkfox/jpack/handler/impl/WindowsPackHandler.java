@@ -23,7 +23,7 @@ public class WindowsPackHandler extends AbstractPackHandler {
     /**
      * bat 文件的名称数组.
      */
-    private static final String[] BAT_NAME_ARR = {"install", "uninstall", "start", "stop", "restart"};
+    private static final String[] BAT_NAME_ARR = {"install", "uninstall", "start", "stop", "restart", "status"};
 
     /**
      * 根据打包的相关参数，将该 Maven 项目打包成 Windows 中的可部署包的方法.

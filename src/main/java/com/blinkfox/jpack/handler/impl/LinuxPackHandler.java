@@ -48,6 +48,7 @@ public class LinuxPackHandler extends AbstractPackHandler {
             TemplateKit.renderFile("linux/bin/start.sh", context, bin + "start.sh");
             TemplateKit.renderFile("linux/bin/stop.sh", context, bin + "stop.sh");
             TemplateKit.renderFile("linux/bin/restart.sh", context, bin + "restart.sh");
+            TemplateKit.renderFile("linux/bin/status.sh", context, bin + "status.sh");
         } catch (IOException e) {
             Logger.error("渲染 shell 模板内容并写入 bin 目录中出错！", e);
         }

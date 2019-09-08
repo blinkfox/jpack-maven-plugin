@@ -1,12 +1,12 @@
 # jpack-maven-plugin
 
-[![HitCount](http://hits.dwyl.io/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin) [![Build Status](https://secure.travis-ci.org/blinkfox/jpack-maven-plugin.svg)](https://travis-ci.org/blinkfox/jpack-maven-plugin) [![GitHub license](https://img.shields.io/github/license/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin/blob/master/LICENSE) [![codecov](https://codecov.io/gh/blinkfox/jpack-maven-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/blinkfox/jpack-maven-plugin) ![Java Version](https://img.shields.io/badge/Java-%3E%3D%208-blue.svg) [![Maven Central](https://img.shields.io/maven-central/v/com.blinkfox/jpack-maven-plugin.svg)](https://search.maven.org/artifact/com.blinkfox/jpack-maven-plugin/1.3.1/maven-plugin) [![Javadocs](https://img.shields.io/badge/javadoc-1.3.1-brightgreen.svg)](https://www.javadoc.io/doc/com.blinkfox/jpack-maven-plugin/1.3.1)
+[![HitCount](http://hits.dwyl.io/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin) [![Build Status](https://secure.travis-ci.org/blinkfox/jpack-maven-plugin.svg)](https://travis-ci.org/blinkfox/jpack-maven-plugin) [![GitHub license](https://img.shields.io/github/license/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin/blob/master/LICENSE) [![codecov](https://codecov.io/gh/blinkfox/jpack-maven-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/blinkfox/jpack-maven-plugin) ![Java Version](https://img.shields.io/badge/Java-%3E%3D%208-blue.svg) [![Maven Central](https://img.shields.io/maven-central/v/com.blinkfox/jpack-maven-plugin.svg)](https://search.maven.org/artifact/com.blinkfox/jpack-maven-plugin/1.3.2/maven-plugin) [![Javadocs](https://img.shields.io/badge/javadoc-1.3.2-brightgreen.svg)](https://www.javadoc.io/doc/com.blinkfox/jpack-maven-plugin/1.3.2)
 
 > 这是一个用于对 SpringBoot 服务打包为 Windows、Linux 和 Docker 下可发布部署包的 Maven 插件。
 
 ## 特性
 
-- 简单易用
+- 简单易用，基于**约定优于配置**的思想来构建部署包
 - 支持打包为 `Windows`、 `Linux` 和 `Docker` 下的发布部署包，也可单独选择打某些平台下的部署包
 - `Windows`部署包可以安装为服务，从 `Windows` 的服务界面中来启动和停止应用服务，且默认为开机自启动
 - 支持 `Docker` 的镜像构建、导出镜像 `tar` 包和推送镜像到远程仓库等功能
@@ -29,7 +29,7 @@
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            <version>1.3.1</version>
+            <version>1.3.2</version>
         </plugin>
     </plugins>
 </build>
@@ -46,7 +46,7 @@ mvn clean package jpack:build
 然后，执行成功之后，你将在 Maven 控制台看到如下输出：
 
 ```bash
-[INFO] --- jpack-maven-plugin:1.3.1:build (default-cli) @ web-demo ---
+[INFO] --- jpack-maven-plugin:1.3.2:build (default-cli) @ web-demo ---
 [INFO] -------------------------- jpack start packing... -------------------------
                              __                          __
                             |__|______  _____     ____  |  | __
@@ -91,7 +91,7 @@ openjdk                        8-jdk-alpine        a3562aa0b991        6 days ag
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            <version>1.3.1</version>
+            <version>1.3.2</version>
             <executions>
                 <execution>
                     <goals>
@@ -118,6 +118,7 @@ openjdk                        8-jdk-alpine        a3562aa0b991        6 days ag
   - `start.bat`: 启动服务的可执行脚本
   - `stop.bat`: 停止服务的可执行脚本
   - `restart.bat`: 重启服务的可执行脚本
+  - `status.bat`: 查看服务运行状态的可执行脚本
   - `web-demo-1.0.0.exe`: 可执行的二进制文件，可不用管
   - `web-demo-1.0.0.exe.config`: 也可不用管
   - `web-demo-1.0.0.xml`: 服务执行相关的配置文件，一般情况下不需要修改
@@ -129,7 +130,7 @@ openjdk                        8-jdk-alpine        a3562aa0b991        6 days ag
 
 **注意事项**：
 
-- 5个 `.bat` 可执行脚本，请以管理员的身份运行，；
+- 6 个 `.bat` 可执行脚本，请以管理员的身份运行；
 - 请先执行 `install.bat` 来安装为 `windows` 服务，安装服务只需要执行一次即可，以后就可以通过 `Windows` 服务界面来启动了，且默认是开机自启动；
 - `bin` 目录下的文件不要移动，各文件的文件名无特殊情况也不要修改；
 - 命令运行时，可能会提示安装 `.NET`, 安装完成就可运行命令了，不过现在大部分的 Windows 服务器或者个人电脑都会默认安装了 `.NET`, 没有的话启用一下就好了;
@@ -142,6 +143,7 @@ openjdk                        8-jdk-alpine        a3562aa0b991        6 days ag
   - `start.sh`: 启动服务的 shell 脚本
   - `stop.sh`: 停止服务的 shell 脚本
   - `restart.sh`: 重启服务的 shell 脚本
+  - `status.sh`: 查看服务运行状态的 shell 脚本
 - `config`: 存放 `application.yml` 等配置文件的目录（可自定义复制配置文件到此目录，方便部署时按需修改，SpringBoot 启动时会自动读取）
 - `docs`: 存放文档的目录（可自定义复制文档到此目录，方便部署时查阅文档）
 - `logs`: 存放日志的目录（建议 SpringBoot 的日志存放到 jar 包同级的 logs 目录中）
@@ -150,7 +152,7 @@ openjdk                        8-jdk-alpine        a3562aa0b991        6 days ag
 
 **注意事项**：
 
-- 各个可执行脚本请以 `sh` 命令来执行，如：`sh start.sh`。
+- 各个可执行脚本请以 `bash` 命令来执行，如：`bash start.sh`，或者对 `bin` 目录添加可执行权限（`chmod -R 755 bin`），然后执行 `./start.sh` 即可。
 
 ### Docker
 
@@ -163,7 +165,7 @@ openjdk                        8-jdk-alpine        a3562aa0b991        6 days ag
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            <version>1.3.1</version>
+            <version>1.3.2</version>
             <executions>
                 <execution>
                     <goals>
@@ -537,7 +539,7 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
 <plugin>
     <groupId>com.blinkfox</groupId>
     <artifactId>jpack-maven-plugin</artifactId>
-    <version>1.3.1</version>
+    <version>1.3.2</version>
     <executions>
         <execution>
             <goals>
@@ -640,8 +642,11 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
 
 ## 版本记录
 
+- v1.3.2(2019-09-08)
+  - 新增了 Windows 和 Linux 下查看服务运行状态（`status`）的脚本；
+  - 修改了 Linux 发布包脚本中的 `shell` 声明为 `bash`；
 - v1.3.1(2019-08-21)
-  - 修改默认构建的 `Dockerfile` 从 `target` 目录下读取 jar 包；
+  - 修改了默认构建的 `Dockerfile` 从 `target` 目录下读取 jar 包；
 - v1.3.0(2019-06-04)
   - 修改了 jpack 默认的 Dockerfile 的一些指令为从配置文件读取；
   - 新增了 `fromImage`, `expose`, `volumes`, `customCommands` 4项 jpack 默认提供的 Dockerfile 的指令配置；
