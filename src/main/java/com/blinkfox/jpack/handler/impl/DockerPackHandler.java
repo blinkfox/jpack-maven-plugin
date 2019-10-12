@@ -18,12 +18,14 @@ import com.spotify.docker.client.messages.RegistryAuth;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.io.RawInputStreamFacade;
@@ -118,6 +120,9 @@ public class DockerPackHandler extends AbstractPackHandler {
         try {
             this.dockerClient = DefaultDockerClient.fromEnv().build();
             this.dockerClient.ping();
+
+            // 初始化 ~/.dockercfg 文件，防止进行授权时报文件找不到的异常！
+            this.initDockercfgFile();
         } catch (Exception e) {
             throw new DockerPackException(ExceptionEnum.NO_DOCKER.getMsg(), e);
         }
@@ -224,19 +229,14 @@ public class DockerPackHandler extends AbstractPackHandler {
      * 推送像 Docker 镜像到远程仓库.
      */
     private void pushImage() {
-        // 初始化 ~/.dockercfg 文件，防止进行授权时报文件找不到的异常！
-        this.initDockercfgFile();
+        // 校验推送的授权是否合法，不合法就不能推送.
+        Pair<RegistryAuth, Integer> authPair = this.validRegistryAuth();
+        if (authPair.getRight() != SUCC_CODE) {
+            Logger.warn("校验 registry 授权不通过，不能推送镜像到远程镜像仓库中.");
+            return;
+        }
 
-        // 构建 Registry 授权对象实例，并做校验.
-        Logger.info("正在校验推送镜像时需要的 registry 授权是否合法...");
         try {
-            RegistryAuth auth = RegistryAuth.fromDockerConfig().build();
-            int statusCode = dockerClient.auth(auth);
-            if (statusCode != SUCC_CODE) {
-                Logger.warn("校验 registry 授权不通过，不能推送镜像到远程镜像仓库中.");
-                return;
-            }
-
             // 判断 registry 是否配置，如果没有配置就认为默认推送到 dockerhub,就不需要打标签，
             // 否则就需要打含 `registry` 前缀的标签.
             String registry = super.packInfo.getDocker().getRegistry();
@@ -244,10 +244,30 @@ public class DockerPackHandler extends AbstractPackHandler {
 
             // 推送镜像到远程镜像仓库中.
             Logger.info("正在推送标签为【" + imageTagName + "】的镜像到远程仓库中...");
-            dockerClient.push(imageTagName, this::printProgress, auth);
+            dockerClient.push(imageTagName, this::printProgress, authPair.getLeft());
             Logger.info("推送标签为【" + imageTagName + "】的镜像到远程仓库中成功.");
         } catch (Exception e) {
             throw new DockerPackException(ExceptionEnum.DOCKER_PUSH_EXCEPTION.getMsg(), e);
+        }
+    }
+
+    /**
+     * 校验 registry 授权是否合法.
+     *
+     * @return RegistryAuth 和校验结果
+     */
+    private Pair<RegistryAuth, Integer> validRegistryAuth() {
+        // 构建 Registry 授权对象实例，并做校验.
+        Logger.info("正在校验推送镜像时需要的 registry 授权是否合法...");
+
+        // 从 Docker 环境中获取配置授权信息，并校验.
+        RegistryAuth auth = null;
+        try {
+            auth = RegistryAuth.fromDockerConfig().build();
+            return Pair.of(null, dockerClient.auth(auth));
+        } catch (Exception e) {
+            Logger.error("获取并校验推送镜像的 registry 授权 失败！", e);
+            return Pair.of(auth, 0);
         }
     }
 
@@ -380,12 +400,39 @@ public class DockerPackHandler extends AbstractPackHandler {
      * <p>注意：这个操作的目的是防止校验授权时报错.</p>
      */
     private void initDockercfgFile() {
-        File dockercfgFile = new File(System.getProperty("user.home") + File.separator + ".dockercfg");
-        if (!dockercfgFile.exists()) {
-            try {
-                org.apache.commons.io.FileUtils.touch(dockercfgFile);
-            } catch (IOException e) {
-                Logger.error("初始化 ~/.dockercfg 文件失败！", e);
+        // 初始化创建可能用得到的配置文件.
+        String parentPath = System.getProperty("user.home") + File.separator;
+        String dockerCfg = parentPath + ".dockercfg";
+        String configJson = parentPath + ".docker" + File.separator + "config.json";
+        this.initFilesIfNotExists(dockerCfg, configJson);
+
+        // 如果 config.json 文件中的内容是空的，就随便写入一条 JSON 数据，以防止报错.
+        File configFile = new File(configJson);
+        try {
+            String content = org.apache.commons.io.FileUtils.readFileToString(configFile, StandardCharsets.UTF_8);
+            if (StringUtils.isBlank(content)) {
+                org.apache.commons.io.FileUtils.writeByteArrayToFile(configFile,
+                        "{\"credsStore\":\"wincred\"}".getBytes(StandardCharsets.UTF_8));
+            }
+        } catch (IOException e) {
+            Logger.error("读取或写入文件内容到 ~/.docker/config.json 中出错！", e);
+        }
+    }
+
+    /**
+     * 初始化创建一些可能需要的不存在的文件文件.
+     *
+     * @param paths 多个文件路径
+     */
+    private void initFilesIfNotExists(String... paths) {
+        for (String path : paths) {
+            File file = new File(path);
+            if (!file.exists()) {
+                try {
+                    org.apache.commons.io.FileUtils.touch(file);
+                } catch (IOException e) {
+                    Logger.error("初始化创建【" + path + "】文件失败！", e);
+                }
             }
         }
     }
