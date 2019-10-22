@@ -56,6 +56,12 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
     private File targetDir;
 
     /**
+     * Maven 运行时是否清理 target 目录.
+     */
+    @Parameter(defaultValue = "false", required = true)
+    private Boolean cleanTargetDir;
+
+    /**
      * Maven 项目的 `groupId`.
      */
     @Parameter(defaultValue = "${project.groupId}", required = true)
@@ -202,7 +208,7 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
     private File createHomeDir() {
         File file = new File(this.targetDir + File.separator + HOME_DIR_NAME + File.separator);
         try {
-            if (file.exists()) {
+            if (file.exists() && this.cleanTargetDir) {
                 FileUtils.cleanDirectory(file);
             } else {
                 FileUtils.forceMkdir(file);
