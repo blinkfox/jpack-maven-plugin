@@ -4,7 +4,7 @@
 
     <groupId>com.blinkfox</groupId>
     <artifactId>jpack-maven-plugin</artifactId>
-    <version>1.3.3</version>
+    <version>1.3.4-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>jpack-maven-plugin</name>
