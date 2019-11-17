@@ -13,6 +13,19 @@ APPLICATION="${name}"
 # 项目启动jar包名称
 APPLICATION_JAR="${jarName}"
 
+# 判断该服务是否已经启动，如果已经启动了，就不再重复运行了.
+if [[ -z "$1" ]]
+then
+    pid=`ps ax |grep -i '${jarName}' |grep java | grep -v grep |  awk '{print $1}'`
+else
+    pid=`ps ax |grep -i '${jarName}' |grep java | grep -i 'server.port='''${1}''''| grep -v grep |  awk '{print $1}'`
+fi
+
+if [[ "$pid" ]] ; then
+    echo "监测到 \${APPLICATION} 服务正在运行中，将不再重复启动... [running...]"
+    exit 0;
+fi
+
 # bin目录绝对路径
 BIN_PATH=$(cd `dirname $0`; pwd)
 # 进入bin目录
