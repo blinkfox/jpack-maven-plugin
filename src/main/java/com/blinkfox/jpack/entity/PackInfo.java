@@ -68,6 +68,11 @@ public class PackInfo {
     private SkipErrorEnum skipError;
 
     /**
+     * 执行过程中是否清空之前打包的目录.
+     */
+    private boolean cleanPackDir;
+
+    /**
      * 构建 Windowns 发布包相关的个性化参数配置.
      */
     private Windows windows;
@@ -254,6 +259,15 @@ public class PackInfo {
 
     public PackInfo setSkipError(SkipErrorEnum skipError) {
         this.skipError = skipError;
+        return this;
+    }
+
+    public boolean isCleanPackDir() {
+        return cleanPackDir;
+    }
+
+    public PackInfo setCleanPackDir(boolean cleanPackDir) {
+        this.cleanPackDir = cleanPackDir;
         return this;
     }
 

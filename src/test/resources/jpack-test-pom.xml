@@ -37,6 +37,7 @@
                     <vmOptions>-Xms512m -Xmx1024m</vmOptions>
                     <!-- 所集成的 Java 服务程序运行所需的参数. -->
                     <programArgs></programArgs>
+                    <cleanPackDir>false</cleanPackDir>
                     <!-- 需要复制到部署包中 config 目录下的 yml 或者 .properties 文件的配置文件路径，
                         它的值必须是一个具体的文件，可以是相对路径、绝对路径或网络资源. -->
                     <configFiles>

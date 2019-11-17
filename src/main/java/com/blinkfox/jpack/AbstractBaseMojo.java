@@ -117,6 +117,12 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
     private String skipError;
 
     /**
+     * 执行过程中是否清空之前打包的目录.
+     */
+    @Parameter(property = "cleanPackDir", defaultValue = "true")
+    private String cleanPackDir;
+
+    /**
      * 构建 Docker 发布包相关的参数.
      */
     @Parameter(property = "windows")
@@ -174,6 +180,7 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
      * @return PackInfo 对象实例
      */
     protected PackInfo buildPackInfo() {
+        this.cleanPackDir = StringUtils.isBlank(this.cleanPackDir) ? Boolean.TRUE.toString() : this.cleanPackDir;
         PackInfo packInfo = new PackInfo()
                 .setTargetDir(this.targetDir)
                 .setHomeDir(this.createHomeDir())
@@ -185,6 +192,7 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
                 .setProgramArgs(this.programArgs)
                 .setConfigFiles(this.configFiles)
                 .setSkipError(SkipErrorEnum.of(this.skipError))
+                .setCleanPackDir(Boolean.TRUE.equals(Boolean.valueOf(this.cleanPackDir)))
                 .setWindows(this.windows)
                 .setLinux(this.linux)
                 .setDocker(this.initDefaultDockerInfo())
@@ -200,17 +208,22 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
      * @return jpack 目录的 file 对象
      */
     private File createHomeDir() {
-        File file = new File(this.targetDir + File.separator + HOME_DIR_NAME + File.separator);
+        File homeDir = new File(this.targetDir + File.separator + HOME_DIR_NAME + File.separator);
         try {
-            if (file.exists()) {
-                FileUtils.cleanDirectory(file);
-            } else {
-                FileUtils.forceMkdir(file);
+            // 如果主文件夹不存在，就创建一个新文件目录.
+            if (!homeDir.exists()) {
+                FileUtils.forceMkdir(homeDir);
+                return homeDir;
+            }
+
+            // 如果文件夹存在，且配置了清除主目录的配置（默认不配置的话，视为清除），就清空目录.
+            if (Boolean.TRUE.equals(Boolean.valueOf(this.cleanPackDir))) {
+                FileUtils.cleanDirectory(homeDir);
             }
         } catch (IOException e) {
-            Logger.error("创建 jpack 文件夹失败！请检查其中是否有文件正在使用! ", e);
+            Logger.error("创建或清空 jpack 文件夹【" + homeDir.getAbsolutePath() + "】失败！请检查其中是否有文件正在使用! ", e);
         }
-        return file;
+        return homeDir;
     }
 
     /**
