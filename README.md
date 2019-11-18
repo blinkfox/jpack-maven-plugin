@@ -1,6 +1,6 @@
 # jpack-maven-plugin
 
-[![HitCount](http://hits.dwyl.io/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin) [![Build Status](https://secure.travis-ci.org/blinkfox/jpack-maven-plugin.svg)](https://travis-ci.org/blinkfox/jpack-maven-plugin) [![GitHub license](https://img.shields.io/github/license/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin/blob/master/LICENSE) [![codecov](https://codecov.io/gh/blinkfox/jpack-maven-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/blinkfox/jpack-maven-plugin) ![Java Version](https://img.shields.io/badge/Java-%3E%3D%208-blue.svg) [![Maven Central](https://img.shields.io/maven-central/v/com.blinkfox/jpack-maven-plugin.svg)](https://search.maven.org/artifact/com.blinkfox/jpack-maven-plugin/1.3.3/maven-plugin) [![Javadocs](https://img.shields.io/badge/javadoc-1.3.3-brightgreen.svg)](https://www.javadoc.io/doc/com.blinkfox/jpack-maven-plugin/1.3.3)
+[![HitCount](http://hits.dwyl.io/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin) [![Build Status](https://secure.travis-ci.org/blinkfox/jpack-maven-plugin.svg)](https://travis-ci.org/blinkfox/jpack-maven-plugin) [![GitHub license](https://img.shields.io/github/license/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin/blob/master/LICENSE) [![codecov](https://codecov.io/gh/blinkfox/jpack-maven-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/blinkfox/jpack-maven-plugin) ![Java Version](https://img.shields.io/badge/Java-%3E%3D%208-blue.svg) [![Maven Central](https://img.shields.io/maven-central/v/com.blinkfox/jpack-maven-plugin.svg)](https://search.maven.org/artifact/com.blinkfox/jpack-maven-plugin/1.3.4/maven-plugin) [![Javadocs](https://img.shields.io/badge/javadoc-1.3.4-brightgreen.svg)](https://www.javadoc.io/doc/com.blinkfox/jpack-maven-plugin/1.3.4)
 
 > 这是一个用于对 SpringBoot 服务打包为 Windows、Linux 和 Docker 下可发布部署包的 Maven 插件。
 
@@ -29,7 +29,7 @@
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            <version>1.3.3</version>
+            <version>1.3.4</version>
         </plugin>
     </plugins>
 </build>
@@ -46,7 +46,7 @@ mvn clean package jpack:build
 然后，执行成功之后，你将在 Maven 控制台看到如下输出：
 
 ```bash
-[INFO] --- jpack-maven-plugin:1.3.3:build (default-cli) @ web-demo ---
+[INFO] --- jpack-maven-plugin:1.3.4:build (default-cli) @ web-demo ---
 [INFO] -------------------------- jpack start packing... -------------------------
                              __                          __
                             |__|______  _____     ____  |  | __
@@ -91,7 +91,7 @@ openjdk                        8-jdk-alpine        a3562aa0b991        6 days ag
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            <version>1.3.3</version>
+            <version>1.3.4</version>
             <executions>
                 <execution>
                     <goals>
@@ -165,7 +165,7 @@ openjdk                        8-jdk-alpine        a3562aa0b991        6 days ag
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            <version>1.3.3</version>
+            <version>1.3.4</version>
             <executions>
                 <execution>
                     <goals>
@@ -539,7 +539,7 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
 <plugin>
     <groupId>com.blinkfox</groupId>
     <artifactId>jpack-maven-plugin</artifactId>
-    <version>1.3.3</version>
+    <version>1.3.4</version>
     <executions>
         <execution>
             <goals>
@@ -642,28 +642,31 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
 
 ## 版本记录
 
-- v1.3.3(2019-10-12)
+- v1.3.4 (2019-11-18)
+  - 新增了是否清除之前的打包目录的配置项；
+  - 新增了在 `start.sh` 脚本中对是否已经启动了本服务的判断；
+- v1.3.3 (2019-10-12)
   - 升级了相关包的依赖；
-- v1.3.2(2019-09-08)
+- v1.3.2 (2019-09-08)
   - 新增了 Windows 和 Linux 下查看服务运行状态（`status`）的脚本；
   - 修改了 Linux 发布包脚本中的 `shell` 声明为 `bash`；
-- v1.3.1(2019-08-21)
+- v1.3.1 (2019-08-21)
   - 修改了默认构建的 `Dockerfile` 从 `target` 目录下读取 jar 包；
-- v1.3.0(2019-06-04)
+- v1.3.0 (2019-06-04)
   - 修改了 jpack 默认的 Dockerfile 的一些指令为从配置文件读取；
   - 新增了 `fromImage`, `expose`, `volumes`, `customCommands` 4项 jpack 默认提供的 Dockerfile 的指令配置；
-- v1.2.1(2019-06-01)
+- v1.2.1 (2019-06-01)
   - 修改了 `configFile` 改为了 `configFiles`，支持配置多个配置文件地址；
   - 新增了推送到自定义仓库时的打标签功能；
-- v1.2.0(2019-05-22)
+- v1.2.0 (2019-05-22)
   - 修复了 Windows 下的 SpringBoot 配置文件不生效的问题；
   - 新增了 `configFile` 的配置支持；
   - 新增了自定义 Windows、Linux、Docker 下的一些通用配置为平台专属配置；
   - 修复了默认 `Dockerfile` 构建的镜像容器时间不对的问题；
-- v1.1.0(2019-05-18)
+- v1.1.0 (2019-05-18)
   - 新增了 Docker 平台下的构建、部署包导出、推送镜像等；
   - 新增了一些配置参数；
   - 完善文档说明；
-- v1.0.0(2019-05-07)
+- v1.0.0 (2019-05-07)
   - 基础功能完成；
   - 支持打包为 Windows 和 Linux 下的部署包；
