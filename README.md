@@ -333,6 +333,10 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 </plugin>
 ```
 
+### cleanPackDir
+
+表示执行打包命令是否清除之前生成的发布包数据，默认清除（`true`），可配置为 `false`。
+
 ### copyResources
 
 系统发布时，发布包中必然会有很多除了 `xxx.jar` 之外的其他文件，如：数据库脚本、配置文件、文档手册等等，这些也需要集成到发布包中。为了统一管理和维护，所以通过 `copyResources` 配置项，可以复制你项目中几乎所有你想要的目录、文件或者网络资源等到发布包及发布包里的自定义的目录中。
@@ -564,6 +568,7 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
         <!-- 遇到错误时是否跳过错误，目前仅Docker 下有用到此配置。默认是不填写或者 default，程序会自动处理，不需要你额外关注；
             true的话，会忽略所有异常；false的话，遇到错误就直接报错。 -->
         <skipError>default</skipError>
+        <cleanPackDir>true</cleanPackDir>
         <windows>
             ...
         </windows>
