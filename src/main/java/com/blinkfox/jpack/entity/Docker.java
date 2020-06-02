@@ -4,9 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 构建 Docker 发布包相关的参数实体，继承自 BaseConfig.
+ * 构建 Docker 发布包相关的参数实体，继承自 {@link BaseConfig}.
  *
- * @author blinkfox on 2019/5/9.
+ * @author blinkfox on 2019-05-09.
+ * @since v1.1.0
  */
 @Getter
 @Setter

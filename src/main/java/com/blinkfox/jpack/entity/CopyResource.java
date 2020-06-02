@@ -1,10 +1,16 @@
 package com.blinkfox.jpack.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 某个复制资源相关属性的实体类.
  *
  * @author blinkfox on 2019-05-03.
+ * @since v1.0.0
  */
+@Getter
+@Setter
 public class CopyResource {
 
     /**
@@ -16,23 +22,5 @@ public class CopyResource {
      * 要复制到哪里的资源路径，只能是目录.
      */
     private String to;
-
-    /* getter and setter methods */
-
-    void setFrom(String from) {
-        this.from = from;
-    }
-
-    void setTo(String to) {
-        this.to = to;
-    }
-
-    public String getFrom() {
-        return from;
-    }
-
-    public String getTo() {
-        return to;
-    }
 
 }

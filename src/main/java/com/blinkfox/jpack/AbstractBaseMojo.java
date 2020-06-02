@@ -8,10 +8,8 @@ import com.blinkfox.jpack.entity.PackInfo;
 import com.blinkfox.jpack.entity.Windows;
 import com.blinkfox.jpack.utils.Logger;
 import com.blinkfox.jpack.utils.TimeKit;
-
 import java.io.File;
 import java.io.IOException;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -19,9 +17,10 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * 基础 Mojo 需要的一些公共属性和方法等.
+ * 基础 Mojo 需要的一些公共属性和方法等，继承自 {@link AbstractMojo}.
  *
  * @author blinkfox on 2019-05-13.
+ * @since v1.0.0
  */
 public abstract class AbstractBaseMojo extends AbstractMojo {
 
@@ -32,7 +31,7 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
             + "                            |  |\\____ \\ \\__  \\  _/ ___\\ |  |/ /\n"
             + "                            |  ||  |_> > / __ \\_\\  \\___ |    < \n"
             + "                        /\\__|  ||   __/ (____  / \\___  >|__|_ \\\n"
-            + "                        \\______||__|         \\/      \\/      \\/\n";
+            + "                        \\______||__|         \\/      \\/      \\/ v1.4.0\n";
 
     /**
      * 用来存放 jpack 打包时的文件夹名称常量.
@@ -255,6 +254,7 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
     }
 
     /* getter and setter methods. */
+    // TODO 待修改 getter 和 setter.
 
     void setTargetDir(File targetDir) {
         this.targetDir = targetDir;

@@ -1,23 +1,22 @@
 package com.blinkfox.jpack.utils;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.maven.plugin.logging.Log;
 
 /**
  * 日志工具类.
  *
  * @author blinkfox on 2019-05-01.
+ * @since v1.0.0
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Logger {
 
     /**
      * maven 的日志对象.
      */
     private static Log log;
-
-    /**
-     * 私有构造方法.
-     */
-    private Logger() {}
 
     /**
      * 初始化设置日志对象，必须初始化才行，且最好保证只初始化一次.

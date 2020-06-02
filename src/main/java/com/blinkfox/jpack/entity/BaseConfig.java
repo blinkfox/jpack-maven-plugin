@@ -1,10 +1,16 @@
 package com.blinkfox.jpack.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 基础配置信息.
  *
- * @author blinkfox on 2019/5/21.
+ * @author blinkfox on 2019-05-21.
+ * @since v1.2.0
  */
+@Getter
+@Setter
 public class BaseConfig {
 
     /**
@@ -31,47 +37,5 @@ public class BaseConfig {
      * 需要排除（即不生成）的文件或目录.
      */
     private String[] excludeFiles;
-
-    /* 以下是 getter 和 setter 方法. */
-
-    public String getVmOptions() {
-        return vmOptions;
-    }
-
-    public void setVmOptions(String vmOptions) {
-        this.vmOptions = vmOptions;
-    }
-
-    public String getProgramArgs() {
-        return programArgs;
-    }
-
-    public void setProgramArgs(String programArgs) {
-        this.programArgs = programArgs;
-    }
-
-    public String[] getConfigFiles() {
-        return configFiles;
-    }
-
-    public void setConfigFiles(String[] configFiles) {
-        this.configFiles = configFiles;
-    }
-
-    public CopyResource[] getCopyResources() {
-        return copyResources;
-    }
-
-    public void setCopyResources(CopyResource[] copyResources) {
-        this.copyResources = copyResources;
-    }
-
-    public String[] getExcludeFiles() {
-        return excludeFiles;
-    }
-
-    public void setExcludeFiles(String[] excludeFiles) {
-        this.excludeFiles = excludeFiles;
-    }
 
 }

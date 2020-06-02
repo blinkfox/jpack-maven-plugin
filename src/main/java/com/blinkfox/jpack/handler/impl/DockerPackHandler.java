@@ -15,7 +15,6 @@ import com.spotify.docker.client.DefaultDockerClient;
 import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.messages.ProgressMessage;
 import com.spotify.docker.client.messages.RegistryAuth;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +23,6 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.plexus.util.FileUtils;
@@ -34,7 +32,8 @@ import org.codehaus.plexus.util.io.RawInputStreamFacade;
 /**
  * Docker 下的构建、打包的处理器实现类.
  *
- * @author blinkfox on 2019/5/9.
+ * @author blinkfox on 2019-05-09.
+ * @since v1.1.0
  */
 public class DockerPackHandler extends AbstractPackHandler {
 
@@ -46,7 +45,7 @@ public class DockerPackHandler extends AbstractPackHandler {
     /**
      * 正确情况下的编码.
      */
-    private static final int SUCC_CODE = 200;
+    private static final int SUCCESS_CODE = 200;
 
     /**
      * Docker 客户端.
@@ -183,7 +182,7 @@ public class DockerPackHandler extends AbstractPackHandler {
      */
     private void saveImage() {
         try {
-            String imageTar =  super.packInfo.getDocker().getImageTarName() + ".tar";
+            String imageTar = super.packInfo.getDocker().getImageTarName() + ".tar";
             Logger.info("正在导出 Docker 镜像包: " + imageTar + " ...");
             // 导出镜像为 `.tar` 文件.
             try (InputStream imageInput = dockerClient.save(this.imageName)) {
@@ -192,7 +191,7 @@ public class DockerPackHandler extends AbstractPackHandler {
             }
             Logger.info("从 Docker 中导出镜像包 " + imageTar + " 成功.");
             this.handleFilesAndCompress();
-        } catch (Exception  e) {
+        } catch (Exception e) {
             throw new DockerPackException(ExceptionEnum.DOCKER_SAVE_EXCEPTION.getMsg(), e);
         }
     }
@@ -232,7 +231,7 @@ public class DockerPackHandler extends AbstractPackHandler {
     private void pushImage() {
         // 校验推送的授权是否合法，不合法就不能推送.
         Pair<RegistryAuth, Integer> authPair = this.validRegistryAuth();
-        if (authPair.getRight() != SUCC_CODE) {
+        if (authPair.getRight() != SUCCESS_CODE) {
             Logger.warn("校验 registry 授权不通过，不能推送镜像到远程镜像仓库中.");
             return;
         }

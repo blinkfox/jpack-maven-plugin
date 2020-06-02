@@ -2,21 +2,22 @@ package com.blinkfox.jpack.utils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 /**
  * 字符串操作工具类.
  *
- * @author blinkfox on 2019-1-10.
+ * @author blinkfox on 2019-01-10.
+ * @since v1.0.0
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class TimeKit {
 
-    /** 空字符串. */
-    static final String EMPTY = "";
-
     /**
-     * 私有构造方法.
+     * 空字符串.
      */
-    private TimeKit() {}
+    static final String EMPTY = "";
 
     /**
      * 作为字符串连接各个对象.

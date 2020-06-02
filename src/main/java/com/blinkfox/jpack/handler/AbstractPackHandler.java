@@ -5,14 +5,11 @@ import com.blinkfox.jpack.entity.CopyResource;
 import com.blinkfox.jpack.entity.PackInfo;
 import com.blinkfox.jpack.utils.CompressKit;
 import com.blinkfox.jpack.utils.Logger;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
@@ -27,6 +24,7 @@ import org.codehaus.plexus.util.StringUtils;
  * 各个平台可公用的、抽象的打包处理器抽象类.
  *
  * @author blinkfox on 2019-04-29.
+ * @since v1.0.0
  */
 public abstract class AbstractPackHandler implements PackHandler {
 
@@ -130,7 +128,7 @@ public abstract class AbstractPackHandler implements PackHandler {
     /**
      * 复制基础文件到各平台的主目录中，如：`README.md`.
      *
-     * @param source      源地址
+     * @param source 源地址
      * @param destination 目标地址
      */
     protected void copyFiles(String source, String destination) {

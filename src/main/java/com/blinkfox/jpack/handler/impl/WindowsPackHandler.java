@@ -5,18 +5,17 @@ import com.blinkfox.jpack.entity.PackInfo;
 import com.blinkfox.jpack.handler.AbstractPackHandler;
 import com.blinkfox.jpack.utils.Logger;
 import com.blinkfox.jpack.utils.TemplateKit;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 
 /**
  * Windows 下的打包处理器实现类.
  *
  * @author blinkfox on 2019-04-29.
+ * @since v1.0.0
  */
 public class WindowsPackHandler extends AbstractPackHandler {
 

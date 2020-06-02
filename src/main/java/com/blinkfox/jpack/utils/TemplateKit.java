@@ -3,7 +3,8 @@ package com.blinkfox.jpack.utils;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.beetl.core.Configuration;
 import org.beetl.core.GroupTemplate;
 import org.beetl.core.Template;
@@ -14,10 +15,10 @@ import org.codehaus.plexus.util.FileUtils;
  * 模板生成工具类，这里使用高性能的 beetl 来输出模板.
  *
  * @author blinkfox on 2019-03-30.
+ * @since v1.0.0
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class TemplateKit {
-
-    private TemplateKit() {}
 
     /**
      * Beetl 的 GroupTemplate 模版.

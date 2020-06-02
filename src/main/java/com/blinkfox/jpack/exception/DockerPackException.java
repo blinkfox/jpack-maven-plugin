@@ -4,6 +4,7 @@ package com.blinkfox.jpack.exception;
  * Docker 构建、打包等过程中的异常.
  *
  * @author blinkfox on 2019-05-13.
+ * @since v1.1.0
  */
 public class DockerPackException extends RuntimeException {
 

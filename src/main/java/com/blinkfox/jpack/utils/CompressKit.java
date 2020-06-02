@@ -9,7 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.Zip64Mode;
@@ -22,13 +23,10 @@ import org.apache.commons.compress.utils.IOUtils;
  * 压缩工具类.
  *
  * @author blinkfox on 2019-04-23.
+ * @since v1.0.0
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CompressKit {
-
-    /**
-     * 私有构造方法.
-     */
-    private CompressKit() {}
 
     /**
      * 压缩文件夹为 zip 格式.
@@ -68,7 +66,7 @@ public final class CompressKit {
     /**
      * 文件名处理.
      *
-     * @param dir  文件夹
+     * @param dir 文件夹
      * @param path 路径
      * @return 文件名
      */

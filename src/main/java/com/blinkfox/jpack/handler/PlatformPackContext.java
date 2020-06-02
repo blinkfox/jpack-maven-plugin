@@ -6,7 +6,6 @@ import com.blinkfox.jpack.handler.impl.DockerPackHandler;
 import com.blinkfox.jpack.handler.impl.LinuxPackHandler;
 import com.blinkfox.jpack.handler.impl.WindowsPackHandler;
 import com.blinkfox.jpack.utils.Logger;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -14,7 +13,6 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -22,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
  * 各平台下打包的上下文处理器类.
  *
  * @author blinkfox on 2019-05-03.
+ * @since v1.0.0
  */
 public class PlatformPackContext {
 

@@ -2,14 +2,20 @@ package com.blinkfox.jpack.entity;
 
 import com.blinkfox.jpack.consts.PlatformEnum;
 import com.blinkfox.jpack.consts.SkipErrorEnum;
-
 import java.io.File;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * 在各个平台打包时所需要封装的参数信息的实体类.
  *
  * @author blinkfox on 2019-04-28.
+ * @since v1.0.0
  */
+@Getter
+@Setter
+@Accessors(chain = true)
 public class PackInfo {
 
     /**
@@ -168,152 +174,6 @@ public class PackInfo {
                 + ", programArgs: '" + this.programArgs + '\''
                 + ", skipError: '" + this.skipError + '\''
                 + '}';
-    }
-
-    /* 以下是 getter 和 setter 方法. */
-
-    public File getTargetDir() {
-        return targetDir;
-    }
-
-    public PackInfo setTargetDir(File targetDir) {
-        this.targetDir = targetDir;
-        return this;
-    }
-
-    public File getHomeDir() {
-        return homeDir;
-    }
-
-    public PackInfo setHomeDir(File homeDir) {
-        this.homeDir = homeDir;
-        return this;
-    }
-
-    public String getArtifactId() {
-        return artifactId;
-    }
-
-    public PackInfo setArtifactId(String artifactId) {
-        this.artifactId = artifactId;
-        return this;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public PackInfo setVersion(String version) {
-        this.version = version;
-        return this;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public PackInfo setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public String getDescription() {
-        return this.description;
-    }
-
-    public PackInfo setDescription(String description) {
-        this.description = description;
-        return this;
-    }
-
-    public String getVmOptions() {
-        return this.vmOptions;
-    }
-
-    public PackInfo setVmOptions(String vmOptions) {
-        this.vmOptions = vmOptions;
-        return this;
-    }
-
-    public String getProgramArgs() {
-        return this.programArgs;
-    }
-
-    public PackInfo setProgramArgs(String programArgs) {
-        this.programArgs = programArgs;
-        return this;
-    }
-
-    public String[] getConfigFiles() {
-        return configFiles;
-    }
-
-    public PackInfo setConfigFiles(String[] configFiles) {
-        this.configFiles = configFiles;
-        return this;
-    }
-
-    public SkipErrorEnum getSkipError() {
-        return skipError;
-    }
-
-    public PackInfo setSkipError(SkipErrorEnum skipError) {
-        this.skipError = skipError;
-        return this;
-    }
-
-    public boolean isCleanPackDir() {
-        return cleanPackDir;
-    }
-
-    public PackInfo setCleanPackDir(boolean cleanPackDir) {
-        this.cleanPackDir = cleanPackDir;
-        return this;
-    }
-
-    public Windows getWindows() {
-        return windows;
-    }
-
-    public PackInfo setWindows(Windows windows) {
-        this.windows = windows;
-        return this;
-    }
-
-    public Linux getLinux() {
-        return linux;
-    }
-
-    public PackInfo setLinux(Linux linux) {
-        this.linux = linux;
-        return this;
-    }
-
-    public Docker getDocker() {
-        return docker;
-    }
-
-    public PackInfo setDocker(Docker docker) {
-        this.docker = docker;
-        return this;
-    }
-
-    public String[] getExcludeFiles() {
-        return excludeFiles;
-    }
-
-    public PackInfo setExcludeFiles(String[] excludeFiles) {
-        this.excludeFiles = excludeFiles;
-        return this;
-    }
-
-    public CopyResource[] getCopyResources() {
-        return copyResources;
-    }
-
-    public PackInfo setCopyResources(CopyResource[] copyResources) {
-        this.copyResources = copyResources;
-        return this;
     }
 
 }
