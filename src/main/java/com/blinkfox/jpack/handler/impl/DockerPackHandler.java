@@ -6,6 +6,7 @@ import com.blinkfox.jpack.consts.PlatformEnum;
 import com.blinkfox.jpack.consts.SkipErrorEnum;
 import com.blinkfox.jpack.entity.Docker;
 import com.blinkfox.jpack.entity.PackInfo;
+import com.blinkfox.jpack.entity.RegistryUser;
 import com.blinkfox.jpack.exception.DockerPackException;
 import com.blinkfox.jpack.handler.AbstractPackHandler;
 import com.blinkfox.jpack.utils.Logger;
@@ -245,7 +246,7 @@ public class DockerPackHandler extends AbstractPackHandler {
             // 推送镜像到远程镜像仓库中.
             Logger.info("正在推送标签为【" + imageTagName + "】的镜像到远程仓库中...");
             dockerClient.push(imageTagName, this::printProgress, authPair.getLeft());
-            Logger.info("推送标签为【" + imageTagName + "】的镜像到远程仓库中成功.");
+            Logger.info("推送标签为【" + imageTagName + "】的镜像到远程仓库完成.");
         } catch (Exception e) {
             throw new DockerPackException(ExceptionEnum.DOCKER_PUSH_EXCEPTION.getMsg(), e);
         }
@@ -259,16 +260,57 @@ public class DockerPackHandler extends AbstractPackHandler {
     private Pair<RegistryAuth, Integer> validRegistryAuth() {
         // 构建 Registry 授权对象实例，并做校验.
         Logger.info("正在校验推送镜像时需要的 registry 授权是否合法...");
+        RegistryUser registryUser = super.packInfo.getDocker().getRegistryUser();
 
         // 从 Docker 环境中获取配置授权信息，并校验.
         RegistryAuth auth = null;
         try {
-            auth = RegistryAuth.fromDockerConfig().build();
-            return Pair.of(null, dockerClient.auth(auth));
+            String username;
+            String password;
+            if (registryUser != null
+                    && StringUtils.isNotBlank(username = registryUser.getUsername())
+                    && StringUtils.isNotBlank(password = registryUser.getPassword())) {
+                RegistryAuth.Builder builder = RegistryAuth.builder().username(username).password(password);
+                this.setRegistryAuthServerAddress(builder, registryUser.getServerAddress());
+                if (StringUtils.isNotBlank(registryUser.getEmail())) {
+                    builder.email(registryUser.getEmail());
+                }
+
+                if (StringUtils.isNotBlank(registryUser.getIdentityToken())) {
+                    builder.identityToken(registryUser.getIdentityToken());
+                }
+                auth = builder.build();
+            } else {
+                auth = RegistryAuth.fromDockerConfig().build();
+            }
+            return Pair.of(auth, dockerClient.auth(auth));
         } catch (Exception e) {
             Logger.error("获取并校验推送镜像的 registry 授权 失败！", e);
             return Pair.of(auth, 0);
         }
+    }
+
+    /**
+     * 设置推送镜像到远程仓库的服务地址信息.
+     *
+     * @param builder RegistryAuth 的构建器对象
+     * @param serverAddress 配置在 {@code registryUser} 中的远程镜像仓库的服务地址
+     * @author blinkfox on 2020-06-03
+     * @since v1.4.0
+     */
+    private void setRegistryAuthServerAddress(RegistryAuth.Builder builder, String serverAddress) {
+        if (StringUtils.isNotBlank(serverAddress)) {
+            builder.serverAddress(serverAddress);
+            return;
+        }
+
+        // 如果 serverAddress 中未配置服务地址信息，就使用 registry 中的信息.
+        String registry = super.packInfo.getDocker().getRegistry();
+        if (StringUtils.isBlank(registry)) {
+            Logger.warn("【jpack -> '推送镜像' -> 警示】检测到推送镜像时，你未配置【registry】的服务地址信息.");
+            return;
+        }
+        builder.serverAddress(registry);
     }
 
     /**
@@ -290,7 +332,7 @@ public class DockerPackHandler extends AbstractPackHandler {
         this.initDockerfileAndJar();
         this.buildImage();
 
-        // 如果 docker 的配置信息为空，则直接视为指构建镜像.
+        // 如果 docker 的配置信息为空，则直接视为只构建镜像.
         String[] goalTypes;
         Docker dockerInfo = super.packInfo.getDocker();
         if (dockerInfo == null || (goalTypes = dockerInfo.getExtraGoals()) == null || goalTypes.length == 0) {

@@ -47,7 +47,7 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
     /**
      * 默认需要挂载出来的数据卷字符串数组常量.
      */
-    private static final String[] DEFAULT_VOLUMES = new String[] {"/tmp", "logs"};
+    private static final String[] DEFAULT_VOLUMES = new String[] {"/tmp", "/logs"};
 
     /**
      * Maven 运行时的 target 目录的文件对象.

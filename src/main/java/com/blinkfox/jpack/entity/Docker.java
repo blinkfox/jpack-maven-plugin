@@ -1,10 +1,15 @@
 package com.blinkfox.jpack.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 构建 Docker 发布包相关的参数实体，继承自 BaseConfig.
  *
  * @author blinkfox on 2019/5/9.
  */
+@Getter
+@Setter
 public class Docker extends BaseConfig {
 
     /**
@@ -58,6 +63,13 @@ public class Docker extends BaseConfig {
     private String[] extraGoals;
 
     /**
+     * Registry 远程仓库的权限认证信息.
+     *
+     * @since v1.4.0
+     */
+    private RegistryUser registryUser;
+
+    /**
      * 获取镜像的 tar 包的名称.
      *
      * @return 名称字符串
@@ -73,88 +85,6 @@ public class Docker extends BaseConfig {
      */
     public String getImageName() {
         return this.repo + "/" + this.name + ":" + this.tag;
-    }
-
-    /* getter 和 setter 方法. */
-
-    public String getDockerfile() {
-        return dockerfile;
-    }
-
-    public void setDockerfile(String dockerfile) {
-        this.dockerfile = dockerfile;
-    }
-
-    public String getRegistry() {
-        return registry;
-    }
-
-    public void setRegistry(String registry) {
-        this.registry = registry;
-    }
-
-    public String getRepo() {
-        return repo;
-    }
-
-    public void setRepo(String repo) {
-        this.repo = repo;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
-
-    public String getFromImage() {
-        return fromImage;
-    }
-
-    public void setFromImage(String fromImage) {
-        this.fromImage = fromImage;
-    }
-
-    public String getExpose() {
-        return expose;
-    }
-
-    public void setExpose(String expose) {
-        this.expose = expose;
-    }
-
-    public String[] getVolumes() {
-        return volumes;
-    }
-
-    public void setVolumes(String[] volumes) {
-        this.volumes = volumes;
-    }
-
-    public String[] getCustomCommands() {
-        return customCommands;
-    }
-
-    public void setCustomCommands(String[] customCommands) {
-        this.customCommands = customCommands;
-    }
-
-    public String[] getExtraGoals() {
-        return extraGoals;
-    }
-
-    public void setExtraGoals(String[] extraGoals) {
-        this.extraGoals = extraGoals;
     }
 
 }

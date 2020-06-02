@@ -56,7 +56,7 @@
                         <dockerfile> </dockerfile>
                         <!-- 构建镜像的几个基础参数, registry远程仓库地址，不填写默认视为 Dockerhub 的地址;
                             repo不填写则默认为 groupId，name 不填写则默认为 artifactId，tag不填写则默认为 version.-->
-                        <registry>127.0.0.1:5000</registry>
+                        <registry>registry.yourcompany.com:5000</registry>
                         <repo>blinkfox</repo>
                         <name>jpack-test</name>
                         <tag>1.0.0-SNAPSHOT</tag>
@@ -78,8 +78,17 @@
                             目前这里支持导出镜像为 .tar 包(save)和 推送镜像到远程仓库(push) 两种. -->
                         <extraGoals>
                             <param>save</param>
-                            <!--<param>push</param>-->
+<!--                            <param>push</param>-->
                         </extraGoals>
+                        <!-- jpack 推送到远程私有镜像仓库的用户权限认证信息，通常至少需要填写用户名和密码两项信息，
+                            serverAddress 不填写就默认使用 registry. -->
+                        <registryUser>
+                            <username>blinkfox</username>
+                            <password>123456</password>
+                            <email>your-emial-name@gmail.com</email>
+                            <serverAddress> </serverAddress>
+                            <identityToken> </identityToken>
+                        </registryUser>
                     </docker>
                     <excludeFiles>
                         <param>README.md</param>
