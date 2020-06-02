@@ -1,10 +1,15 @@
 package com.blinkfox.jpack.consts;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+
 /**
  * 异常信息标识和提示信息的对应关系枚举类.
  *
  * @author blinkfox on 2019-05-13.
+ * @since v1.1.0
  */
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public enum ExceptionEnum {
 
     /**
@@ -45,16 +50,7 @@ public enum ExceptionEnum {
     /**
      * 异常的描述信息.
      */
-    private String msg;
-
-    /**
-     * 构造方法.
-     *
-     * @param msg 异常的描述信息
-     */
-    ExceptionEnum(String msg) {
-        this.msg = msg;
-    }
+    private final String msg;
 
     /**
      * 获取异常的描述信息值.

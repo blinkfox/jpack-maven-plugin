@@ -2,11 +2,11 @@ package com.blinkfox.jpack.consts;
 
 import com.blinkfox.jpack.entity.BaseConfig;
 import com.blinkfox.jpack.entity.PackInfo;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.ArrayUtils;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -14,7 +14,9 @@ import org.codehaus.plexus.util.StringUtils;
  * 平台的枚举类.
  *
  * @author blinkfox on 2019-05-01.
+ * @since v1.0.0
  */
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public enum PlatformEnum {
 
     /**
@@ -50,16 +52,7 @@ public enum PlatformEnum {
     /**
      * 属性值.
      */
-    private String code;
-
-    /**
-     * 构造方法.
-     *
-     * @param code code值
-     */
-    PlatformEnum(String code) {
-        this.code = code;
-    }
+    private final String code;
 
     /**
      * 根据 platform 的字符串值转换为 PlatformEnum 的值.
@@ -69,7 +62,7 @@ public enum PlatformEnum {
      */
     public static PlatformEnum of(String platform) {
         for (PlatformEnum platformEnum : PlatformEnum.values()) {
-            if (platformEnum.code.equals(platform)) {
+            if (platformEnum.code.equalsIgnoreCase(platform)) {
                 return platformEnum;
             }
         }

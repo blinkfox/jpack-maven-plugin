@@ -1,10 +1,15 @@
 package com.blinkfox.jpack.consts;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+
 /**
  * Docker 构建目标的枚举类.
  *
  * @author blinkfox on 2019-05-14.
+ * @since v1.1.0
  */
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public enum DockerGoalEnum {
 
     /**
@@ -20,16 +25,7 @@ public enum DockerGoalEnum {
     /**
      * 代码值.
      */
-    private String code;
-
-    /**
-     * 构造方法.
-     *
-     * @param code 代码值
-     */
-    DockerGoalEnum(String code) {
-        this.code = code;
-    }
+    private final String code;
 
     /**
      * 根据代码值的字符串找到对应的实例.
