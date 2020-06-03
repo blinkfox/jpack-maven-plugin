@@ -11,6 +11,7 @@ import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * AES 加密工具类.
@@ -71,7 +72,7 @@ public final class AesKit {
             cipher.init(Cipher.ENCRYPT_MODE, getSecretKeySpec(secretKey), gcmParamSpec);
             return encodeBase64(cipher.doFinal(text.getBytes(StandardCharsets.UTF_8)));
         } catch (Exception e) {
-            throw new EncryptException("【jpack -> '文本加密'】通过 AES 加密原文出错！", e);
+            throw new EncryptException("【文本加密 -> 出错】通过 AES 加密原文出错！", e);
         }
     }
 
@@ -82,7 +83,9 @@ public final class AesKit {
      * @return Base64转码后的加密数据
      */
     public static String decrypt(String text) {
-        return decrypt(DEFAULT_AES_KEY, text);
+        return text.startsWith(ENCRYPT_PREFIX)
+                ? decrypt(DEFAULT_AES_KEY, StringUtils.substring(text, AesKit.ENCRYPT_PREFIX.length()))
+                : text;
     }
 
     /**
@@ -98,7 +101,7 @@ public final class AesKit {
             cipher.init(Cipher.DECRYPT_MODE, getSecretKeySpec(secretKey), gcmParamSpec);
             return new String(cipher.doFinal(decodeBase64(text)), StandardCharsets.UTF_8);
         } catch (Exception e) {
-            throw new EncryptException("【jpack -> '文本解密'】通过 AES 解密密文出错！", e);
+            throw new EncryptException("【文本解密 -> 出错】通过 AES 解密密文出错！", e);
         }
     }
 
@@ -115,7 +118,7 @@ public final class AesKit {
             SecretKey secretKey = kg.generateKey();
             return encodeBase64(secretKey.getEncoded());
         } catch (NoSuchAlgorithmException e) {
-            throw new EncryptException("【jpack -> '生成密钥'】生成 AES 的密钥出错！", e);
+            throw new EncryptException("【生成密钥 -> 出错】生成 AES 的密钥出错！", e);
         }
     }
 

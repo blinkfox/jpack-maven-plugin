@@ -55,11 +55,11 @@ mvn clean package jpack:build
                                 /\__|  ||   __/ (____  / \___  >|__|_ \
                                 \______||__|         \/      \/      \/ v1.4.0
 
-[INFO] 【jpack -> '构建镜像'】将使用 jpack 默认提供的 Dockerfile 文件来构建 Docker 镜像.
-[INFO] 【jpack -> '构建镜像'】正在构建 com.blinkfox/web-demo:1.0.0 镜像...
-[INFO] 【jpack -> '打包完毕'】制作 windows 下的部署压缩包完成.
-[INFO] 【jpack -> '打包完毕'】制作 linux 下的部署压缩包完成.
-[INFO] 【jpack -> '构建完毕'】构建 com.blinkfox/web-demo:1.0.0 镜像完毕，镜像ID: c8f91718f286
+[INFO] 【构建镜像 -> 默认】将使用 jpack 默认提供的 Dockerfile 文件来构建 Docker 镜像.
+[INFO] 【构建镜像 -> 进行】正在构建 com.blinkfox/web-demo:1.0.0 镜像...
+[INFO] 【构建打包 -> 成功】制作 windows 下的部署压缩包完成.
+[INFO] 【构建打包 -> 成功】制作 linux 下的部署压缩包完成.
+[INFO] 【构建镜像 -> 成功】构建 com.blinkfox/web-demo:1.0.0 镜像完毕，镜像ID: c8f91718f286
 [INFO] --------------------- jpack has been packaged to end. [costs: 2.45 s] ---------------------
 ```
 

@@ -73,7 +73,7 @@ public class DockerPackHandler extends AbstractPackHandler {
         try {
             this.doPack();
         } catch (Exception e) {
-            Logger.error("【jpack -> '构建失败'】jpack 执行 Docker 构建失败。\n失败原因：【" + e.getMessage() + "】。");
+            Logger.error("【构建失败 -> 失败】jpack 执行 Docker 构建失败。\nreason:" + e.getMessage());
             throw e;
         } finally {
             this.clean();
@@ -160,9 +160,9 @@ public class DockerPackHandler extends AbstractPackHandler {
     private void buildImage() {
         try {
             this.imageName = super.packInfo.getDocker().getImageName();
-            Logger.info("【jpack -> '构建镜像'】正在构建【" + this.imageName + "】镜像...");
+            Logger.info("【构建镜像 -> 进行】正在构建【" + this.imageName + "】镜像...");
             String imageId = dockerClient.build(Paths.get(super.platformPath), imageName, this::printProgress);
-            Logger.info("【jpack -> '构建完毕'】构建【" + this.imageName + "】镜像完毕，镜像ID: " + imageId);
+            Logger.info("【构建镜像 -> 成功】构建【" + this.imageName + "】镜像完毕，镜像ID: " + imageId);
             FileUtils.deleteDirectory(this.getJpackTargetDir());
         } catch (Exception e) {
             throw new DockerPackException(ExceptionEnum.DOCKER_BUILD_EXCEPTION.getMsg(), e);
@@ -184,13 +184,13 @@ public class DockerPackHandler extends AbstractPackHandler {
     private void saveImage() {
         try {
             String imageTar = super.packInfo.getDocker().getImageTarName() + ".tar";
-            Logger.info("【jpack -> '导出镜像'】正在导出 Docker 镜像包: " + imageTar + " ...");
+            Logger.info("【导出镜像 -> 进行】正在导出 Docker 镜像包: " + imageTar + " ...");
             // 导出镜像为 `.tar` 文件.
             try (InputStream imageInput = dockerClient.save(this.imageName)) {
                 FileUtils.copyStreamToFile(new RawInputStreamFacade(imageInput),
                         new File(super.platformPath + File.separator + imageTar));
             }
-            Logger.info("【jpack -> '导出成功'】从 Docker 中导出镜像包 " + imageTar + " 成功.");
+            Logger.info("【导出镜像 -> 成功】从 Docker 中导出镜像包 " + imageTar + " 成功.");
             this.handleFilesAndCompress();
         } catch (Exception e) {
             throw new DockerPackException(ExceptionEnum.DOCKER_SAVE_EXCEPTION.getMsg(), e);
@@ -219,7 +219,7 @@ public class DockerPackHandler extends AbstractPackHandler {
         try {
             String imageTagName = registry + "/" + this.imageName;
             dockerClient.tag(this.imageName, imageTagName, true);
-            Logger.info("【jpack -> '镜像标签'】已对本次构建的镜像打了标签，标签为：【" + imageTagName + "】.");
+            Logger.info("【镜像标签 -> 成功】已对本次构建的镜像打了标签，标签为：【" + imageTagName + "】.");
             return imageTagName;
         } catch (Exception e) {
             throw new DockerPackException(ExceptionEnum.DOCKER_TAG_EXCEPTION.getMsg(), e);
@@ -233,7 +233,7 @@ public class DockerPackHandler extends AbstractPackHandler {
         // 校验推送的授权是否合法，不合法就不能推送.
         Pair<RegistryAuth, Integer> authPair = this.validRegistryAuth();
         if (authPair.getRight() != SUCCESS_CODE) {
-            Logger.warn("【jpack -> '权限认证'】校验 registry 授权不通过，不能推送镜像到远程镜像仓库中.");
+            Logger.warn("【权限认证 -> 失败】校验 registry 授权不通过，不能推送镜像到远程镜像仓库中.");
             return;
         }
 
@@ -244,9 +244,9 @@ public class DockerPackHandler extends AbstractPackHandler {
             final String imageTagName = StringUtils.isBlank(registry) ? this.imageName : this.tagImage(registry);
 
             // 推送镜像到远程镜像仓库中.
-            Logger.info("【jpack -> '推送镜像'】正在推送标签为【" + imageTagName + "】的镜像到远程仓库中...");
+            Logger.info("【推送镜像 -> 进行】正在推送标签为【" + imageTagName + "】的镜像到远程仓库中...");
             dockerClient.push(imageTagName, this::printProgress, authPair.getLeft());
-            Logger.info("【jpack -> '推送完成'】推送标签为【" + imageTagName + "】的镜像到远程仓库完成.");
+            Logger.info("【推送镜像 -> 成功】推送标签为【" + imageTagName + "】的镜像到远程仓库完成.");
         } catch (Exception e) {
             throw new DockerPackException(ExceptionEnum.DOCKER_PUSH_EXCEPTION.getMsg(), e);
         }
@@ -259,7 +259,7 @@ public class DockerPackHandler extends AbstractPackHandler {
      */
     private Pair<RegistryAuth, Integer> validRegistryAuth() {
         // 构建 Registry 授权对象实例，并做校验.
-        Logger.info("【jpack -> '权限认证'】正在校验推送镜像时需要的 registry 授权是否合法...");
+        Logger.info("【权限认证 -> 进行】正在校验推送镜像时需要的 registry 授权是否合法...");
         RegistryUser registryUser = super.packInfo.getDocker().getRegistryUser();
 
         // 从 Docker 环境中获取配置授权信息，并校验.
@@ -271,8 +271,8 @@ public class DockerPackHandler extends AbstractPackHandler {
                     && StringUtils.isNotBlank(username = registryUser.getUsername())
                     && StringUtils.isNotBlank(password = registryUser.getPassword())) {
                 RegistryAuth.Builder builder = RegistryAuth.builder()
-                        .username(this.decryptIfEncrypt(username))
-                        .password(this.decryptIfEncrypt(password));
+                        .username(AesKit.decrypt(username))
+                        .password(AesKit.decrypt(password));
 
                 this.setRegistryAuthServerAddress(builder, registryUser.getServerAddress());
                 if (StringUtils.isNotBlank(registryUser.getEmail())) {
@@ -288,23 +288,9 @@ public class DockerPackHandler extends AbstractPackHandler {
             }
             return Pair.of(auth, dockerClient.auth(auth));
         } catch (Exception e) {
-            Logger.error("【jpack -> '权限认证'】获取并校验推送镜像的 registry 授权失败！", e);
+            Logger.error("【权限认证 -> 出错】获取并校验推送镜像的 registry 授权出错！", e);
             return Pair.of(auth, 0);
         }
-    }
-
-    /**
-     * 如果密码加过密，那么就解密出加过密的密码为原文，否则就直接返回原字符串即可.
-     *
-     * @param text 待解密的文本
-     * @return 解密后的文本
-     * @author blinkfox on 2020-06-03.
-     * @since v1.4.0
-     */
-    private String decryptIfEncrypt(String text) {
-        return text.startsWith(AesKit.ENCRYPT_PREFIX)
-                ? StringUtils.substring(text, AesKit.ENCRYPT_PREFIX.length())
-                : text;
     }
 
     /**
@@ -324,7 +310,7 @@ public class DockerPackHandler extends AbstractPackHandler {
         // 如果 serverAddress 中未配置服务地址信息，就使用 registry 中的信息.
         String registry = super.packInfo.getDocker().getRegistry();
         if (StringUtils.isBlank(registry)) {
-            Logger.warn("【jpack -> '推送镜像'】检测到推送镜像时，你未配置【registry】的服务地址信息.");
+            Logger.warn("【推送镜像 -> 缺失】检测到推送镜像时，你未配置【registry】的服务地址信息.");
             return;
         }
         builder.serverAddress(registry);
@@ -353,7 +339,7 @@ public class DockerPackHandler extends AbstractPackHandler {
         String[] goalTypes;
         Docker dockerInfo = super.packInfo.getDocker();
         if (dockerInfo == null || (goalTypes = dockerInfo.getExtraGoals()) == null || goalTypes.length == 0) {
-            Logger.debug("【jpack -> '构建目标'】在 jpack 中未配置 docker 额外构建目标类型'goalTypes'的值，只会构建镜像.");
+            Logger.debug("【构建目标 -> 镜像】在 jpack 中未配置 docker 额外构建目标类型'goalTypes'的值，只会构建镜像.");
             return;
         }
 
@@ -368,7 +354,7 @@ public class DockerPackHandler extends AbstractPackHandler {
 
         // 判断配置的目标类型的值是否合法，不合法提示.
         if (goalEnumSet.isEmpty()) {
-            Logger.warn("【jpack -> '构建目标'】在 jpack 中配置 docker 的额外构建目标类型'goalTypes'的值不是 save 或者 push，将忽略后续的构建.");
+            Logger.warn("【构建目标 -> 无效】在 jpack 中配置 docker 的额外构建目标类型'goalTypes'的值不是 save 或者 push，将忽略后续的构建.");
             return;
         }
 
@@ -393,7 +379,7 @@ public class DockerPackHandler extends AbstractPackHandler {
         // 如果未配置 Dockerfile 文件，则默认生成一个简单的 SpringBoot 服务需要的 Dockerfile 文件，用于构建镜像.
         Docker docker = super.packInfo.getDocker();
         if (StringUtils.isBlank(docker.getDockerfile())) {
-            Logger.info("【jpack -> '构建镜像'】将使用 jpack 默认提供的 Dockerfile 文件来构建镜像.");
+            Logger.info("【构建镜像 -> 默认】将使用 jpack 默认提供的 Dockerfile 文件来构建镜像.");
             Map<String, Object> context = super.buildBaseTemplateContextMap();
             context.put("jdkImage", docker.getFromImage());
             context.put("valume", this.buildVolumes(docker.getVolumes()));
@@ -405,7 +391,7 @@ public class DockerPackHandler extends AbstractPackHandler {
         }
 
         // 判断配置的 Dockerfile 文件是否有效.
-        Logger.info("【jpack -> '构建镜像'】开始渲染你自定义的 Dockerfile 文件中的内容.");
+        Logger.info("【构建镜像 -> 渲染】开始渲染你自定义的 Dockerfile 文件中的内容.");
         String dockerFilePath = docker.getDockerfile();
         File dockerFile = new File(super.isRootPath(dockerFilePath) ? DOCKER_FILE : dockerFilePath);
         if (!dockerFile.exists() || dockerFile.isDirectory()) {
@@ -474,7 +460,7 @@ public class DockerPackHandler extends AbstractPackHandler {
                         "{\"credsStore\":\"wincred\"}".getBytes(StandardCharsets.UTF_8));
             }
         } catch (IOException e) {
-            Logger.error("【jpack -> '读取配置'】读取或写入文件内容到 ~/.docker/config.json 中出错！", e);
+            Logger.error("【读取配置 -> 失败】读取或写入文件内容到 ~/.docker/config.json 中出错！", e);
         }
     }
 
@@ -490,7 +476,7 @@ public class DockerPackHandler extends AbstractPackHandler {
                 try {
                     org.apache.commons.io.FileUtils.touch(file);
                 } catch (IOException e) {
-                    Logger.error("【jpack -> '创建文件'】初始化创建【" + path + "】文件失败！", e);
+                    Logger.error("【创建文件 -> 出错】初始化创建【" + path + "】文件出错！", e);
                 }
             }
         }
@@ -512,7 +498,7 @@ public class DockerPackHandler extends AbstractPackHandler {
      * 打印完成信息.
      */
     private void printFinished() {
-        Logger.debug("【jpack -> '构建完毕'】jpack 关于 Docker 的相关构建操作执行完毕.");
+        Logger.debug("【构建结果 -> 完毕】jpack 关于 Docker 的相关构建操作执行完毕.");
     }
 
     /**
@@ -527,7 +513,7 @@ public class DockerPackHandler extends AbstractPackHandler {
             FileUtils.forceDelete(super.platformPath);
         } catch (Exception e) {
             // 这里"静默"删除即可，即时发生异常，也不用打印异常信息.
-            Logger.debug("【jpack -> '删除文件'】删除清除 docker 下的临时文件失败.");
+            Logger.debug("【删除文件 -> 失败】删除清除 docker 下的临时文件失败.");
         }
     }
 

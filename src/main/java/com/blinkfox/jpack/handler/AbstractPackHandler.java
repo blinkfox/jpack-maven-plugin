@@ -75,7 +75,7 @@ public abstract class AbstractPackHandler implements PackHandler {
             // 复制 target 目录中的 jar 包到各平台目录中，复制 application.yml 等文件到 config 目录中.
             this.copyJarAndConfigFile();
         } catch (PlexusContainerException | ComponentLookupException e) {
-            Logger.error("【jpack -> '生成文件'】创建【" + this.platformPath + "】目录或者复制相关的资源失败！请检查文件是否正在使用!", e);
+            Logger.error("【生成文件 -> 出错】创建【" + this.platformPath + "】目录或者复制相关的资源失败！请检查文件是否正在使用!", e);
         }
     }
 
@@ -90,8 +90,8 @@ public abstract class AbstractPackHandler implements PackHandler {
             FileUtils.forceMkdir(new File(this.platformPath + File.separator + "docs"));
             FileUtils.forceMkdir(new File(this.platformPath + File.separator + "logs"));
         } catch (IOException e) {
-            Logger.error("【jpack -> '生成文件'】创建【" + this.platformPath + "】目录下的 bin、config、docs、logs 等"
-                    + "目录失败！请检查文件是否正在使用!", e);
+            Logger.error("【生成文件 -> 出错】创建【" + this.platformPath + "】目录下的 bin、config、docs、logs 等"
+                    + "目录出错！请检查文件是否正在使用!", e);
         }
     }
 
@@ -112,7 +112,7 @@ public abstract class AbstractPackHandler implements PackHandler {
                 }
             }
         } catch (IOException e) {
-            Logger.error("【jpack -> '复制文件'】复制【" + jar + "】到【" + platformPath + "】目录中失败！应该还没有打包此文件，"
+            Logger.error("【复制文件 -> 失败】复制【" + jar + "】到【" + platformPath + "】目录中失败！应该还没有打包此文件，"
                     + "异常信息为：" + e.getMessage());
         }
     }
@@ -137,7 +137,7 @@ public abstract class AbstractPackHandler implements PackHandler {
             FileUtils.copyFile(this.resourceManager.getResourceAsFile(source),
                     new File(this.platformPath, destination));
         } catch (IOException | ResourceNotFoundException | FileResourceCreationException e) {
-            Logger.error("【jpack -> '复制文件'】复制默认资源到平台中出错！", e);
+            Logger.error("【复制文件 -> 出错】复制默认资源到平台中出错！", e);
         }
     }
 
@@ -180,7 +180,7 @@ public abstract class AbstractPackHandler implements PackHandler {
             try {
                 this.copyCustomResources(fromPath, copyResource.getTo());
             } catch (IOException e) {
-                Logger.error("【jpack -> '复制文件'】复制配置的自定义资源【" + fromPath + "】到各平台的包中出错！", e);
+                Logger.error("【复制文件 -> 出错】复制配置的自定义资源【" + fromPath + "】到各平台的包中出错！", e);
             }
         }
     }
@@ -208,7 +208,7 @@ public abstract class AbstractPackHandler implements PackHandler {
             // 如果源文件不存在，则直接返回
             File sourceFile = new File(from);
             if (!sourceFile.exists()) {
-                Logger.warn("【jpack -> '复制资源'】需要复制的源资源文件【" + from + "】不存在，请检查！");
+                Logger.warn("【复制资源 -> 无效】需要复制的源资源文件【" + from + "】不存在，请检查！");
                 return;
             }
 
@@ -238,14 +238,14 @@ public abstract class AbstractPackHandler implements PackHandler {
             String filePath = this.platformPath + File.separator + path;
             File file = new File(filePath);
             if (!file.exists()) {
-                Logger.warn("【jpack -> '排除资源'】你配置的需要排除的资源【" + filePath + "】不存在，请检查！");
+                Logger.warn("【排除资源 -> 无效】你配置的需要排除的资源【" + filePath + "】不存在，请检查！");
                 continue;
             }
 
             try {
                 FileUtils.forceDelete(file);
             } catch (IOException e) {
-                Logger.error("【jpack -> '排除资源'】删除配置的需要排除的资源【" + filePath + "】出错，出错原因：【"
+                Logger.error("【排除资源 -> 出错】删除配置的需要排除的资源【" + filePath + "】出错，出错原因：【"
                         + e.getMessage() + "】。");
             }
         }
@@ -272,7 +272,7 @@ public abstract class AbstractPackHandler implements PackHandler {
         this.handleBeforeCompress();
 
         String platform = platformEnum.getCode();
-        Logger.debug("【jpack -> '服务打包'】正在制作 " + platform + " 下的部署压缩包...");
+        Logger.debug("【构建打包 -> 进行】正在制作 " + platform + " 下的部署压缩包...");
         try {
             // 制作压缩包.
             switch (platformEnum) {
@@ -289,13 +289,13 @@ public abstract class AbstractPackHandler implements PackHandler {
                     break;
             }
 
-            Logger.debug("【jpack -> '清除文件'】正在清除 " + platform + " 临时文件....");
+            Logger.debug("【清除文件 -> 进行】正在清除 " + platform + " 临时文件....");
             FileUtils.forceDelete(platformPath);
-            Logger.debug("【jpack -> '清除文件'】已清除 " + platform + " 临时文件.");
+            Logger.debug("【清除文件 -> 成功】已清除 " + platform + " 临时文件.");
         } catch (IOException e) {
-            Logger.error("【jpack -> '服务打包'】压缩并清除 " + platform + " 下部署的临时文件失败.", e);
+            Logger.error("【构建打包 -> 失败】压缩并清除 " + platform + " 下部署的临时文件失败.", e);
         }
-        Logger.info("【jpack -> '打包完毕'】制作 " + platform + " 下的部署压缩包完成.");
+        Logger.info("【构建打包 -> 成功】制作 " + platform + " 下的部署压缩包完成.");
     }
 
 }

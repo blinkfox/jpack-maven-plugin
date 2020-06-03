@@ -27,13 +27,13 @@ import org.codehaus.plexus.util.StringUtils;
 public abstract class AbstractBaseMojo extends AbstractMojo {
 
     private static final String START = ""
-            + "------------------------------------- jpack start packing... ------------------------------------\n"
-            + "                                      __                          __    \n"
-            + "                                     |__|______  _____     ____  |  | __\n"
-            + "                                     |  |\\____ \\ \\__  \\  _/ ___\\ |  |/ /\n"
-            + "                                     |  ||  |_> > / __ \\_\\  \\___ |    < \n"
-            + "                                 /\\__|  ||   __/ (____  / \\___  >|__|_ \\\n"
-            + "                                 \\______||__|         \\/      \\/      \\/ v1.4.0\n";
+            + "---------------------------------- jpack start packing... ---------------------------------\n"
+            + "                                   __                          __    \n"
+            + "                                  |__|______  _____     ____  |  | __\n"
+            + "                                  |  |\\____ \\ \\__  \\  _/ ___\\ |  |/ /\n"
+            + "                                  |  ||  |_> > / __ \\_\\  \\___ |    < \n"
+            + "                              /\\__|  ||   __/ (____  / \\___  >|__|_ \\\n"
+            + "                              \\______||__|         \\/      \\/      \\/ v1.4.0\n";
 
     /**
      * 用来存放 jpack 打包时的文件夹名称常量.
@@ -173,8 +173,8 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
 
         this.exec();
 
-        Logger.info("------------------------ jpack has been packaged to end. [costs: "
-                + TimeKit.convertTime(System.nanoTime() - start) + "] ------------------------\n");
+        Logger.info("--------------------- jpack has been packaged to end. [costs: "
+                + TimeKit.convertTime(System.nanoTime() - start) + "] ---------------------\n");
     }
 
     /**
@@ -229,7 +229,7 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
                 FileUtils.cleanDirectory(homeDir);
             }
         } catch (IOException e) {
-            Logger.error("【jpack -> '创建文件'】创建或清空 jpack 文件夹【" + homeDir.getAbsolutePath() + "】失败！请检查其中是否有文件正在使用! ", e);
+            Logger.error("【创建文件 -> 失败】创建或清空 jpack 文件夹【" + homeDir.getAbsolutePath() + "】失败！请检查其中是否有文件正在使用! ", e);
         }
         return homeDir;
     }
