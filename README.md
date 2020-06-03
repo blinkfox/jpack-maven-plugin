@@ -46,14 +46,14 @@ mvn clean package jpack:build
 然后，执行成功之后，你将在 Maven 控制台看到如下输出：
 
 ```bash
-[INFO] --- jpack-maven-plugin:1.3.4:build (default-cli) @ web-demo ---
+[INFO] --- jpack-maven-plugin:1.4.0:build (default-cli) @ web-demo ---
 [INFO] -------------------------- jpack start packing... -------------------------
                              __                          __
                             |__|______  _____     ____  |  | __
                             |  |\____ \ \__  \  _/ ___\ |  |/ /
                             |  ||  |_> > / __ \_\  \___ |    <
                         /\__|  ||   __/ (____  / \___  >|__|_ \
-                        \______||__|         \/      \/      \/
+                        \______||__|         \/      \/      \/ v1.4.0
 
 [INFO] 将使用 jpack 默认提供的 Dockerfile 文件来构建 Docker 镜像.
 [INFO] 正在构建 com.blinkfox/web-demo:1.0.0 镜像...
@@ -605,6 +605,15 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
                 <param>save</param>
                 <param>push</param>
             </extraGoals>
+            <!-- jpack 推送到远程私有镜像仓库的用户权限认证信息，通常至少需要填写用户名和密码两项信息，
+                serverAddress 不填写就默认使用 registry. -->
+            <registryUser>
+                <username>blinkfox</username>
+                <password>123456</password>
+                <email>your-emial-name@gmail.com</email>
+                <serverAddress> </serverAddress>
+                <identityToken> </identityToken>
+            </registryUser>
             ...
         </docker>
         <!-- 需要copy 哪些资源(from 的值可以是目录或者具体的相对、绝对或网络资源路径)到部署包中的某个目录;
@@ -647,6 +656,9 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
 
 ## 版本记录
 
+- v1.4.0 (2020-06-03)
+  - 新增了推送到远程私有镜像仓库时，可以配置 registry 的用户权限认证信息；
+  - 修改了日志格式的一些显示格式；
 - v1.3.4 (2019-11-18)
   - 新增了是否清除之前的打包目录的配置项；
   - 新增了在 `start.sh` 脚本中对是否已经启动了本服务的判断；

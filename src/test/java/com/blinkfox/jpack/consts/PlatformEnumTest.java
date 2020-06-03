@@ -7,6 +7,7 @@ import org.junit.Test;
  * PlatformEnumTest.
  *
  * @author blinkfox on 2019-05-04.
+ * @since v1.0.0
  */
 public class PlatformEnumTest {
 

@@ -3,10 +3,8 @@ package com.blinkfox.jpack;
 import static com.blinkfox.jpack.PackBuildMojo.HOME_DIR_NAME;
 
 import com.blinkfox.jpack.utils.Logger;
-
 import java.io.File;
 import java.io.IOException;
-
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugin.testing.MojoRule;
 import org.codehaus.plexus.PlexusTestCase;
@@ -21,6 +19,7 @@ import org.junit.runners.MethodSorters;
  * 按顺序执行各个单元测试方法.
  *
  * @author blinkfox on 2019-05-03.
+ * @since v1.0.0
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PackBuildMojoTest {

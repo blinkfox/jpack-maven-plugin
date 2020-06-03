@@ -38,6 +38,13 @@ import org.codehaus.plexus.util.io.RawInputStreamFacade;
 public class DockerPackHandler extends AbstractPackHandler {
 
     /**
+     * 表明是加密的字符串的前缀标识常量.
+     *
+     * @since v1.4.0
+     */
+    private static final String ENCRYPT_PREFIX = "ENCRYPT#";
+
+    /**
      * Dockerfile 配置文件的名称常量.
      */
     private static final String DOCKER_FILE = "Dockerfile";
@@ -269,7 +276,10 @@ public class DockerPackHandler extends AbstractPackHandler {
             if (registryUser != null
                     && StringUtils.isNotBlank(username = registryUser.getUsername())
                     && StringUtils.isNotBlank(password = registryUser.getPassword())) {
-                RegistryAuth.Builder builder = RegistryAuth.builder().username(username).password(password);
+                RegistryAuth.Builder builder = RegistryAuth.builder()
+                        .username(this.decryptIfEncrypt(username))
+                        .password(this.decryptIfEncrypt(password));
+
                 this.setRegistryAuthServerAddress(builder, registryUser.getServerAddress());
                 if (StringUtils.isNotBlank(registryUser.getEmail())) {
                     builder.email(registryUser.getEmail());
@@ -287,6 +297,18 @@ public class DockerPackHandler extends AbstractPackHandler {
             Logger.error("获取并校验推送镜像的 registry 授权 失败！", e);
             return Pair.of(auth, 0);
         }
+    }
+
+    /**
+     * 如果密码加过密，那么就解密出加过密的密码为原文，否则就直接返回原字符串即可.
+     *
+     * @param text 待解密的文本
+     * @return 解密后的文本
+     * @author blinkfox on 2020-06-03.
+     * @since v1.4.0
+     */
+    private String decryptIfEncrypt(String text) {
+        return text.startsWith(ENCRYPT_PREFIX) ? StringUtils.substring(text, ENCRYPT_PREFIX.length()) : text;
     }
 
     /**

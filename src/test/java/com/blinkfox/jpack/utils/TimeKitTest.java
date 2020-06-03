@@ -7,6 +7,7 @@ import org.junit.Test;
  * TimeKitTest.
  *
  * @author blinkfox on 2019-05-11.
+ * @since v1.1.0
  */
 public class TimeKitTest {
 

@@ -10,6 +10,8 @@ import com.blinkfox.jpack.utils.Logger;
 import com.blinkfox.jpack.utils.TimeKit;
 import java.io.File;
 import java.io.IOException;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -51,24 +53,28 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
     /**
      * Maven 运行时的 target 目录的文件对象.
      */
+    @Setter
     @Parameter(defaultValue = "${project.build.directory}", required = true)
     private File targetDir;
 
     /**
      * Maven 项目的 `groupId`.
      */
+    @Setter
     @Parameter(defaultValue = "${project.groupId}", required = true)
     private String groupId;
 
     /**
      * Maven 项目的 `artifactId`.
      */
+    @Setter
     @Parameter(defaultValue = "${project.artifactId}", required = true)
     private String artifactId;
 
     /**
      * Maven 项目的版本 `version`.
      */
+    @Setter
     @Parameter(defaultValue = "${project.version}", required = true)
     private String version;
 
@@ -76,12 +82,14 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
      * 该 Maven 项目 pom.xml 中的 `finalName`，如果 Maven 中设置了此项，打包的名称前缀将是这个值，
      * 否则打包的名称前缀 Maven 默认就是 `artifactId + version`.
      */
+    @Setter
     @Parameter(defaultValue = "${project.build.finalName}", required = true)
     private String finalName;
 
     /**
      * 该 Maven 项目 pom.xml 中的版本 `description`.
      */
+    @Setter
     @Parameter(defaultValue = "${project.description}")
     private String description;
 
@@ -136,6 +144,7 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
     /**
      * 构建 Docker 发布包相关的参数.
      */
+    @Getter
     @Parameter(property = "docker")
     private Docker docker;
 
@@ -251,37 +260,6 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
             this.docker.setVolumes(DEFAULT_VOLUMES);
         }
         return this.docker;
-    }
-
-    /* getter and setter methods. */
-    // TODO 待修改 getter 和 setter.
-
-    void setTargetDir(File targetDir) {
-        this.targetDir = targetDir;
-    }
-
-    void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
-
-    void setArtifactId(String artifactId) {
-        this.artifactId = artifactId;
-    }
-
-    void setVersion(String version) {
-        this.version = version;
-    }
-
-    void setFinalName(String finalName) {
-        this.finalName = finalName;
-    }
-
-    void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Docker getDocker() {
-        return docker;
     }
 
 }
