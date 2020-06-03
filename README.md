@@ -9,7 +9,7 @@
 - 简单易用，基于**约定优于配置**的思想来构建部署包
 - 支持打包为 `Windows`、 `Linux` 和 `Docker` 下的发布部署包，也可单独选择打某些平台下的部署包
 - `Windows`部署包可以安装为服务，从 `Windows` 的服务界面中来启动和停止应用服务，且默认为开机自启动
-- 支持 `Docker` 的镜像构建、导出镜像 `tar` 包和推送镜像到远程仓库等功能
+- 支持 `Docker` 的镜像构建、导出镜像 `tar` 包和推送镜像到远程仓库或远程私有仓库等功能
 - jpack 内部默认提供了一个简单通用的 `Dockerfile` 来构建 SpringBoot 服务的镜像，也支持自定义 `Dockerfile` 来构建镜像
 - 可自定义复制文件资源到部署包中，例如通常发布时需要的：数据库脚本、文档说明等
 - 可自定义排除不需要的文件资源被打包到部署包中，例如默认生成的文件目录资源你可以选择性排除掉
@@ -47,20 +47,20 @@ mvn clean package jpack:build
 
 ```bash
 [INFO] --- jpack-maven-plugin:1.4.0:build (default-cli) @ web-demo ---
-[INFO] -------------------------- jpack start packing... -------------------------
-                             __                          __
-                            |__|______  _____     ____  |  | __
-                            |  |\____ \ \__  \  _/ ___\ |  |/ /
-                            |  ||  |_> > / __ \_\  \___ |    <
-                        /\__|  ||   __/ (____  / \___  >|__|_ \
-                        \______||__|         \/      \/      \/ v1.4.0
+[INFO] ---------------------------------- jpack start packing... ---------------------------------
+                                     __                          __
+                                    |__|______  _____     ____  |  | __
+                                    |  |\____ \ \__  \  _/ ___\ |  |/ /
+                                    |  ||  |_> > / __ \_\  \___ |    <
+                                /\__|  ||   __/ (____  / \___  >|__|_ \
+                                \______||__|         \/      \/      \/ v1.4.0
 
-[INFO] 将使用 jpack 默认提供的 Dockerfile 文件来构建 Docker 镜像.
-[INFO] 正在构建 com.blinkfox/web-demo:1.0.0 镜像...
-[INFO] 制作 windows 下的部署压缩包完成.
-[INFO] 制作 linux 下的部署压缩包完成.
-[INFO] 构建 com.blinkfox/web-demo:1.0.0 镜像完毕，镜像ID: c8f91718f286
-[INFO] ------------- jpack has been packaged to end. [costs: 2.45 s] -------------
+[INFO] 【jpack -> '构建镜像'】将使用 jpack 默认提供的 Dockerfile 文件来构建 Docker 镜像.
+[INFO] 【jpack -> '构建镜像'】正在构建 com.blinkfox/web-demo:1.0.0 镜像...
+[INFO] 【jpack -> '打包完毕'】制作 windows 下的部署压缩包完成.
+[INFO] 【jpack -> '打包完毕'】制作 linux 下的部署压缩包完成.
+[INFO] 【jpack -> '构建完毕'】构建 com.blinkfox/web-demo:1.0.0 镜像完毕，镜像ID: c8f91718f286
+[INFO] --------------------- jpack has been packaged to end. [costs: 2.45 s] ---------------------
 ```
 
 成功之后就可以在 `target` 目录中看到 `jpack` 的文件夹，`jpack` 文件夹中就包含了对应各个平台下的可部署服务包, Docker 下的包除外，因为 Docker 构建不做额外配置的话，默认只是构建镜像，想要可导入的离线镜像部署包，可以参看下面的介绍。
@@ -475,6 +475,14 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 - `configFiles`: 针对 Docker 平台的配置文件配置。如果你配置了这个值，那么在 Docker 下将会覆盖通用的 `configFiles` 的值。
 - `copyResources`: 针对 Docker 平台的资源复制。如果你配置了这个值，那么会额外复制这些资源到 Docker 平台的包中。
 - `excludeFiles`: 针对 Docker 平台的资源排除。如果你配置了这个值，那么会额外从 Docker 平台的包中排除这些资源。
+- `registryUser`：`v1.4.0` 版本新增，当镜像推送到私有权限限制的镜像仓库中时，可以填写如下用户权限认证信息。通常，至少需要填写用户名和密码。
+  - `username`：registry 仓库的用户名。可以对用户名进行加密，只要将用户名以 `ENCRYPT#` 开头就表示是加过密的用户名，否则说明直接使用原文。
+  - `password`：registry 仓库的密码。可以对密码进行加密，只要将文本内容以 `ENCRYPT#` 开头就表示是加过密的密码，否则说明直接使用原文密码。
+  - `email`：用户的邮箱信息，非必填。
+  - `serverAddress`：registry 仓库的服务地址，如果不填写就默认使用上面的 `registry` 地址，通常你不需要填写。 
+  - `identityToken`：Token 标识，通常你可以不用填写。
+
+> 注：关于 `registryUser` 中的用户名或密码加密，你可以使用 jpack 中的 `AesKit.encrypt("your-username");` 方法进行加密。该种加密并不安全，意在防君子，防不了小人。
 
 示例如下：
 
@@ -515,6 +523,17 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
                 <param>save</param>
                 <param>push</param>
             </extraGoals>
+            <!-- jpack 推送到远程私有镜像仓库的用户权限认证信息，通常至少需要填写用户名和密码两项信息，
+                serverAddress 不填写就默认使用 registry. -->
+            <registryUser>
+                <username>blinkfox</username>
+                <password>123456</password>
+                <!-- 可以对用户名或密码进行加密，可同时加密，也可只加密用户名或密码，只要将用户名或密码以 'ENCRYPT#' 开头就表示是加过密的信息. -->
+                <!-- <password>ENCRYPT#xrrHHzgJsGUQrfkEasF6WahbGnMXTg==</password>-->
+                <email>your-emial-name@gmail.com</email>
+                <serverAddress></serverAddress> <!-- registry 服务地址，不填写则使用上面 registry 的值. -->
+                <identityToken></identityToken> <!-- 该 token 值通常不需要填写. -->
+            </registryUser>
             <vmOptions>-Xms1024m -Xmx2048m</vmOptions>
             <programArgs>--server.port=7070</programArgs>
             <configFiles>
@@ -610,9 +629,11 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
             <registryUser>
                 <username>blinkfox</username>
                 <password>123456</password>
+                <!-- 可以对用户名或密码进行加密，可同时加密，也可只加密用户名或密码，只要将用户名或密码以 'ENCRYPT#' 开头就表示是加过密的信息. -->
+                <!-- <password>ENCRYPT#xrrHHzgJsGUQrfkEasF6WahbGnMXTg==</password>-->
                 <email>your-emial-name@gmail.com</email>
-                <serverAddress> </serverAddress>
-                <identityToken> </identityToken>
+                <serverAddress></serverAddress> <!-- registry 服务地址，不填写则使用上面 registry 的值. -->
+                <identityToken></identityToken> <!-- 该 token 值通常不需要填写. -->
             </registryUser>
             ...
         </docker>

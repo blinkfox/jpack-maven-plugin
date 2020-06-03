@@ -272,7 +272,7 @@ public abstract class AbstractPackHandler implements PackHandler {
         this.handleBeforeCompress();
 
         String platform = platformEnum.getCode();
-        Logger.debug("【jpack -> '制作归档'】正在制作 " + platform + " 下的部署压缩包...");
+        Logger.debug("【jpack -> '服务打包'】正在制作 " + platform + " 下的部署压缩包...");
         try {
             // 制作压缩包.
             switch (platformEnum) {
@@ -293,9 +293,9 @@ public abstract class AbstractPackHandler implements PackHandler {
             FileUtils.forceDelete(platformPath);
             Logger.debug("【jpack -> '清除文件'】已清除 " + platform + " 临时文件.");
         } catch (IOException e) {
-            Logger.error("【jpack -> '制作归档'】压缩并清除 " + platform + " 下部署的临时文件失败.", e);
+            Logger.error("【jpack -> '服务打包'】压缩并清除 " + platform + " 下部署的临时文件失败.", e);
         }
-        Logger.info("【jpack -> '制作归档'】制作 " + platform + " 下的部署压缩包完成.");
+        Logger.info("【jpack -> '打包完毕'】制作 " + platform + " 下的部署压缩包完成.");
     }
 
 }

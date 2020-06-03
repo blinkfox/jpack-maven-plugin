@@ -9,6 +9,7 @@ import com.blinkfox.jpack.entity.PackInfo;
 import com.blinkfox.jpack.entity.RegistryUser;
 import com.blinkfox.jpack.exception.DockerPackException;
 import com.blinkfox.jpack.handler.AbstractPackHandler;
+import com.blinkfox.jpack.utils.AesKit;
 import com.blinkfox.jpack.utils.Logger;
 import com.blinkfox.jpack.utils.TemplateKit;
 import com.spotify.docker.client.DefaultDockerClient;
@@ -36,13 +37,6 @@ import org.codehaus.plexus.util.io.RawInputStreamFacade;
  * @since v1.1.0
  */
 public class DockerPackHandler extends AbstractPackHandler {
-
-    /**
-     * 表明是加密的字符串的前缀标识常量.
-     *
-     * @since v1.4.0
-     */
-    private static final String ENCRYPT_PREFIX = "ENCRYPT#";
 
     /**
      * Dockerfile 配置文件的名称常量.
@@ -168,7 +162,7 @@ public class DockerPackHandler extends AbstractPackHandler {
             this.imageName = super.packInfo.getDocker().getImageName();
             Logger.info("【jpack -> '构建镜像'】正在构建【" + this.imageName + "】镜像...");
             String imageId = dockerClient.build(Paths.get(super.platformPath), imageName, this::printProgress);
-            Logger.info("【jpack -> '构建镜像'】构建【" + this.imageName + "】镜像完毕，镜像ID: " + imageId);
+            Logger.info("【jpack -> '构建完毕'】构建【" + this.imageName + "】镜像完毕，镜像ID: " + imageId);
             FileUtils.deleteDirectory(this.getJpackTargetDir());
         } catch (Exception e) {
             throw new DockerPackException(ExceptionEnum.DOCKER_BUILD_EXCEPTION.getMsg(), e);
@@ -196,7 +190,7 @@ public class DockerPackHandler extends AbstractPackHandler {
                 FileUtils.copyStreamToFile(new RawInputStreamFacade(imageInput),
                         new File(super.platformPath + File.separator + imageTar));
             }
-            Logger.info("【jpack -> '导出镜像'】从 Docker 中导出镜像包 " + imageTar + " 成功.");
+            Logger.info("【jpack -> '导出成功'】从 Docker 中导出镜像包 " + imageTar + " 成功.");
             this.handleFilesAndCompress();
         } catch (Exception e) {
             throw new DockerPackException(ExceptionEnum.DOCKER_SAVE_EXCEPTION.getMsg(), e);
@@ -252,7 +246,7 @@ public class DockerPackHandler extends AbstractPackHandler {
             // 推送镜像到远程镜像仓库中.
             Logger.info("【jpack -> '推送镜像'】正在推送标签为【" + imageTagName + "】的镜像到远程仓库中...");
             dockerClient.push(imageTagName, this::printProgress, authPair.getLeft());
-            Logger.info("【jpack -> '推送镜像'】推送标签为【" + imageTagName + "】的镜像到远程仓库完成.");
+            Logger.info("【jpack -> '推送完成'】推送标签为【" + imageTagName + "】的镜像到远程仓库完成.");
         } catch (Exception e) {
             throw new DockerPackException(ExceptionEnum.DOCKER_PUSH_EXCEPTION.getMsg(), e);
         }
@@ -308,7 +302,9 @@ public class DockerPackHandler extends AbstractPackHandler {
      * @since v1.4.0
      */
     private String decryptIfEncrypt(String text) {
-        return text.startsWith(ENCRYPT_PREFIX) ? StringUtils.substring(text, ENCRYPT_PREFIX.length()) : text;
+        return text.startsWith(AesKit.ENCRYPT_PREFIX)
+                ? StringUtils.substring(text, AesKit.ENCRYPT_PREFIX.length())
+                : text;
     }
 
     /**

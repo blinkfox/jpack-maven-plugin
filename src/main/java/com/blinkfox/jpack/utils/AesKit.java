@@ -22,6 +22,13 @@ import lombok.NoArgsConstructor;
 public final class AesKit {
 
     /**
+     * 表明是加密的字符串的前缀标识常量.
+     *
+     * @since v1.4.0
+     */
+    public static final String ENCRYPT_PREFIX = "ENCRYPT#";
+
+    /**
      * 本插件使用的 AES 默认加解密的密钥.
      */
     private static final String DEFAULT_AES_KEY = "7A55Aj5DztePlVI68YZTfw==";
@@ -48,7 +55,7 @@ public final class AesKit {
      * @return Base64转码后的加密数据
      */
     public static String encrypt(String text) {
-        return encrypt(DEFAULT_AES_KEY, text);
+        return ENCRYPT_PREFIX + encrypt(DEFAULT_AES_KEY, text);
     }
 
     /**
