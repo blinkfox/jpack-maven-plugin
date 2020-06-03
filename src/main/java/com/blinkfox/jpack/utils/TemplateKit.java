@@ -32,7 +32,7 @@ public final class TemplateKit {
             cfg.getResourceMap().put("autoCheck", "false");
             groupTemplate = new GroupTemplate(new ClasspathResourceLoader("/"), cfg);
         } catch (IOException e) {
-            Logger.error("初始化 beetl 模版出错！", e);
+            Logger.error("【jpack -> '初始出错'】初始化 beetl 模版出错！", e);
         }
     }
 

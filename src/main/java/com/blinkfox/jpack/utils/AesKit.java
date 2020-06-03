@@ -64,7 +64,7 @@ public final class AesKit {
             cipher.init(Cipher.ENCRYPT_MODE, getSecretKeySpec(secretKey), gcmParamSpec);
             return encodeBase64(cipher.doFinal(text.getBytes(StandardCharsets.UTF_8)));
         } catch (Exception e) {
-            throw new EncryptException("通过 AES 加密原文出错！", e);
+            throw new EncryptException("【jpack -> '文本加密'】通过 AES 加密原文出错！", e);
         }
     }
 
@@ -91,7 +91,7 @@ public final class AesKit {
             cipher.init(Cipher.DECRYPT_MODE, getSecretKeySpec(secretKey), gcmParamSpec);
             return new String(cipher.doFinal(decodeBase64(text)), StandardCharsets.UTF_8);
         } catch (Exception e) {
-            throw new EncryptException("通过 AES 解密密文出错！", e);
+            throw new EncryptException("【jpack -> '文本解密'】通过 AES 解密密文出错！", e);
         }
     }
 
@@ -108,7 +108,7 @@ public final class AesKit {
             SecretKey secretKey = kg.generateKey();
             return encodeBase64(secretKey.getEncoded());
         } catch (NoSuchAlgorithmException e) {
-            throw new EncryptException("生成 AES 的密钥出错！", e);
+            throw new EncryptException("【jpack -> '生成密钥'】生成 AES 的密钥出错！", e);
         }
     }
 

@@ -81,14 +81,14 @@ public class PlatformPackContext {
         List<PlatformEnum> platformEnumList = new ArrayList<>(platforms.length);
         for (String platform : platforms) {
             if (StringUtils.isBlank(platform)) {
-                Logger.warn("你配置的 jpack 平台为空！");
+                Logger.warn("【jpack -> '配置校验'】你配置的 jpack 打包平台为空！");
                 continue;
             }
 
             // 将 platform 的字符串值转换为平台的枚举值，并添加到集合中.
             PlatformEnum platformEnum = PlatformEnum.of(platform.trim().toLowerCase());
             if (platformEnum == null) {
-                Logger.warn("你配置的 jpack 平台 " + platform + " 不存在！");
+                Logger.warn("【jpack -> '配置校验'】你配置的 jpack 平台【" + platform + "】不存在！");
             } else {
                 platformEnumList.add(platformEnum);
             }
@@ -106,7 +106,7 @@ public class PlatformPackContext {
         try {
             countDownLatch.await();
         } catch (InterruptedException e) {
-            Logger.error("在多线程下等待 jpack 构建打包结束时出错!", e);
+            Logger.error("【jpack -> '配置校验'】在多线程下等待 jpack 构建打包结束时出错!", e);
             Thread.currentThread().interrupt();
         } finally {
             executorService.shutdown();

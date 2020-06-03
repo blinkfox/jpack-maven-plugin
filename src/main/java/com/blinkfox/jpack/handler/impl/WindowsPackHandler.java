@@ -70,7 +70,7 @@ public class WindowsPackHandler extends AbstractPackHandler {
         try {
             TemplateKit.renderFile("windows/bin/winsw.xml", context, destXml);
         } catch (IOException e) {
-            Logger.error("渲染 winsw.xml 模板内容并写入 bin 目录中出错！", e);
+            Logger.error("【jpack -> '生成文件'】渲染 winsw.xml 模板内容并写入 bin 目录中出错！", e);
         }
     }
 
@@ -92,7 +92,7 @@ public class WindowsPackHandler extends AbstractPackHandler {
                         super.binPath + batName + ".bat");
             }
         } catch (IOException e) {
-            Logger.error("渲染 template.bat 模板内容并写入到 bin 目录中出错！", e);
+            Logger.error("【jpack -> '生成文件'】渲染 template.bat 模板内容并写入到 bin 目录中出错！", e);
         }
     }
 
