@@ -59,6 +59,13 @@ public class DockerPackHandler extends AbstractPackHandler {
     private String imageName;
 
     /**
+     * 是否对镜像打了标签.
+     *
+     * @since v1.5.0
+     */
+    private boolean tagged;
+
+    /**
      * 根据打包的相关参数进行 Docker 构建和打包的方法.
      *
      * <p>注意：这里区分是否抛出异常的情况，如果未配置是否跳过异常，则使用我的默认处理方式.</p>
@@ -182,15 +189,18 @@ public class DockerPackHandler extends AbstractPackHandler {
      * 导出该服务的镜像为 '.tar' 包.
      */
     private void saveImage() {
+        // 导出之前对镜像进行打标签.
+        this.tagImage();
+
         try {
-            String imageTar = super.packInfo.getDocker().getImageTarName() + ".tar";
-            Logger.info("【导出镜像 -> 进行】正在导出 Docker 镜像包: " + imageTar + " ...");
-            // 导出镜像为 `.tar` 文件.
+            String imageTgz = super.packInfo.getDocker().getImageTarName();
+            Logger.info("【导出镜像 -> 进行】正在导出 Docker 镜像包: " + imageTgz + " ...");
+            // 导出镜像为 `.tgz` 文件.
             try (InputStream imageInput = dockerClient.save(this.imageName)) {
                 FileUtils.copyStreamToFile(new RawInputStreamFacade(imageInput),
-                        new File(super.platformPath + File.separator + imageTar));
+                        new File(super.platformPath + File.separator + imageTgz));
             }
-            Logger.info("【导出镜像 -> 成功】从 Docker 中导出镜像包 " + imageTar + " 成功.");
+            Logger.info("【导出镜像 -> 成功】从 Docker 中导出镜像包 " + imageTgz + " 成功.");
             this.handleFilesAndCompress();
         } catch (Exception e) {
             throw new DockerPackException(ExceptionEnum.DOCKER_SAVE_EXCEPTION.getMsg(), e);
@@ -212,13 +222,24 @@ public class DockerPackHandler extends AbstractPackHandler {
     /**
      * 给镜像打含`registry`前缀的标签，便于后续的镜像推送.
      *
-     * @param registry 远程仓库地址
      * @return 打了含`registry`前缀的标签
      */
-    private String tagImage(String registry) {
+    private String tagImage() {
+        // 如果 registry 为空，则不需要打标签，直接返回镜像名称即可.
+        String registry = super.packInfo.getDocker().getRegistry();
+        if (StringUtils.isBlank(registry)) {
+            return this.imageName;
+        }
+
+        // 判断是否已经打过标签了，如果已经打过标签就直接返回镜像标签名称即可.
+        String imageTagName = registry + "/" + this.imageName;
+        if (this.tagged) {
+            return imageTagName;
+        }
+
         try {
-            String imageTagName = registry + "/" + this.imageName;
             dockerClient.tag(this.imageName, imageTagName, true);
+            this.tagged = true;
             Logger.info("【镜像标签 -> 成功】已对本次构建的镜像打了标签，标签为：【" + imageTagName + "】.");
             return imageTagName;
         } catch (Exception e) {
@@ -240,8 +261,7 @@ public class DockerPackHandler extends AbstractPackHandler {
         try {
             // 判断 registry 是否配置，如果没有配置就认为默认推送到 dockerhub,就不需要打标签，
             // 否则就需要打含 `registry` 前缀的标签.
-            String registry = super.packInfo.getDocker().getRegistry();
-            final String imageTagName = StringUtils.isBlank(registry) ? this.imageName : this.tagImage(registry);
+            final String imageTagName = this.tagImage();
 
             // 推送镜像到远程镜像仓库中.
             Logger.info("【推送镜像 -> 进行】正在推送标签为【" + imageTagName + "】的镜像到远程仓库中...");

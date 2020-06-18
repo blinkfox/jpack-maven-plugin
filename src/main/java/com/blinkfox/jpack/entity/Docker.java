@@ -2,6 +2,7 @@ package com.blinkfox.jpack.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * 构建 Docker 发布包相关的参数实体，继承自 {@link BaseConfig}.
@@ -59,6 +60,13 @@ public class Docker extends BaseConfig {
     private String[] customCommands;
 
     /**
+     * 导出镜像时，自定义的镜像名称，不填写，则默认是"(镜像名 + 标签名).tgz".
+     *
+     * @since v1.5.0
+     */
+    private String saveImageName;
+
+    /**
      * Docker 构建支持的额外目标，目前仅可以配置 save, push 两种，不配置的话，默认目标是只构建镜像.
      */
     private String[] extraGoals;
@@ -76,7 +84,9 @@ public class Docker extends BaseConfig {
      * @return 名称字符串
      */
     public String getImageTarName() {
-        return this.name + "-" + this.tag;
+        return StringUtils.isNotBlank(this.saveImageName)
+                ? this.saveImageName
+                : this.name + "-" + this.tag + ".tgz";
     }
 
     /**
