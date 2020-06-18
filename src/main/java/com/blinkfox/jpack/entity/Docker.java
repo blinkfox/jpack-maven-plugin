@@ -79,6 +79,13 @@ public class Docker extends BaseConfig {
     private RegistryUser registryUser;
 
     /**
+     * Helm Chart 包的相关信息.
+     *
+     * @since v1.5.0
+     */
+    private HelmChart helmChart;
+
+    /**
      * 获取镜像的 tar 包的名称.
      *
      * @return 名称字符串

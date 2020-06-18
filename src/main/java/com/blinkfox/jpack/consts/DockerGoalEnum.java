@@ -13,7 +13,7 @@ import lombok.AllArgsConstructor;
 public enum DockerGoalEnum {
 
     /**
-     * 导出镜像到本地为 '.tar' 文件.
+     * 导出镜像到本地为 '.tgz' 文件.
      */
     SAVE("save"),
 
