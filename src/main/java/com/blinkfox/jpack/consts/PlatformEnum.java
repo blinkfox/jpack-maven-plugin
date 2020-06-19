@@ -47,6 +47,16 @@ public enum PlatformEnum {
         public PackInfo mergeNewPackInfo(PackInfo packInfo) {
             return newBaseConfigPackInfo(packInfo, packInfo.getDocker());
         }
+    },
+
+    /**
+     * helmChart.
+     */
+    HELM_CHART("helmChart") {
+        @Override
+        public PackInfo mergeNewPackInfo(PackInfo packInfo) {
+            return newBaseConfigPackInfo(packInfo, packInfo.getHelmChart());
+        }
     };
 
     /**

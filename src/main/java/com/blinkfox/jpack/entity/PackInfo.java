@@ -94,6 +94,13 @@ public class PackInfo {
     private Docker docker;
 
     /**
+     * Helm Chart 包的相关信息.
+     *
+     * @since v1.5.0
+     */
+    private HelmChart helmChart;
+
+    /**
      * 需要排除（即不生成）的文件或目录.
      */
     private String[] excludeFiles;
@@ -124,6 +131,7 @@ public class PackInfo {
                 .setWindows(packInfo.getWindows())
                 .setLinux(packInfo.getLinux())
                 .setDocker(packInfo.getDocker())
+                .setHelmChart(packInfo.getHelmChart())
                 .setExcludeFiles(packInfo.getExcludeFiles())
                 .setCopyResources(packInfo.getCopyResources());
     }

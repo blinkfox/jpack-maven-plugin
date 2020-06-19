@@ -19,6 +19,16 @@ public class HelmChart {
     private String location;
 
     /**
+     * 要推送 helm chart 所在仓库的 API URL 地址.
+     */
+    private String chartRepoUrl;
+
+    /**
+     * 需要导出的镜像名称集合，可以导出多个镜像.
+     */
+    private String[] saveImages;
+
+    /**
      * chart 包的相关构建目标.
      */
     private String[] goals;

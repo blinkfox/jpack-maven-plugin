@@ -3,6 +3,7 @@ package com.blinkfox.jpack;
 import com.blinkfox.jpack.consts.SkipErrorEnum;
 import com.blinkfox.jpack.entity.CopyResource;
 import com.blinkfox.jpack.entity.Docker;
+import com.blinkfox.jpack.entity.HelmChart;
 import com.blinkfox.jpack.entity.Linux;
 import com.blinkfox.jpack.entity.PackInfo;
 import com.blinkfox.jpack.entity.Windows;
@@ -33,7 +34,7 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
             + "                                  |  |\\____ \\ \\__  \\  _/ ___\\ |  |/ /\n"
             + "                                  |  ||  |_> > / __ \\_\\  \\___ |    < \n"
             + "                              /\\__|  ||   __/ (____  / \\___  >|__|_ \\\n"
-            + "                              \\______||__|         \\/      \\/      \\/ v1.4.0\n";
+            + "                              \\______||__|         \\/      \\/      \\/ v1.5.0\n";
 
     /**
      * 用来存放 jpack 打包时的文件夹名称常量.
@@ -149,6 +150,14 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
     private Docker docker;
 
     /**
+     * Helm Chart 包的相关信息.
+     *
+     * @since v1.5.0
+     */
+    @Getter
+    private HelmChart helmChart;
+
+    /**
      * 需要排除（即不生成）的文件或目录.
      */
     @Parameter(property = "excludeFiles")
@@ -204,6 +213,7 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
                 .setWindows(this.windows)
                 .setLinux(this.linux)
                 .setDocker(this.initDefaultDockerInfo())
+                .setHelmChart(this.helmChart)
                 .setExcludeFiles(this.excludeFiles)
                 .setCopyResources(this.copyResources);
         Logger.debug(packInfo.toString());
