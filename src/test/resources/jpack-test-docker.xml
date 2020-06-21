@@ -101,6 +101,7 @@
                         <saveImages>
                             <param></param>
                         </saveImages>
+                        <saveImageFileName></saveImageFileName>
                         <goals>
                             <param>package</param>
                             <param>push</param>

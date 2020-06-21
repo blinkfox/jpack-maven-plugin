@@ -1,18 +1,29 @@
 package com.blinkfox.jpack.handler.impl;
 
 import com.blinkfox.jpack.consts.ChartGoalEnum;
+import com.blinkfox.jpack.consts.ExceptionEnum;
 import com.blinkfox.jpack.entity.HelmChart;
 import com.blinkfox.jpack.entity.PackInfo;
 import com.blinkfox.jpack.entity.RegistryUser;
+import com.blinkfox.jpack.exception.DockerPackException;
 import com.blinkfox.jpack.handler.AbstractPackHandler;
 import com.blinkfox.jpack.utils.AesKit;
 import com.blinkfox.jpack.utils.CmdKit;
 import com.blinkfox.jpack.utils.Logger;
+import com.spotify.docker.client.DefaultDockerClient;
+import com.spotify.docker.client.DockerClient;
+import com.spotify.docker.client.exceptions.DockerCertificateException;
+import com.spotify.docker.client.exceptions.DockerException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.io.RawInputStreamFacade;
 
 /**
  * ChartPackHandler.
@@ -201,10 +212,31 @@ public class ChartPackHandler extends AbstractPackHandler {
     }
 
     /**
-     * 将 Chart 包和离线的 Docker 镜像包、copyResource 等相关资源再一起导出成一个更大的发布包，
+     * 将 Chart 包和离线的 Docker 镜像包、copyResource 等相关资源再一起导出成一个更大的发布包.
      */
     private void saveChart() {
-        // TODO
+        // 开始生成需要导出镜像的名称.
+        String[] saveImages = this.helmChart.getSaveImages();
+        if (ArrayUtils.isEmpty(saveImages)) {
+            saveImages = new String[] {this.packInfo.getDocker().getImageTagName()};
+        }
+
+        Logger.info("【Chart导出镜像 -> 开始】开始从 Docker 中导出镜像包 ...");
+        DockerClient dockerClient;
+        try {
+            dockerClient = DefaultDockerClient.fromEnv().build();
+            dockerClient.ping();
+            try (InputStream imageInput = dockerClient.save(saveImages)) {
+                String saveImageFileName = this.helmChart.getSaveImageFileName();
+                saveImageFileName = StringUtils.isBlank(saveImageFileName) ? "images.tgz" : saveImageFileName;
+                FileUtils.copyStreamToFile(new RawInputStreamFacade(imageInput), new File(saveImageFileName));
+                Logger.info("【Chart导出镜像 -> 成功】从 Docker 中导出镜像包 " + saveImageFileName + " 成功.");
+            }
+        } catch (DockerException | InterruptedException | DockerCertificateException | IOException e) {
+            throw new DockerPackException("【Chart导出镜像 -> 放弃】未检测到或开启 Docker 环境，将跳过 Helm Chart 导出时的镜像导出环节.", e);
+        }
+
+        // TODO 将其他文件也写入到该目录中.
     }
 
 }

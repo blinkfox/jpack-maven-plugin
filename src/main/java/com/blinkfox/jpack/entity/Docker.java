@@ -60,13 +60,6 @@ public class Docker extends BaseConfig {
     private String[] customCommands;
 
     /**
-     * 导出镜像时，自定义的镜像名称，不填写，则默认是"(镜像名 + 标签名).tgz".
-     *
-     * @since v1.5.0
-     */
-    private String saveImageName;
-
-    /**
      * Docker 构建支持的额外目标，目前仅可以配置 save, push 两种，不配置的话，默认目标是只构建镜像.
      */
     private String[] extraGoals;
@@ -84,9 +77,18 @@ public class Docker extends BaseConfig {
      * @return 名称字符串
      */
     public String getImageTarName() {
-        return StringUtils.isNotBlank(this.saveImageName)
-                ? this.saveImageName
-                : this.name + "-" + this.tag + ".tgz";
+        return this.name + "-" + this.tag + ".tgz";
+    }
+
+    /**
+     * 获取打过标签的镜像的 tgz 包的名称.
+     *
+     * @return 名称字符串
+     * @author blinkfox on 2020-06-21.
+     * @since v1.5.0
+     */
+    public String getImageTagName() {
+        return (StringUtils.isBlank(this.registry) ? "" : this.registry + "/") + this.getImageTarName();
     }
 
     /**
