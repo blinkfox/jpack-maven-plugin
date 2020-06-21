@@ -171,8 +171,23 @@ public class ChartPackHandler extends AbstractPackHandler {
      * @return 布尔值结果
      */
     private boolean packageChart() {
+        // 判断 helmChart 源 yaml 文件是否存在，或者是否是目录.
+        File file = new File(this.helmChart.getLocation());
+        if (!file.exists()) {
+            Logger.info("【Chart打包 -> 放弃】Helm Chart 中的各源 yaml 文件不存在【"
+                    + this.helmChart.getLocation() + "】，请检查修改【helmChart -> location】 的值.");
+            return false;
+        }
+
+        if (!file.isDirectory()) {
+            Logger.info("【Chart打包 -> 放弃】Helm Chart 中的【" + this.helmChart.getLocation()
+                    + "】不是一个目录，请检查修改【helmChart -> location】 的值.");
+            return false;
+        }
+
         try {
-            String result = CmdKit.execute("helm package " + this.helmChart.getLocation());
+            // 使用 helm 命令来打包.
+            String result = CmdKit.execute("helm package " + file.getAbsolutePath());
             if (result.contains("Successfully")) {
                 Logger.info("【Chart打包 -> 成功】执行【helm】命令打包成功.");
                 this.chartTgzPath = StringUtils.substringAfterLast(result, "saved it to:").trim();
