@@ -166,6 +166,17 @@ public class PackInfo {
     }
 
     /**
+     * 获取 Helm Chart 打包的完整文件路径名称，但不含文件扩展名.
+     * <p>如：`/home/xxx/target/jpack/helmChart/test-1.2.5-helmChart.tar.gz`(实际结果没有 .tar.gz 的扩展名)</p>
+     *
+     * @return 包名称
+     */
+    public String getChartSavePackName() {
+        return this.homeDir.getAbsolutePath() + File.separator
+                + this.name + "-" + this.version + "-" + PlatformEnum.HELM_CHART.getCode();
+    }
+
+    /**
      * 重写的 toString 方法.
      *
      * @return String

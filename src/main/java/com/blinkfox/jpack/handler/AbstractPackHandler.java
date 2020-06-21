@@ -101,8 +101,11 @@ public abstract class AbstractPackHandler implements PackHandler {
     private void copyJarAndConfigFile() {
         String jar = packInfo.getFullJarName();
         try {
-            FileUtils.copyFileToDirectory(packInfo.getTargetDir().getAbsolutePath() + File.separator + jar,
-                    platformPath);
+            // 如果平台不是 Helm Chart 就打包 jar 文件到各平台中.
+            if (!this.platformPath.endsWith(PlatformEnum.HELM_CHART.getCode())) {
+                FileUtils.copyFileToDirectory(packInfo.getTargetDir().getAbsolutePath() + File.separator + jar,
+                        platformPath);
+            }
 
             // 复制配置的 configFiles 配置.
             String[] configFiles = this.packInfo.getConfigFiles();
@@ -112,8 +115,8 @@ public abstract class AbstractPackHandler implements PackHandler {
                 }
             }
         } catch (IOException e) {
-            Logger.error("【复制文件 -> 失败】复制【" + jar + "】到【" + platformPath + "】目录中失败！应该还没有打包此文件，"
-                    + "异常信息为：" + e.getMessage());
+            Logger.error("【复制文件 -> 失败】复制【" + jar + "】或 config 文件到【" + platformPath + "】目录中失败！"
+                    + "应该还没有打包此文件，异常信息为：" + e.getMessage());
         }
     }
 
@@ -284,6 +287,9 @@ public abstract class AbstractPackHandler implements PackHandler {
                     break;
                 case DOCKER:
                     CompressKit.tarGz(platformPath, packInfo.getDockerPackName() + ".tar.gz");
+                    break;
+                case HELM_CHART:
+                    CompressKit.tarGz(platformPath, packInfo.getChartSavePackName() + ".tar.gz");
                     break;
                 default:
                     break;

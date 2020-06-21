@@ -1,11 +1,11 @@
 package com.blinkfox.jpack.handler.impl;
 
 import com.blinkfox.jpack.consts.ChartGoalEnum;
-import com.blinkfox.jpack.consts.ExceptionEnum;
+import com.blinkfox.jpack.consts.PlatformEnum;
 import com.blinkfox.jpack.entity.HelmChart;
 import com.blinkfox.jpack.entity.PackInfo;
 import com.blinkfox.jpack.entity.RegistryUser;
-import com.blinkfox.jpack.exception.DockerPackException;
+import com.blinkfox.jpack.exception.PackException;
 import com.blinkfox.jpack.handler.AbstractPackHandler;
 import com.blinkfox.jpack.utils.AesKit;
 import com.blinkfox.jpack.utils.CmdKit;
@@ -74,6 +74,8 @@ public class ChartPackHandler extends AbstractPackHandler {
                     + "请到这里【https://github.com/helm/helm/releases】下载最新版的 helm，并将其设置到 path 环境变量中.");
             return;
         }
+
+        super.createPlatformCommonDir(PlatformEnum.HELM_CHART);
 
         // 将构建目标的字符串转换为枚举，存入到 set 集合中.
         this.doBuild(goals);
@@ -215,28 +217,60 @@ public class ChartPackHandler extends AbstractPackHandler {
      * 将 Chart 包和离线的 Docker 镜像包、copyResource 等相关资源再一起导出成一个更大的发布包.
      */
     private void saveChart() {
+        // 创建用来存放镜像和 Chart 文件包的文件夹.
+        String imageChartPath = this.platformPath + File.separator + this.packInfo.getName() + File.separator;
+        try {
+            FileUtils.forceMkdir(new File(imageChartPath));
+        } catch (IOException e) {
+            throw new PackException("【Chart导出镜像 -> 异常】初始化用来存放镜像和 Chart 文件包的文件夹【" + imageChartPath + "】异常.", e);
+        }
+
         // 开始生成需要导出镜像的名称.
         String[] saveImages = this.helmChart.getSaveImages();
         if (ArrayUtils.isEmpty(saveImages)) {
             saveImages = new String[] {this.packInfo.getDocker().getImageTagName()};
         }
 
-        Logger.info("【Chart导出镜像 -> 开始】开始从 Docker 中导出镜像包 ...");
-        DockerClient dockerClient;
-        try {
-            dockerClient = DefaultDockerClient.fromEnv().build();
+        // 构建导出运行 Chart 所需的镜像.
+        Logger.info("【Chart导出镜像 -> 开始】开始从 Docker 中导出 Chart 所需的镜像包 ...");
+        try (DockerClient dockerClient = DefaultDockerClient.fromEnv().build();) {
             dockerClient.ping();
             try (InputStream imageInput = dockerClient.save(saveImages)) {
                 String saveImageFileName = this.helmChart.getSaveImageFileName();
-                saveImageFileName = StringUtils.isBlank(saveImageFileName) ? "images.tgz" : saveImageFileName;
+                saveImageFileName = StringUtils.isBlank(saveImageFileName)
+                        ? imageChartPath + "images.tgz"
+                        : imageChartPath + saveImageFileName;
                 FileUtils.copyStreamToFile(new RawInputStreamFacade(imageInput), new File(saveImageFileName));
                 Logger.info("【Chart导出镜像 -> 成功】从 Docker 中导出镜像包 " + saveImageFileName + " 成功.");
             }
-        } catch (DockerException | InterruptedException | DockerCertificateException | IOException e) {
-            throw new DockerPackException("【Chart导出镜像 -> 放弃】未检测到或开启 Docker 环境，将跳过 Helm Chart 导出时的镜像导出环节.", e);
+        } catch (DockerException | InterruptedException | DockerCertificateException e) {
+            Logger.error("【Chart导出镜像 -> 放弃】未检测到或开启 Docker 环境，将跳过 Helm Chart 导出时的镜像导出环节.", e);
+        } catch (IOException e) {
+            Logger.error("【Chart导出镜像 -> 失败】从 Docker 中导出镜像失败.", e);
         }
 
-        // TODO 将其他文件也写入到该目录中.
+        // 将 chart 源文件或其他文件复制到目标文件夹中.
+        File sourceChartFile = new File(chartTgzPath);
+        String targetChartPath = imageChartPath + sourceChartFile.getName();
+        try {
+            FileUtils.copyFile(sourceChartFile, new File(targetChartPath));
+            this.handleFilesAndCompress();
+        } catch (IOException e) {
+            throw new PackException("【Chart导出镜像 -> 异常】复制 Chart 源文件【" + sourceChartFile.getAbsolutePath()
+                    + "】到目标文件【" + targetChartPath + "】出错.", e);
+        }
+    }
+
+    /**
+     * 将需要打包的相关文件压缩成 tar.gz 格式的压缩包.
+     *
+     * <p>需要生成 docs 目录，复制默认的 README.md，将这些相关文件压缩成 .tar.gz 压缩包.</p>
+     * <p>文件包括：name/镜像包 xxx.tgz, name/chart.tgz, docs, README.md 等.</p>
+     */
+    private void handleFilesAndCompress() throws IOException {
+        FileUtils.forceMkdir(new File(super.platformPath + File.separator + "docs"));
+        super.copyFiles("helmChart/README.md", "README.md");
+        super.compress(PlatformEnum.HELM_CHART);
     }
 
 }

@@ -101,6 +101,7 @@
                         <saveImages>
                             <param></param>
                         </saveImages>
+                        <!-- 表示导出镜像时的镜像文件名称，不填写，则默认是 'images.tgz'. -->
                         <saveImageFileName></saveImageFileName>
                         <goals>
                             <param>package</param>

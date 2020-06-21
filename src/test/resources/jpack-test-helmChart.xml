@@ -1,0 +1,74 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.blinkfox</groupId>
+    <artifactId>jpack-to-test</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>Test JPack Mojo</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.blinkfox</groupId>
+                <artifactId>jpack-maven-plugin</artifactId>
+                <version>1.5.0-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>docker-build</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- JVM 运行所需的参数选项. -->
+                    <vmOptions>-Xms512m -Xmx1024m</vmOptions>
+                    <!-- 所集成的 Java 服务程序运行所需的参数. -->
+                    <programArgs>--server.port=8080</programArgs>
+                    <!-- 需要复制到部署包中 config 目录下的 yml 或者 .properties 文件的配置文件路径，
+                        它的值必须是一个具体的文件，可以是相对路径、绝对路径或网络资源. -->
+                    <configFiles>
+                        <param>src/test/resources/application.yml</param>
+                        <param>src/test/resources/application-local.yml</param>
+                    </configFiles>
+                    <!-- 打包哪些平台的包，不填写则代表所有平台. 目前支持 Windows 和 Linux 两种(大小写均可). -->
+                    <platforms>
+                        <param>HelmChart</param>
+                    </platforms>
+                    <helmChart>
+                        <!-- helm chart 源文件的位置，目前仅支持本地文件的绝对或相对路径. -->
+                        <location>helm-chart</location>
+                        <!-- 要推送 helm chart 所在仓库的 API URL 地址. -->
+                        <chartRepoUrl>http://registry.yourcompany.com:5000/api/chartrepo/blinkfox/charts</chartRepoUrl>
+                        <!-- goals 中有 save 时，需要导出的镜像名称或有标签的镜像名称，不填写会默认从上面 Docker 导出的镜像中获取. -->
+                        <saveImages>
+                            <param></param>
+                        </saveImages>
+                        <!-- 表示导出镜像时的镜像文件名称，不填写，则默认是 'images.tgz'. -->
+                        <saveImageFileName></saveImageFileName>
+                        <goals>
+                            <param>package</param>
+                            <param>push</param>
+                            <param>save</param>
+                        </goals>
+                    </helmChart>
+<!--                    <excludeFiles>-->
+<!--                        <param>README.md</param>-->
+<!--                    </excludeFiles>-->
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
