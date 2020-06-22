@@ -34,7 +34,7 @@ public class CmdKit {
             Process process = Runtime.getRuntime().exec(cmd);
             int exitValue = process.waitFor();
             if (exitValue != 0) {
-                throw new DockerPackException("【执行指令 -> 失败】执行命令行指令失败，执行的指令为【" + cmdStr + "】.");
+                throw new DockerPackException("【执行指令 -> 失败】执行命令行指令失败.");
             }
 
             // 获取执行结果，并转换为字符串.
@@ -45,10 +45,10 @@ public class CmdKit {
             Logger.info("【执行指令 -> 成功】执行指令成功，结果为：\n" + result);
             return result;
         } catch (IOException e) {
-            throw new PackException("【执行指令 -> 出错】执行命令行指令失败，执行的指令为【" + cmdStr + "】，错误原因：【" + e.getMessage() + "】.");
+            throw new PackException("【执行指令 -> 出错】执行命令行指令失败，错误原因：【" + e.getMessage() + "】.");
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new PackException("【执行指令 -> 出错】执行命令行指令被中断，执行的指令为【" + cmdStr + "】，错误原因：【" + e.getMessage() + "】.");
+            throw new PackException("【执行指令 -> 出错】执行命令行指令被中断，错误原因：【" + e.getMessage() + "】.");
         }
     }
 

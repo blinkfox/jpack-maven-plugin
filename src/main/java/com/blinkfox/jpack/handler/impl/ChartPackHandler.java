@@ -198,6 +198,7 @@ public class ChartPackHandler extends AbstractPackHandler {
                 // 复制打包后的文件到 jpack 主目录中，便于获取或后续使用.
                 this.chartTgzPath = super.packInfo.getHomeDir() + File.separator + tgzFile.getName();
                 FileUtils.copyFile(tgzFile, new File(this.chartTgzPath));
+                FileUtils.forceDelete(tgzFile);
                 return true;
             }
         } catch (Exception e) {
