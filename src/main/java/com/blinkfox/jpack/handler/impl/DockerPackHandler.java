@@ -256,7 +256,7 @@ public class DockerPackHandler extends AbstractPackHandler {
         try {
             dockerClient.tag(this.imageName, imageTagName, true);
             this.tagged = true;
-            Logger.info("【镜像标签 -> 成功】已对本次构建的镜像打了标签，标签为：【" + imageTagName + "】.");
+            Logger.info("【镜像标签 -> 成功】已对镜像打了标签:【" + imageTagName + "】.");
             return imageTagName;
         } catch (Exception e) {
             throw new DockerPackException(ExceptionEnum.DOCKER_TAG_EXCEPTION.getMsg(), e);
@@ -528,7 +528,7 @@ public class DockerPackHandler extends AbstractPackHandler {
     private void printProgress(ProgressMessage msg) {
         String progress = msg.progress();
         if (StringUtils.isNotBlank(progress)) {
-            System.out.printf("\r" + progress);
+            System.out.printf("\r[INFO] 【推送镜像 -> 进度】" + progress);
         }
     }
 

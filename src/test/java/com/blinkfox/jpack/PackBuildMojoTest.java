@@ -11,6 +11,7 @@ import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -143,6 +144,27 @@ public class PackBuildMojoTest {
         String baseDir = PlexusTestCase.getBasedir();
         File packPom = new File(baseDir, "src/test/resources/jpack-test-helmChart.xml");
         Assert.assertTrue(packPom.exists());
+
+        // 获取 mojo 并执行.
+        PackBuildMojo dockerBuildMojo = (PackBuildMojo) rule.lookupMojo("build", packPom);
+        Assert.assertNotNull(dockerBuildMojo);
+        this.setPackMojoProperties(baseDir, dockerBuildMojo);
+        dockerBuildMojo.execute();
+    }
+
+    /**
+     * 测试 jpack 插件 docker 的构建.
+     *
+     * @throws Exception 异常
+     */
+    @Test
+    @Ignore
+    public void testExecute3WithDockerChart() throws Exception {
+        // 获取测试的 pom.xml
+        String baseDir = PlexusTestCase.getBasedir();
+        File packPom = new File(baseDir, "src/test/resources/jpack-test-dockerChart.xml");
+        Assert.assertTrue(packPom.exists());
+        this.copyDockerTestFiles(baseDir);
 
         // 获取 mojo 并执行.
         PackBuildMojo dockerBuildMojo = (PackBuildMojo) rule.lookupMojo("build", packPom);

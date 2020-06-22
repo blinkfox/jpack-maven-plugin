@@ -1,0 +1,77 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.blinkfox</groupId>
+    <artifactId>jpack-to-test</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>Test JPack Mojo</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.blinkfox</groupId>
+                <artifactId>jpack-maven-plugin</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>docker-build</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- 需要复制到部署包中 config 目录下的 yml 或者 .properties 文件的配置文件路径，
+                        它的值必须是一个具体的文件，可以是相对路径、绝对路径或网络资源. -->
+                    <configFiles>
+                        <param>src/test/resources/application.yml</param>
+                    </configFiles>
+                    <!-- 打包哪些平台的包，不填写则代表所有平台. 目前支持 Windows 和 Linux 两种(大小写均可). -->
+                    <platforms>
+                        <param>Docker</param>
+                        <param>HelmChart</param>
+                    </platforms>
+                    <docker>
+                        <registry>registry.yourcompany.com:5000</registry>
+                        <repo>blinkfox</repo>
+                        <name>jpack-test</name>
+                        <tag>1.0.0-SNAPSHOT</tag>
+                        <extraGoals>
+                            <!-- 构建 docker 镜像之外的额外目标，push 表示推送到远程的镜像仓库. -->
+                            <param>push</param>
+                        </extraGoals>
+                        <registryUser>
+                            <username>blinkfox</username>
+                            <password>123456</password>
+                        </registryUser>
+                    </docker>
+                    <helmChart>
+                        <!-- helm chart 源文件的目录位置，目前仅支持本地文件的绝对或相对路径. -->
+                        <location>src/test/resources/hello-helm</location>
+                        <!-- 要推送 helm chart 所在仓库的 API URL 地址. -->
+                        <chartRepoUrl>http://registry.yourcompany.com:5000/api/chartrepo/blinkfox/charts</chartRepoUrl>
+                        <!-- 该值表示 save 导出时，是否使用本插件 Docker 构建的镜像，将其也导出到最终的镜像包中，默认为 false. -->
+                        <useDockerImage>true</useDockerImage>
+                        <goals>
+                            <param>package</param>
+                            <param>push</param>
+                            <param>save</param>
+                        </goals>
+                    </helmChart>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

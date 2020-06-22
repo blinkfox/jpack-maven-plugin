@@ -1,6 +1,6 @@
 # jpack-maven-plugin
 
-[![HitCount](http://hits.dwyl.io/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin) [![Build Status](https://secure.travis-ci.org/blinkfox/jpack-maven-plugin.svg)](https://travis-ci.org/blinkfox/jpack-maven-plugin) [![GitHub license](https://img.shields.io/github/license/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin/blob/master/LICENSE) [![codecov](https://codecov.io/gh/blinkfox/jpack-maven-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/blinkfox/jpack-maven-plugin) ![Java Version](https://img.shields.io/badge/Java-%3E%3D%208-blue.svg) [![Maven Central](https://img.shields.io/maven-central/v/com.blinkfox/jpack-maven-plugin.svg)](https://search.maven.org/artifact/com.blinkfox/jpack-maven-plugin/1.4.0/maven-plugin) [![Javadocs](https://img.shields.io/badge/javadoc-1.4.0-brightgreen.svg)](https://www.javadoc.io/doc/com.blinkfox/jpack-maven-plugin/1.4.0)
+[![HitCount](http://hits.dwyl.io/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin) [![Build Status](https://secure.travis-ci.org/blinkfox/jpack-maven-plugin.svg)](https://travis-ci.org/blinkfox/jpack-maven-plugin) [![GitHub license](https://img.shields.io/github/license/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin/blob/master/LICENSE) [![codecov](https://codecov.io/gh/blinkfox/jpack-maven-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/blinkfox/jpack-maven-plugin) ![Java Version](https://img.shields.io/badge/Java-%3E%3D%208-blue.svg) [![Maven Central](https://img.shields.io/maven-central/v/com.blinkfox/jpack-maven-plugin.svg)](https://search.maven.org/artifact/com.blinkfox/jpack-maven-plugin/1.5.0/maven-plugin) [![Javadocs](https://img.shields.io/badge/javadoc-1.5.0-brightgreen.svg)](https://www.javadoc.io/doc/com.blinkfox/jpack-maven-plugin/1.5.0)
 
 > 这是一个用于对 SpringBoot 服务打包为 Windows、Linux 和 Docker 下可发布部署包的 Maven 插件。
 
@@ -10,6 +10,7 @@
 - 支持打包为 `Windows`、 `Linux` 和 `Docker` 下的发布部署包，也可单独选择打某些平台下的部署包
 - `Windows`部署包可以安装为服务，从 `Windows` 的服务界面中来启动和停止应用服务，且默认为开机自启动
 - 支持 `Docker` 的镜像构建、导出镜像 `tar` 包和推送镜像到远程仓库或远程私有仓库等功能
+- 支持 `Helm Chart` 的打包、推送和连带镜像一起导出 `tgz` 包的功能
 - jpack 内部默认提供了一个简单通用的 `Dockerfile` 来构建 SpringBoot 服务的镜像，也支持自定义 `Dockerfile` 来构建镜像
 - 可自定义复制文件资源到部署包中，例如通常发布时需要的：数据库脚本、文档说明等
 - 可自定义排除不需要的文件资源被打包到部署包中，例如默认生成的文件目录资源你可以选择性排除掉
@@ -29,7 +30,7 @@
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            <version>1.4.0</version>
+            <version>1.5.0</version>
         </plugin>
     </plugins>
 </build>
@@ -46,14 +47,14 @@ mvn clean package jpack:build
 然后，执行成功之后，你将在 Maven 控制台看到如下输出：
 
 ```bash
-[INFO] --- jpack-maven-plugin:1.4.0:build (default-cli) @ web-demo ---
+[INFO] --- jpack-maven-plugin:1.5.0:build (default-cli) @ web-demo ---
 [INFO] ---------------------------------- jpack start packing... ---------------------------------
                                      __                          __
                                     |__|______  _____     ____  |  | __
                                     |  |\____ \ \__  \  _/ ___\ |  |/ /
                                     |  ||  |_> > / __ \_\  \___ |    <
                                 /\__|  ||   __/ (____  / \___  >|__|_ \
-                                \______||__|         \/      \/      \/ v1.4.0
+                                \______||__|         \/      \/      \/ v1.5.0
 
 [INFO] 【构建镜像 -> 默认】将使用 jpack 默认提供的 Dockerfile 文件来构建 Docker 镜像.
 [INFO] 【构建镜像 -> 进行】正在构建 com.blinkfox/web-demo:1.0.0 镜像...
@@ -91,7 +92,7 @@ openjdk                        8-jdk-alpine        a3562aa0b991        6 days ag
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            <version>1.4.0</version>
+            <version>1.5.0</version>
             <executions>
                 <execution>
                     <goals>
@@ -165,7 +166,7 @@ openjdk                        8-jdk-alpine        a3562aa0b991        6 days ag
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            <version>1.4.0</version>
+            <version>1.5.0</version>
             <executions>
                 <execution>
                     <goals>
@@ -562,7 +563,7 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
 <plugin>
     <groupId>com.blinkfox</groupId>
     <artifactId>jpack-maven-plugin</artifactId>
-    <version>1.4.0</version>
+    <version>1.5.0</version>
     <executions>
         <execution>
             <goals>
@@ -677,9 +678,12 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
 
 ## 版本记录
 
+- v1.5.0 (2020-06-23)
+  - 新增了 `Helm Chart` 的相关构建；
+  - 修改了一些日志格式的显示；
 - v1.4.0 (2020-06-03)
   - 新增了推送到远程私有镜像仓库时，可以配置 registry 的用户权限认证信息；
-  - 修改了日志格式的一些显示格式；
+  - 修改了一些日志格式的显示；
 - v1.3.4 (2019-11-18)
   - 新增了是否清除之前的打包目录的配置项；
   - 新增了在 `start.sh` 脚本中对是否已经启动了本服务的判断；

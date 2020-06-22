@@ -161,7 +161,7 @@ public class ChartPackHandler extends AbstractPackHandler {
     private boolean checkHelmEnv() {
         try {
             String result = CmdKit.execute(new String[] {"helm", VERSION});
-            Logger.info("【Helm 指令 -> 完毕】执行【helm version】命令检测 Helm 环境完成，结果为：\n" + result);
+            Logger.debug("【Helm 指令 -> 完毕】执行【helm version】命令检测 Helm 环境完成，结果为：\n" + result);
             return result.contains(VERSION);
         } catch (Exception e) {
             Logger.warn(e.getMessage());
@@ -192,7 +192,7 @@ public class ChartPackHandler extends AbstractPackHandler {
         try {
             // 使用 helm 命令来打包.
             String result = CmdKit.execute(new String[] {"helm", "package", file.getAbsolutePath()});
-            Logger.info("【Helm 指令 -> 完毕】执行【helm package】命令打包完成，结果为：\n" + result);
+            Logger.debug("【Helm 指令 -> 完毕】执行【helm package】命令打包完成，结果为：\n" + result);
             if (result.toLowerCase().contains(SUCCESS)) {
                 Logger.info("【Chart打包 -> 成功】执行【helm package】命令打包成功.");
                 File tgzFile = new File(StringUtils.substringAfterLast(result, "to:").trim());
@@ -233,7 +233,7 @@ public class ChartPackHandler extends AbstractPackHandler {
         try {
             Logger.info("【Chart推送 -> 开始】开始推送 Chart 包到远程 Registry 仓库中 ...");
             String result = CmdKit.execute(buildPushUrl(registry, charRepoUrl));
-            Logger.info("【Chart推送 -> 完毕】推送 Chart 包到远程 Registry 仓库的结果为：\n" + result);
+            Logger.debug("【Chart推送 -> 完毕】推送 Chart 包到远程 Registry 仓库的结果为：\n" + result);
             if (result.toLowerCase().contains(STR_TRUE)) {
                 Logger.info("【Chart推送 -> 成功】推送 Chart 包到远程 Registry 仓库中成功.");
             }
@@ -280,7 +280,7 @@ public class ChartPackHandler extends AbstractPackHandler {
             FileUtils.copyFile(sourceChartFile, new File(targetChartPath));
             this.handleFilesAndCompress();
         } catch (IOException e) {
-            throw new PackException("【Chart导出镜像 -> 异常】复制并压缩最终 Chart 包的相关资源出错.", e);
+            throw new PackException("【Chart导出 -> 异常】复制并压缩最终 Chart 包的相关资源出错.", e);
         }
     }
 
@@ -288,11 +288,11 @@ public class ChartPackHandler extends AbstractPackHandler {
         List<String> allSaveImages = this.buildAllSaveImages(this.helmChart.getSaveImages(),
                 this.packInfo.getImageBuildObserver());
         if (allSaveImages.isEmpty()) {
-            Logger.info("【Chart导出镜像 -> 开始】没有能从 Docker 中导出的镜像包，将跳过离线镜像的导出环节 ...");
+            Logger.info("【Chart导出 -> 开始】没有能从 Docker 中导出的镜像包，将跳过离线镜像的导出环节 ...");
             return;
         }
 
-        Logger.info("【Chart导出镜像 -> 开始】开始从 Docker 中导出 Chart 所需的镜像包 ...，要导出的镜像有：\n" + allSaveImages.toString());
+        Logger.info("【Chart导出 -> 开始】开始从 Docker 中导出 Chart 所需的镜像包 ...，要导出的镜像有：\n" + allSaveImages.toString());
         try (DockerClient dockerClient = DefaultDockerClient.fromEnv().build()) {
             dockerClient.ping();
             try (InputStream imageInput = dockerClient.save(allSaveImages.toArray(new String[] {}))) {
@@ -301,14 +301,14 @@ public class ChartPackHandler extends AbstractPackHandler {
                         ? super.platformPath + File.separator + "images.tgz"
                         : super.platformPath + File.separator + saveImageFileName;
                 FileUtils.copyStreamToFile(new RawInputStreamFacade(imageInput), new File(saveImageFileName));
-                Logger.info("【Chart导出镜像 -> 成功】从 Docker 中导出镜像包 " + saveImageFileName + " 成功.");
+                Logger.info("【Chart导出 -> 成功】从 Docker 中导出镜像包 " + saveImageFileName + " 成功.");
             }
         } catch (DockerException | DockerCertificateException e) {
-            Logger.error("【Chart导出镜像 -> 放弃】未检测到或开启 Docker 环境，将跳过 Helm Chart 导出时的镜像导出环节.", e);
+            Logger.error("【Chart导出 -> 放弃】未检测到或开启 Docker 环境，将跳过 Helm Chart 导出时的镜像导出环节.", e);
         } catch (IOException e) {
-            Logger.error("【Chart导出镜像 -> 失败】从 Docker 中导出镜像失败.", e);
+            Logger.error("【Chart导出 -> 失败】从 Docker 中导出镜像失败.", e);
         } catch (InterruptedException e) {
-            Logger.error("【Chart导出镜像 -> 中断】从 Docker 中导出镜像被中断.", e);
+            Logger.error("【Chart导出 -> 中断】从 Docker 中导出镜像被中断.", e);
             Thread.currentThread().interrupt();
         }
     }
