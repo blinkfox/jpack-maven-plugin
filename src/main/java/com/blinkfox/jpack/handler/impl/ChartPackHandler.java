@@ -17,7 +17,9 @@ import com.spotify.docker.client.exceptions.DockerException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import lombok.Getter;
 import org.apache.commons.lang3.ArrayUtils;
@@ -161,7 +163,7 @@ public class ChartPackHandler extends AbstractPackHandler {
      */
     private boolean checkHelmEnv() {
         try {
-            return CmdKit.execute("helm version").contains(VERSION);
+            return CmdKit.execute(new String[] {"helm", "version"}).contains(VERSION);
         } catch (Exception e) {
             Logger.warn(e.getMessage());
             return false;
@@ -190,7 +192,7 @@ public class ChartPackHandler extends AbstractPackHandler {
 
         try {
             // 使用 helm 命令来打包.
-            String result = CmdKit.execute("helm package " + file.getAbsolutePath());
+            String result = CmdKit.execute(new String[] {"helm", "package", file.getAbsolutePath()});
             if (result.toLowerCase().contains(SUCCESS)) {
                 Logger.info("【Chart打包 -> 成功】执行【helm】命令打包成功.");
                 File tgzFile = new File(StringUtils.substringAfterLast(result, "to:").trim());
@@ -222,16 +224,33 @@ public class ChartPackHandler extends AbstractPackHandler {
         }
 
         // 拼接推送 Chart 的 CURL 命令，并执行推送的命令.
-        String cmd = String.format(PUSH_CURL, AesKit.decrypt(registry.getUsername()),
-                AesKit.decrypt(registry.getPassword()), charRepoUrl, this.chartTgzPath);
+//        String cmd = String.format(PUSH_CURL, AesKit.decrypt(registry.getUsername()),
+//                AesKit.decrypt(registry.getPassword()), charRepoUrl, this.chartTgzPath);
         try {
             Logger.info("【Chart推送 -> 开始】开始推送 Chart 包到远程 Registry 仓库中 ...");
-            if (CmdKit.execute(cmd).toLowerCase().contains(STR_TRUE)) {
+            if (CmdKit.execute(buildPushUrl(registry, charRepoUrl)).toLowerCase().contains(STR_TRUE)) {
                 Logger.info("【Chart推送 -> 成功】推送 Chart 包到远程 Registry 仓库中成功.");
             }
         } catch (Exception e) {
             Logger.error("【Chart推送 -> 出错】执行 CURL 指令推送 Chart 包出错，错误原因如下：", e);
         }
+    }
+
+    private String[] buildPushUrl(RegistryUser registry, String charRepoUrl) {
+        List<String> cmdList = new ArrayList<>();
+        cmdList.add("curl");
+        cmdList.add("-u");
+        cmdList.add(AesKit.decrypt(registry.getUsername()) + ":" + AesKit.decrypt(registry.getPassword()));
+        cmdList.add("-X");
+        cmdList.add("POST");
+        cmdList.add(charRepoUrl);
+        cmdList.add("-H");
+        cmdList.add("accept: application/json");
+        cmdList.add("-H");
+        cmdList.add("Content-Type: multipart/form-data");
+        cmdList.add("-F");
+        cmdList.add("chart=@" + this.chartTgzPath + ";type=application/x-compressed");
+        return cmdList.toArray(new String[] {});
     }
 
     /**
