@@ -36,9 +36,6 @@ import org.codehaus.plexus.util.io.RawInputStreamFacade;
 @Getter
 public class ChartPackHandler extends AbstractPackHandler {
 
-    public static final String PUSH_CURL = "curl -u \"%s:%s\" -X POST \"%s\" -H \"accept: application/json\" "
-            + "-H \"Content-Type: multipart/form-data\" -F \"chart=@%s;type=application/x-compressed\"";
-
     private static final String VERSION = "version";
 
     private static final String SUCCESS = "success";
@@ -108,11 +105,9 @@ public class ChartPackHandler extends AbstractPackHandler {
                 if (this.packageChart()) {
                     this.pushChart();
                 }
-            } else if (goalEnum == ChartGoalEnum.SAVE) {
+            } else if (goalEnum == ChartGoalEnum.SAVE && this.packageChart()) {
                 // 如果目标是导出更大的包，则也会先打包，打包成功后再导出.
-                if (this.packageChart()) {
-                    this.saveChart();
-                }
+                this.saveChart();
             }
         } else if (goalSize == 2) {
             if (goalSet.contains(ChartGoalEnum.PACKAGE) && goalSet.contains(ChartGoalEnum.PUSH)) {
@@ -125,12 +120,12 @@ public class ChartPackHandler extends AbstractPackHandler {
                 if (this.packageChart()) {
                     this.saveChart();
                 }
-            } else if (goalSet.contains(ChartGoalEnum.PUSH) && goalSet.contains(ChartGoalEnum.SAVE)) {
+            } else if (goalSet.contains(ChartGoalEnum.PUSH)
+                    && goalSet.contains(ChartGoalEnum.SAVE)
+                    && this.packageChart()) {
                 // 如果目标是推送和导出更大的包，则也会先打包，打包成功后再推送、导出.
-                if (this.packageChart()) {
-                    this.pushChart();
-                    this.saveChart();
-                }
+                this.pushChart();
+                this.saveChart();
             }
         } else {
             // 否则，表示打包、推送以及导出都做.
@@ -163,7 +158,7 @@ public class ChartPackHandler extends AbstractPackHandler {
      */
     private boolean checkHelmEnv() {
         try {
-            return CmdKit.execute(new String[] {"helm", "version"}).contains(VERSION);
+            return CmdKit.execute(new String[] {"helm", VERSION}).contains(VERSION);
         } catch (Exception e) {
             Logger.warn(e.getMessage());
             return false;
@@ -224,8 +219,6 @@ public class ChartPackHandler extends AbstractPackHandler {
         }
 
         // 拼接推送 Chart 的 CURL 命令，并执行推送的命令.
-//        String cmd = String.format(PUSH_CURL, AesKit.decrypt(registry.getUsername()),
-//                AesKit.decrypt(registry.getPassword()), charRepoUrl, this.chartTgzPath);
         try {
             Logger.info("【Chart推送 -> 开始】开始推送 Chart 包到远程 Registry 仓库中 ...");
             if (CmdKit.execute(buildPushUrl(registry, charRepoUrl)).toLowerCase().contains(STR_TRUE)) {
@@ -236,14 +229,21 @@ public class ChartPackHandler extends AbstractPackHandler {
         }
     }
 
-    private String[] buildPushUrl(RegistryUser registry, String charRepoUrl) {
+    /**
+     * 拼接推送 Chart 的 CURL 命令.
+     *
+     * @param registry registry 权限信息
+     * @param chartRepoUrl 推送 Chart 仓库所在的 URL.
+     * @return 最终的推送命令.
+     */
+    private String[] buildPushUrl(RegistryUser registry, String chartRepoUrl) {
         List<String> cmdList = new ArrayList<>();
         cmdList.add("curl");
         cmdList.add("-u");
         cmdList.add(AesKit.decrypt(registry.getUsername()) + ":" + AesKit.decrypt(registry.getPassword()));
         cmdList.add("-X");
         cmdList.add("POST");
-        cmdList.add(charRepoUrl);
+        cmdList.add(chartRepoUrl);
         cmdList.add("-H");
         cmdList.add("accept: application/json");
         cmdList.add("-H");
@@ -257,14 +257,6 @@ public class ChartPackHandler extends AbstractPackHandler {
      * 将 Chart 包和离线的 Docker 镜像包、copyResource 等相关资源再一起导出成一个更大的发布包.
      */
     private void saveChart() {
-        // 创建用来存放镜像和 Chart 文件包的文件夹.
-        String imageChartPath = this.platformPath + File.separator + this.packInfo.getName() + File.separator;
-        try {
-            FileUtils.forceMkdir(new File(imageChartPath));
-        } catch (IOException e) {
-            throw new PackException("【Chart导出镜像 -> 异常】初始化用来存放镜像和 Chart 文件包的文件夹【" + imageChartPath + "】异常.", e);
-        }
-
         // 开始生成需要导出镜像的名称.
         String[] saveImages = this.helmChart.getSaveImages();
         if (ArrayUtils.isEmpty(saveImages)) {
@@ -273,13 +265,13 @@ public class ChartPackHandler extends AbstractPackHandler {
 
         // 构建导出运行 Chart 所需的镜像.
         Logger.info("【Chart导出镜像 -> 开始】开始从 Docker 中导出 Chart 所需的镜像包 ...");
-        try (DockerClient dockerClient = DefaultDockerClient.fromEnv().build();) {
+        try (DockerClient dockerClient = DefaultDockerClient.fromEnv().build()) {
             dockerClient.ping();
             try (InputStream imageInput = dockerClient.save(saveImages)) {
                 String saveImageFileName = this.helmChart.getSaveImageFileName();
                 saveImageFileName = StringUtils.isBlank(saveImageFileName)
-                        ? imageChartPath + "images.tgz"
-                        : imageChartPath + saveImageFileName;
+                        ? super.platformPath + File.separator + "images.tgz"
+                        : super.platformPath + File.separator + saveImageFileName;
                 FileUtils.copyStreamToFile(new RawInputStreamFacade(imageInput), new File(saveImageFileName));
                 Logger.info("【Chart导出镜像 -> 成功】从 Docker 中导出镜像包 " + saveImageFileName + " 成功.");
             }
@@ -294,7 +286,7 @@ public class ChartPackHandler extends AbstractPackHandler {
 
         // 将 chart 源文件或其他文件复制到目标文件夹中.
         File sourceChartFile = new File(chartTgzPath);
-        String targetChartPath = imageChartPath + sourceChartFile.getName();
+        String targetChartPath = super.platformPath + File.separator + sourceChartFile.getName();
         try {
             FileUtils.copyFile(sourceChartFile, new File(targetChartPath));
             this.handleFilesAndCompress();

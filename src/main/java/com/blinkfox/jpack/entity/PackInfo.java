@@ -173,7 +173,7 @@ public class PackInfo {
      */
     public String getChartSavePackName() {
         return this.homeDir.getAbsolutePath() + File.separator
-                + this.name + "-" + this.version + "-" + PlatformEnum.HELM_CHART.getCode();
+                + this.name + "-" + PlatformEnum.HELM_CHART.getCode();
     }
 
     /**
