@@ -38,4 +38,11 @@ public class HelmChart extends BaseConfig {
      */
     private String[] goals;
 
+    /**
+     * Registry 远程仓库的权限认证信息.
+     *
+     * @since v1.5.0
+     */
+    private RegistryUser registryUser;
+
 }

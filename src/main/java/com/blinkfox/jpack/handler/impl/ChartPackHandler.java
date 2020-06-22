@@ -41,6 +41,8 @@ public class ChartPackHandler extends AbstractPackHandler {
 
     private static final String SUCCESS = "success";
 
+    private static final String STR_TRUE = "true";
+
     /**
      * 进行 Helm Chart 构建的相关信息.
      */
@@ -209,31 +211,27 @@ public class ChartPackHandler extends AbstractPackHandler {
 
     /**
      * 推送 Chart 到远程仓库中.
-     *
-     * @return 布尔值结果
      */
-    private boolean pushChart() {
-        RegistryUser registryUser = this.packInfo.getDocker().getRegistryUser();
+    private void pushChart() {
+        RegistryUser registry = this.helmChart.getRegistryUser();
         String charRepoUrl = this.helmChart.getChartRepoUrl();
-        if (registryUser == null || StringUtils.isBlank(charRepoUrl)) {
+        if (StringUtils.isBlank(charRepoUrl) || registry == null
+                || StringUtils.isBlank(registry.getUsername()) || StringUtils.isBlank(registry.getPassword())) {
             Logger.warn("【Chart推送 -> 跳过】未配置 registryUser 和 charRepoUrl 相关信息，将不会推送 Chart 包.");
-            return false;
+            return;
         }
 
         // 拼接推送 Chart 的 CURL 命令，并执行推送的命令.
-        String cmd = String.format(PUSH_CURL, AesKit.decrypt(registryUser.getUsername()),
-                AesKit.decrypt(registryUser.getPassword()), charRepoUrl, this.chartTgzPath);
+        String cmd = String.format(PUSH_CURL, AesKit.decrypt(registry.getUsername()),
+                AesKit.decrypt(registry.getPassword()), charRepoUrl, this.chartTgzPath);
         try {
             Logger.info("【Chart推送 -> 开始】开始推送 Chart 包到远程 Registry 仓库中 ...");
-            String result = CmdKit.execute(cmd);
-            if (result.contains("true")) {
+            if (CmdKit.execute(cmd).toLowerCase().contains(STR_TRUE)) {
                 Logger.info("【Chart推送 -> 成功】推送 Chart 包到远程 Registry 仓库中成功.");
-                return true;
             }
         } catch (Exception e) {
             Logger.error("【Chart推送 -> 出错】执行 CURL 指令推送 Chart 包出错，错误原因如下：", e);
         }
-        return false;
     }
 
     /**
@@ -266,10 +264,13 @@ public class ChartPackHandler extends AbstractPackHandler {
                 FileUtils.copyStreamToFile(new RawInputStreamFacade(imageInput), new File(saveImageFileName));
                 Logger.info("【Chart导出镜像 -> 成功】从 Docker 中导出镜像包 " + saveImageFileName + " 成功.");
             }
-        } catch (DockerException | InterruptedException | DockerCertificateException e) {
+        } catch (DockerException | DockerCertificateException e) {
             Logger.error("【Chart导出镜像 -> 放弃】未检测到或开启 Docker 环境，将跳过 Helm Chart 导出时的镜像导出环节.", e);
         } catch (IOException e) {
             Logger.error("【Chart导出镜像 -> 失败】从 Docker 中导出镜像失败.", e);
+        } catch (InterruptedException e) {
+            Logger.error("【Chart导出镜像 -> 中断】从 Docker 中导出镜像被中断.", e);
+            Thread.currentThread().interrupt();
         }
 
         // 将 chart 源文件或其他文件复制到目标文件夹中.
