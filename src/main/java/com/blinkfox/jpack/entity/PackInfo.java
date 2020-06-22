@@ -111,6 +111,13 @@ public class PackInfo {
     private CopyResource[] copyResources;
 
     /**
+     * 用于判断 Docker 镜像是否已经构建完毕.
+     *
+     * @since v1.5.0
+     */
+    private ImageBuildObserver imageBuildObserver;
+
+    /**
      * 创建一个新的、具有公共信息的 PackInfo 对象实例.
      *
      * @param packInfo PackInfo 对象
@@ -133,7 +140,8 @@ public class PackInfo {
                 .setDocker(packInfo.getDocker())
                 .setHelmChart(packInfo.getHelmChart())
                 .setExcludeFiles(packInfo.getExcludeFiles())
-                .setCopyResources(packInfo.getCopyResources());
+                .setCopyResources(packInfo.getCopyResources())
+                .setImageBuildObserver(packInfo.getImageBuildObserver());
     }
 
     /**

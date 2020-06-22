@@ -4,6 +4,7 @@ import com.blinkfox.jpack.consts.SkipErrorEnum;
 import com.blinkfox.jpack.entity.CopyResource;
 import com.blinkfox.jpack.entity.Docker;
 import com.blinkfox.jpack.entity.HelmChart;
+import com.blinkfox.jpack.entity.ImageBuildObserver;
 import com.blinkfox.jpack.entity.Linux;
 import com.blinkfox.jpack.entity.PackInfo;
 import com.blinkfox.jpack.entity.Windows;
@@ -215,7 +216,9 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
                 .setDocker(this.initDefaultDockerInfo())
                 .setHelmChart(this.helmChart)
                 .setExcludeFiles(this.excludeFiles)
-                .setCopyResources(this.copyResources);
+                .setCopyResources(this.copyResources)
+                .setImageBuildObserver(ImageBuildObserver
+                        .of(this.helmChart != null && this.helmChart.getUseDockerImage()));
         Logger.debug(packInfo.toString());
         return packInfo;
     }

@@ -5,6 +5,7 @@ import com.blinkfox.jpack.consts.ExceptionEnum;
 import com.blinkfox.jpack.consts.PlatformEnum;
 import com.blinkfox.jpack.consts.SkipErrorEnum;
 import com.blinkfox.jpack.entity.Docker;
+import com.blinkfox.jpack.entity.ImageBuildObserver;
 import com.blinkfox.jpack.entity.PackInfo;
 import com.blinkfox.jpack.entity.RegistryUser;
 import com.blinkfox.jpack.exception.DockerPackException;
@@ -165,13 +166,26 @@ public class DockerPackHandler extends AbstractPackHandler {
      * 构建该服务的 Docker 镜像.
      */
     private void buildImage() {
+        ImageBuildObserver imageObserver = super.packInfo.getImageBuildObserver();
         try {
             this.imageName = super.packInfo.getDocker().getImageName();
             Logger.info("【构建镜像 -> 进行】正在构建【" + this.imageName + "】镜像...");
             String imageId = dockerClient.build(Paths.get(super.platformPath), imageName, this::printProgress);
             Logger.info("【构建镜像 -> 成功】构建【" + this.imageName + "】镜像完毕，镜像ID: " + imageId);
+
+            // 对镜像打标签.
+            String imageTagName = this.tagImage();
+
+            // 如果开启了镜像构建监控的功能，就设置镜像已经构建完成.
+            if (imageObserver.isEnabled()) {
+                imageObserver.setBuilt(true);
+                imageObserver.setImageTagName(imageTagName);
+            }
             FileUtils.deleteDirectory(this.getJpackTargetDir());
         } catch (Exception e) {
+            if (imageObserver.isEnabled()) {
+                imageObserver.setBuilt(false);
+            }
             throw new DockerPackException(ExceptionEnum.DOCKER_BUILD_EXCEPTION.getMsg(), e);
         }
     }
@@ -278,9 +292,10 @@ public class DockerPackHandler extends AbstractPackHandler {
      * @return RegistryAuth 和校验结果
      */
     private Pair<RegistryAuth, Integer> validRegistryAuth() {
-        // 构建 Registry 授权对象实例，并做校验.
+        // 构建 Registry 授权对象实例，并做校验.如果 Docker 中 registry 为空，就调用 helmChart 中的 RegistryUser 的值.
         Logger.info("【权限认证 -> 进行】正在校验推送镜像时需要的 registry 授权是否合法...");
         RegistryUser registryUser = super.packInfo.getDocker().getRegistryUser();
+        registryUser = registryUser == null ? super.packInfo.getHelmChart().getRegistryUser() : registryUser;
 
         // 从 Docker 环境中获取配置授权信息，并校验.
         RegistryAuth auth = null;

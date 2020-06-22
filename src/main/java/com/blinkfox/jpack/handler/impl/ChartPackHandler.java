@@ -3,6 +3,7 @@ package com.blinkfox.jpack.handler.impl;
 import com.blinkfox.jpack.consts.ChartGoalEnum;
 import com.blinkfox.jpack.consts.PlatformEnum;
 import com.blinkfox.jpack.entity.HelmChart;
+import com.blinkfox.jpack.entity.ImageBuildObserver;
 import com.blinkfox.jpack.entity.PackInfo;
 import com.blinkfox.jpack.entity.RegistryUser;
 import com.blinkfox.jpack.exception.PackException;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import lombok.Getter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -158,7 +160,9 @@ public class ChartPackHandler extends AbstractPackHandler {
      */
     private boolean checkHelmEnv() {
         try {
-            return CmdKit.execute(new String[] {"helm", VERSION}).contains(VERSION);
+            String result = CmdKit.execute(new String[] {"helm", VERSION});
+            Logger.info("【Helm 指令 -> 完毕】执行【helm version】命令检测 Helm 环境完成，结果为：\n" + result);
+            return result.contains(VERSION);
         } catch (Exception e) {
             Logger.warn(e.getMessage());
             return false;
@@ -188,8 +192,9 @@ public class ChartPackHandler extends AbstractPackHandler {
         try {
             // 使用 helm 命令来打包.
             String result = CmdKit.execute(new String[] {"helm", "package", file.getAbsolutePath()});
+            Logger.info("【Helm 指令 -> 完毕】执行【helm package】命令打包完成，结果为：\n" + result);
             if (result.toLowerCase().contains(SUCCESS)) {
-                Logger.info("【Chart打包 -> 成功】执行【helm】命令打包成功.");
+                Logger.info("【Chart打包 -> 成功】执行【helm package】命令打包成功.");
                 File tgzFile = new File(StringUtils.substringAfterLast(result, "to:").trim());
                 if (!tgzFile.exists()) {
                     throw new PackException("【Chart打包 -> 失败】未找到打包后的 tgz 文件的位置，请检查，打包的结果为：【" + result + "】.");
@@ -211,7 +216,12 @@ public class ChartPackHandler extends AbstractPackHandler {
      * 推送 Chart 到远程仓库中.
      */
     private void pushChart() {
+        // 如果 helm 中的 RegistryUser 是空的，就从 Docker 中去读取 RegistryUser 信息.
         RegistryUser registry = this.helmChart.getRegistryUser();
+        if (registry == null) {
+            registry = this.packInfo.getDocker().getRegistryUser();
+        }
+
         String charRepoUrl = this.helmChart.getChartRepoUrl();
         if (StringUtils.isBlank(charRepoUrl) || registry == null
                 || StringUtils.isBlank(registry.getUsername()) || StringUtils.isBlank(registry.getPassword())) {
@@ -222,7 +232,9 @@ public class ChartPackHandler extends AbstractPackHandler {
         // 拼接推送 Chart 的 CURL 命令，并执行推送的命令.
         try {
             Logger.info("【Chart推送 -> 开始】开始推送 Chart 包到远程 Registry 仓库中 ...");
-            if (CmdKit.execute(buildPushUrl(registry, charRepoUrl)).toLowerCase().contains(STR_TRUE)) {
+            String result = CmdKit.execute(buildPushUrl(registry, charRepoUrl));
+            Logger.info("【Chart推送 -> 完毕】推送 Chart 包到远程 Registry 仓库的结果为：\n" + result);
+            if (result.toLowerCase().contains(STR_TRUE)) {
                 Logger.info("【Chart推送 -> 成功】推送 Chart 包到远程 Registry 仓库中成功.");
             }
         } catch (Exception e) {
@@ -258,17 +270,32 @@ public class ChartPackHandler extends AbstractPackHandler {
      * 将 Chart 包和离线的 Docker 镜像包、copyResource 等相关资源再一起导出成一个更大的发布包.
      */
     private void saveChart() {
-        // 开始生成需要导出镜像的名称.
-        String[] saveImages = this.helmChart.getSaveImages();
-        if (ArrayUtils.isEmpty(saveImages)) {
-            saveImages = new String[] {this.packInfo.getDocker().getImageTagName()};
+        // 构建导出运行 Chart 所需的镜像.
+        this.saveAllDockerImages();
+
+        // 将 chart 源文件或其他文件复制到目标文件夹中.
+        File sourceChartFile = new File(chartTgzPath);
+        String targetChartPath = super.platformPath + File.separator + sourceChartFile.getName();
+        try {
+            FileUtils.copyFile(sourceChartFile, new File(targetChartPath));
+            this.handleFilesAndCompress();
+        } catch (IOException e) {
+            throw new PackException("【Chart导出镜像 -> 异常】复制并压缩最终 Chart 包的相关资源出错.", e);
+        }
+    }
+
+    private void saveAllDockerImages() {
+        List<String> allSaveImages = this.buildAllSaveImages(this.helmChart.getSaveImages(),
+                this.packInfo.getImageBuildObserver());
+        if (allSaveImages.isEmpty()) {
+            Logger.info("【Chart导出镜像 -> 开始】没有能从 Docker 中导出的镜像包，将跳过离线镜像的导出环节 ...");
+            return;
         }
 
-        // 构建导出运行 Chart 所需的镜像.
-        Logger.info("【Chart导出镜像 -> 开始】开始从 Docker 中导出 Chart 所需的镜像包 ...");
+        Logger.info("【Chart导出镜像 -> 开始】开始从 Docker 中导出 Chart 所需的镜像包 ...，要导出的镜像有：\n" + allSaveImages.toString());
         try (DockerClient dockerClient = DefaultDockerClient.fromEnv().build()) {
             dockerClient.ping();
-            try (InputStream imageInput = dockerClient.save(saveImages)) {
+            try (InputStream imageInput = dockerClient.save(allSaveImages.toArray(new String[] {}))) {
                 String saveImageFileName = this.helmChart.getSaveImageFileName();
                 saveImageFileName = StringUtils.isBlank(saveImageFileName)
                         ? super.platformPath + File.separator + "images.tgz"
@@ -284,17 +311,43 @@ public class ChartPackHandler extends AbstractPackHandler {
             Logger.error("【Chart导出镜像 -> 中断】从 Docker 中导出镜像被中断.", e);
             Thread.currentThread().interrupt();
         }
+    }
 
-        // 将 chart 源文件或其他文件复制到目标文件夹中.
-        File sourceChartFile = new File(chartTgzPath);
-        String targetChartPath = super.platformPath + File.separator + sourceChartFile.getName();
-        try {
-            FileUtils.copyFile(sourceChartFile, new File(targetChartPath));
-            this.handleFilesAndCompress();
-        } catch (IOException e) {
-            throw new PackException("【Chart导出镜像 -> 异常】复制 Chart 源文件【" + sourceChartFile.getAbsolutePath()
-                    + "】到目标文件【" + targetChartPath + "】出错.", e);
+    /**
+     * 构建出所有要导出的镜像信息的数组.
+     *
+     * @param configSaveImages 配置的需要导出的镜像名称数组
+     * @param imageObserver jpack 构建的镜像观察者对象，如果 Docker 镜像还未构建完毕，save 之前将会一直阻塞.
+     * @return 镜像的集合
+     */
+    private List<String> buildAllSaveImages(String[] configSaveImages, ImageBuildObserver imageObserver) {
+        List<String> allImages = new ArrayList<>();
+
+        // 将配置的诸多镜像添加到集合中.
+        if (ArrayUtils.isNotEmpty(configSaveImages)) {
+            for (String s : configSaveImages) {
+                if (StringUtils.isNotBlank(s)) {
+                    allImages.add(s);
+                }
+            }
         }
+
+        // 如果激活了也导出使用 jpack 构建的 Docker 镜像，那么就等待镜像构建完毕，并添加到集合中.
+        if (imageObserver.isEnabled()) {
+            while (imageObserver.getBuilt() == null) {
+                try {
+                    TimeUnit.MILLISECONDS.sleep(500);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+
+            if (imageObserver.getBuilt() && StringUtils.isNotBlank(imageObserver.getImageTagName())) {
+                allImages.add(imageObserver.getImageTagName());
+            }
+        }
+
+        return allImages;
     }
 
     /**

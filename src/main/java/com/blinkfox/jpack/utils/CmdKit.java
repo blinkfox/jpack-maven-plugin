@@ -41,9 +41,7 @@ public class CmdKit {
             List<String> results = new ArrayList<>();
             convertInputStream(process.getInputStream(), results);
             convertInputStream(process.getErrorStream(), results);
-            String result = listToString(results);
-            Logger.info("【执行指令 -> 成功】执行指令成功，结果为：\n" + result);
-            return result;
+            return listToString(results);
         } catch (IOException e) {
             throw new PackException("【执行指令 -> 出错】执行命令行指令失败，错误原因：【" + e.getMessage() + "】.");
         } catch (InterruptedException e) {
@@ -65,8 +63,14 @@ public class CmdKit {
 
     private String listToString(List<String> results) {
         StringBuilder sb = new StringBuilder();
-        for (String s : results) {
-            sb.append(s).append("\n");
+        int len = results.size();
+        if (len > 0) {
+            for (int i = 0; i < len; ++i) {
+                sb.append(results.get(i));
+                if (i < len - 1) {
+                    sb.append("\n");
+                }
+            }
         }
         return sb.toString();
     }

@@ -24,6 +24,11 @@ public class HelmChart extends BaseConfig {
     private String chartRepoUrl;
 
     /**
+     * 表示 save 导出时，是否使用本插件 Docker 构建的镜像，将其也导出到最终的镜像包中，默认为 false.
+     */
+    private Boolean useDockerImage;
+
+    /**
      * 保存导出 Chart 时，导出的最终镜像的文件名称，不填写，则默认是 {@code images.tgz}.
      */
     private String saveImageFileName;

@@ -51,16 +51,18 @@
                         <location>src/test/resources/hello-helm</location>
                         <!-- 要推送 helm chart 所在仓库的 API URL 地址. -->
                         <chartRepoUrl>http://registry.yourcompany.com:5000/api/chartrepo/blinkfox/charts</chartRepoUrl>
+                        <!-- 该值表示 save 导出时，是否使用本插件 Docker 构建的镜像，将其也导出到最终的镜像包中，默认为 false. -->
+                        <useDockerImage>false</useDockerImage>
                         <!-- goals 中有 save 时，需要导出的镜像名称或有标签的镜像名称，不填写会默认从上面 Docker 导出的镜像中获取. -->
                         <saveImages>
-                            <param></param>
+                            <param>registry.yourcompany.com:5000/blinkfox/jpack-test:1.0.0-SNAPSHOT</param>
                         </saveImages>
                         <!-- 表示导出镜像时的镜像文件名称，不填写，则默认是 'images.tgz'. -->
                         <saveImageFileName></saveImageFileName>
                         <goals>
                             <param>package</param>
-                            <param>push</param>
-<!--                            <param>save</param>-->
+<!--                            <param>push</param>-->
+                            <param>save</param>
                         </goals>
                         <registryUser>
                             <username>blinkfox</username>
