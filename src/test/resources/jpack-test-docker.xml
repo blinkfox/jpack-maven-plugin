@@ -74,8 +74,6 @@
                         <customCommands>
                             <param>RUN echo 'Asia/Shanghai' >/etc/timezone</param>
                         </customCommands>
-                        <!-- 自定义导出镜像的名称，不填写此标签或者内容为空，则默认是"(镜像名 + 标签名).tgz". -->
-                        <saveImageName>images.tgz</saveImageName>
                         <!-- jpack 的 Docker 构建的默认目标是构建镜像，如果你需要其他目标的话，可以再此配置（可配多个）.
                             目前这里支持导出镜像为 .tar 包(save)和 推送镜像到远程仓库(push) 两种. -->
                         <extraGoals>
@@ -92,23 +90,6 @@
                             <identityToken> </identityToken>
                         </registryUser>
                     </docker>
-                    <helmChart>
-                        <!-- helm chart 源文件的位置，目前仅支持本地文件的绝对或相对路径. -->
-                        <location>helm-chart</location>
-                        <!-- 要推送 helm chart 所在仓库的 API URL 地址. -->
-                        <chartRepoUrl>http://registry.yourcompany.com:5000/api/chartrepo/blinkfox/charts</chartRepoUrl>
-                        <!-- goals 中有 save 时，需要导出的镜像名称或有标签的镜像名称，不填写会默认从上面 Docker 导出的镜像中获取. -->
-                        <saveImages>
-                            <param></param>
-                        </saveImages>
-                        <!-- 表示导出镜像时的镜像文件名称，不填写，则默认是 'images.tgz'. -->
-                        <saveImageFileName></saveImageFileName>
-                        <goals>
-                            <param>package</param>
-                            <param>push</param>
-                            <param>save</param>
-                        </goals>
-                    </helmChart>
                     <excludeFiles>
                         <param>README.md</param>
                     </excludeFiles>

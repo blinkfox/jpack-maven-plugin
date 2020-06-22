@@ -23,7 +23,7 @@
             <plugin>
                 <groupId>com.blinkfox</groupId>
                 <artifactId>jpack-maven-plugin</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>1.0.0-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <goals>
@@ -51,7 +51,7 @@
                         <!-- helm chart 源文件的目录位置，目前仅支持本地文件的绝对或相对路径. -->
                         <location>hello-helm</location>
                         <!-- 要推送 helm chart 所在仓库的 API URL 地址. -->
-                        <chartRepoUrl>http://registry.yourcompany.com:5000/api/chartrepo/blinkfox/charts</chartRepoUrl>
+                        <chartRepoUrl>http://registry.thunisoft.com:5000/api/chartrepo/blinkfox/charts</chartRepoUrl>
                         <!-- goals 中有 save 时，需要导出的镜像名称或有标签的镜像名称，不填写会默认从上面 Docker 导出的镜像中获取. -->
                         <saveImages>
                             <param></param>
@@ -60,8 +60,8 @@
                         <saveImageFileName></saveImageFileName>
                         <goals>
                             <param>package</param>
-                            <param>push</param>
-                            <param>save</param>
+<!--                            <param>push</param>-->
+<!--                            <param>save</param>-->
                         </goals>
                     </helmChart>
                 </configuration>

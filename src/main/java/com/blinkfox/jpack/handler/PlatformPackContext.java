@@ -2,6 +2,7 @@ package com.blinkfox.jpack.handler;
 
 import com.blinkfox.jpack.consts.PlatformEnum;
 import com.blinkfox.jpack.entity.PackInfo;
+import com.blinkfox.jpack.handler.impl.ChartPackHandler;
 import com.blinkfox.jpack.handler.impl.DockerPackHandler;
 import com.blinkfox.jpack.handler.impl.LinuxPackHandler;
 import com.blinkfox.jpack.handler.impl.WindowsPackHandler;
@@ -27,12 +28,13 @@ public class PlatformPackContext {
     /**
      * 用来存储各个平台打包的 map.
      */
-    private static final Map<PlatformEnum, PackHandler> packMap = new LinkedHashMap<>(4);
+    private static final Map<PlatformEnum, PackHandler> packMap = new LinkedHashMap<>(8);
 
     static {
         packMap.put(PlatformEnum.WINDOWS, new WindowsPackHandler());
         packMap.put(PlatformEnum.LINUX, new LinuxPackHandler());
         packMap.put(PlatformEnum.DOCKER, new DockerPackHandler());
+        packMap.put(PlatformEnum.HELM_CHART, new ChartPackHandler());
     }
 
     /**

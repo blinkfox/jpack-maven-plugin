@@ -156,11 +156,11 @@ public class ChartPackHandler extends AbstractPackHandler {
     private boolean checkHelmEnv() {
         try {
             String result = CmdKit.execute("helm version");
-            if (result.contains("version.BuildInfo")) {
+            if (result.contains("version")) {
                 return true;
             }
-        } catch (Exception ignore) {
-            // ignore.
+        } catch (Exception e) {
+            Logger.warn(e.getMessage());
         }
         return false;
     }
