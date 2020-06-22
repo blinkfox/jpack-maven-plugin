@@ -2,6 +2,7 @@ package com.blinkfox.jpack.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * 基础配置信息.
@@ -11,6 +12,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@ToString
 public class BaseConfig {
 
     /**

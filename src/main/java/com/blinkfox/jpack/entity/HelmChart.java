@@ -2,6 +2,7 @@ package com.blinkfox.jpack.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * 用于制作 Helm Chart 包相关的实体类.
@@ -11,6 +12,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@ToString
 public class HelmChart extends BaseConfig {
 
     /**

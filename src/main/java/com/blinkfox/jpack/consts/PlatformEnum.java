@@ -2,6 +2,7 @@ package com.blinkfox.jpack.consts;
 
 import com.blinkfox.jpack.entity.BaseConfig;
 import com.blinkfox.jpack.entity.PackInfo;
+import com.blinkfox.jpack.utils.Logger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -99,6 +100,11 @@ public enum PlatformEnum {
      */
     public static PackInfo newBaseConfigPackInfo(PackInfo packInfo, BaseConfig baseConfig) {
         PackInfo newPackInfo = PackInfo.newCommonPackInfo(packInfo);
+        if (baseConfig == null) {
+            Logger.debug("【构建打包 -> 构建】构建打包的相关信息为：【" + newPackInfo + "】.");
+            return newPackInfo;
+        }
+
         if (StringUtils.isNotBlank(baseConfig.getVmOptions())) {
             newPackInfo.setVmOptions(baseConfig.getVmOptions());
         }
@@ -115,6 +121,7 @@ public enum PlatformEnum {
         if (ArrayUtils.isNotEmpty(baseConfig.getExcludeFiles())) {
             newPackInfo.setExcludeFiles(ArrayUtils.addAll(packInfo.getExcludeFiles(), baseConfig.getExcludeFiles()));
         }
+        Logger.debug("【构建打包 -> 构建】构建打包的相关信息为：【" + newPackInfo + "】.");
         return newPackInfo;
     }
 

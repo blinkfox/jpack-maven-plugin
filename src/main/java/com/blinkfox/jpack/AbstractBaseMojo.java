@@ -156,6 +156,7 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
      * @since v1.5.0
      */
     @Getter
+    @Parameter(property = "helmChart")
     private HelmChart helmChart;
 
     /**

@@ -200,6 +200,8 @@ public class PackInfo {
                 + ", vmOptions: '" + this.vmOptions + '\''
                 + ", programArgs: '" + this.programArgs + '\''
                 + ", skipError: '" + this.skipError + '\''
+                + ", docker: '" + this.docker + '\''
+                + ", helmChart: '" + this.helmChart + '\''
                 + '}';
     }
 
