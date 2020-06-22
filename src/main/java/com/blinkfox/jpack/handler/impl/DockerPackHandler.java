@@ -170,7 +170,9 @@ public class DockerPackHandler extends AbstractPackHandler {
         try {
             this.imageName = super.packInfo.getDocker().getImageName();
             Logger.info("【构建镜像 -> 进行】正在构建【" + this.imageName + "】镜像...");
+            // 持续打印进度，完成之后，换行.
             String imageId = dockerClient.build(Paths.get(super.platformPath), imageName, this::printProgress);
+            System.out.println();
             Logger.info("【构建镜像 -> 成功】构建【" + this.imageName + "】镜像完毕，镜像ID: " + imageId);
 
             // 对镜像打标签.
@@ -280,6 +282,7 @@ public class DockerPackHandler extends AbstractPackHandler {
             // 推送镜像到远程镜像仓库中.
             Logger.info("【推送镜像 -> 进行】正在推送标签为【" + imageTagName + "】的镜像到远程仓库中...");
             dockerClient.push(imageTagName, this::printProgress, authPair.getLeft());
+            System.out.println();
             Logger.info("【推送镜像 -> 成功】推送标签为【" + imageTagName + "】的镜像到远程仓库完成.");
         } catch (Exception e) {
             throw new DockerPackException(ExceptionEnum.DOCKER_PUSH_EXCEPTION.getMsg(), e);
@@ -518,14 +521,14 @@ public class DockerPackHandler extends AbstractPackHandler {
     }
 
     /**
-     * 打印 Docker 处理进度.
+     * 打印 Docker 处理进度，这里使用 .
      *
      * @param msg msg消息
      */
     private void printProgress(ProgressMessage msg) {
         String progress = msg.progress();
         if (StringUtils.isNotBlank(progress)) {
-            Logger.info(progress);
+            System.out.printf("\r" + progress);
         }
     }
 
