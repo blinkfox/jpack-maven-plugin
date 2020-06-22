@@ -37,6 +37,10 @@ public class ChartPackHandler extends AbstractPackHandler {
     public static final String PUSH_CURL = "curl -u \"%s:%s\" -X POST \"%s\" -H \"accept: application/json\" "
             + "-H \"Content-Type: multipart/form-data\" -F \"chart=@%s;type=application/x-compressed\"";
 
+    private static final String VERSION = "version";
+
+    private static final String SUCCESS = "success";
+
     /**
      * 进行 Helm Chart 构建的相关信息.
      */
@@ -155,14 +159,11 @@ public class ChartPackHandler extends AbstractPackHandler {
      */
     private boolean checkHelmEnv() {
         try {
-            String result = CmdKit.execute("helm version");
-            if (result.contains("version")) {
-                return true;
-            }
+            return CmdKit.execute("helm version").contains(VERSION);
         } catch (Exception e) {
             Logger.warn(e.getMessage());
+            return false;
         }
-        return false;
     }
 
     /**
@@ -188,9 +189,16 @@ public class ChartPackHandler extends AbstractPackHandler {
         try {
             // 使用 helm 命令来打包.
             String result = CmdKit.execute("helm package " + file.getAbsolutePath());
-            if (result.contains("Successfully")) {
+            if (result.toLowerCase().contains(SUCCESS)) {
                 Logger.info("【Chart打包 -> 成功】执行【helm】命令打包成功.");
-                this.chartTgzPath = StringUtils.substringAfterLast(result, "saved it to:").trim();
+                File tgzFile = new File(StringUtils.substringAfterLast(result, "to:").trim());
+                if (!tgzFile.exists()) {
+                    throw new PackException("【Chart打包 -> 失败】未找到打包后的 tgz 文件的位置，请检查，打包的结果为：【" + result + "】.");
+                }
+
+                // 复制打包后的文件到 jpack 主目录中，便于获取或后续使用.
+                this.chartTgzPath = super.packInfo.getHomeDir() + File.separator + tgzFile.getName();
+                FileUtils.copyFile(tgzFile, new File(this.chartTgzPath));
                 return true;
             }
         } catch (Exception e) {
