@@ -219,7 +219,7 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
                 .setExcludeFiles(this.excludeFiles)
                 .setCopyResources(this.copyResources)
                 .setImageBuildObserver(ImageBuildObserver
-                        .of(this.helmChart != null && this.helmChart.getUseDockerImage()));
+                        .of(this.helmChart != null && Boolean.TRUE.equals(this.helmChart.getUseDockerImage())));
         Logger.debug(packInfo.toString());
         return packInfo;
     }

@@ -71,7 +71,7 @@ public class ChartPackHandler extends AbstractPackHandler {
         // 判断是否有构建目标.
         final String[] goals = this.helmChart.getGoals();
         if (ArrayUtils.isEmpty(goals)) {
-            Logger.warn("【Chart构建 -> 跳过】没有配置【<helmChart>】的构建目标【<goals>】，将跳过 HelmChart 相关的构建.");
+            Logger.info("【Chart构建 -> 跳过】没有配置【<helmChart>】的构建目标【<goals>】，将跳过 HelmChart 相关的构建.");
             return;
         }
 
