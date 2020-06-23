@@ -47,7 +47,7 @@
                         <param>HelmChart</param>
                     </platforms>
                     <helmChart>
-                        <!-- helm chart 源文件的目录位置，目前仅支持本地文件的绝对或相对路径. -->
+                        <!-- helm chart 源文件的目录位置，目前仅支持本地文件的绝对路径或相对 pom.xml 的相对路径. -->
                         <location>src/test/resources/hello-helm</location>
                         <!-- 要推送 helm chart 所在仓库的 API URL 地址. -->
                         <chartRepoUrl>http://registry.yourcompany.com:5000/api/chartrepo/blinkfox/charts</chartRepoUrl>

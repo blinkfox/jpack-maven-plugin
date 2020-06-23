@@ -2,14 +2,14 @@
 
 [![HitCount](http://hits.dwyl.io/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin) [![Build Status](https://secure.travis-ci.org/blinkfox/jpack-maven-plugin.svg)](https://travis-ci.org/blinkfox/jpack-maven-plugin) [![GitHub license](https://img.shields.io/github/license/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin/blob/master/LICENSE) [![codecov](https://codecov.io/gh/blinkfox/jpack-maven-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/blinkfox/jpack-maven-plugin) ![Java Version](https://img.shields.io/badge/Java-%3E%3D%208-blue.svg) [![Maven Central](https://img.shields.io/maven-central/v/com.blinkfox/jpack-maven-plugin.svg)](https://search.maven.org/artifact/com.blinkfox/jpack-maven-plugin/1.5.1/maven-plugin) [![Javadocs](https://img.shields.io/badge/javadoc-1.5.1-brightgreen.svg)](https://www.javadoc.io/doc/com.blinkfox/jpack-maven-plugin/1.5.1)
 
-> 这是一个用于对 SpringBoot 服务打包为 Windows、Linux 和 Docker 下可发布部署包的 Maven 插件。
+> 这是一个用于对 SpringBoot 服务打包为 Windows、Linux 和 Docker 下可发布部署包的 Maven 插件。[参考示例项目（jpack-demo）](https://github.com/blinkfox/jpack-demo)。
 
 ## 一、特性
 
 - 简单易用，基于**约定优于配置**的思想来构建部署包
 - 支持打包为 `Windows`、 `Linux` 和 `Docker` 下的发布部署包，也可单独选择打某些平台下的部署包
 - `Windows`部署包可以安装为服务，从 `Windows` 的服务界面中来启动和停止应用服务，且默认为开机自启动
-- 支持 `Docker` 的镜像构建、导出镜像 `tar` 包和推送镜像到远程仓库或远程私有仓库等功能
+- 支持 `Docker` 的镜像构建、导出镜像 `tgz` 包和推送镜像到远程仓库或远程私有仓库等功能
 - 支持 `Helm Chart` 的打包、推送和连带镜像一起导出 `tgz` 包的功能
 - jpack 内部默认提供了一个简单通用的 `Dockerfile` 来构建 SpringBoot 服务的镜像，也支持自定义 `Dockerfile` 来构建镜像
 - 可自定义复制文件资源到部署包中，例如通常发布时需要的：数据库脚本、文档说明等
@@ -270,6 +270,7 @@ docker run -d -p 7070:7070 -e JVM_OPTS="-Xms512m -Xmx1024m" -e PROGRAM_ARGS="--s
                 <param>push</param>
                 <param>save</param>
             </goals>
+            <!-- 推送 Chart 到 Harbor 中的 registry 用户密码信息，可以进行 AES 加密. -->
             <registryUser>
                 <username>your-username</username>
                 <password>your-password</password>
@@ -279,7 +280,17 @@ docker run -d -p 7070:7070 -e JVM_OPTS="-Xms512m -Xmx1024m" -e PROGRAM_ARGS="--s
 </plugin>
 ```
 
-> 待继续完善....
+- Helm Chart 的构建支持打包为 `tgz` 包，便于上传到 Harbor Registry 仓库中；
+- 你也可以通过配置 `chartRepoUrl` 和 `registryUser` 来将 Chart 直接推送到 Harbor 远程仓库中；
+- 也可以将 Chart 包和所需的镜像包一起打包，共通导出成离线应用包。
+
+离线应用包内容结果如下：
+
+- `config`: 存放 `application.yml` 等配置文件的目录，便于部署时参考和设置配置项；
+- `docs`: 存放文档的目录（可自定义复制文档到此目录，方便部署和应用使用时查阅相关文档）
+- `jpack-demo-1.0.0.tgz`: 打包后的 Chart 包。
+- `images.tgz`: Chart 所需的**离线镜像包**，可以自定义导出多个镜像包为一个镜像包，也可以默认使用 jpack 自身构建的 Docker 镜像包。
+- `README.md`: 主入口说明文件
 
 ## 四、jpack configuration 配置详解
 
@@ -612,6 +623,60 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 </plugin>
 ```
 
+### 12. helmChart
+
+这是用于专门对 Helm Chart 平台进行构建的配置项，`v1.5.0` 版本新增，主要包括前面提到的如下几个子配置项及 Helm Chart 平台下特有的一些配置项，用法同前面类似，不再赘述：
+
+- `location`: helm chart 源文件的目录位置，目前仅支持本地文件的绝对路径或相对 `pom.xml` 的相对路径。
+- `chartRepoUrl`: 要推送 Helm Chart 包所在 Harbor Registry 仓库的 API URL 地址，示例如：`http://registry.yourcompany.com:5000/api/chartrepo/blinkfox/charts`，将 `yourcompany` 和 `blinkfox` 替换成你自己的公司仓库和项目名称。
+- `useDockerImage`: 导出离线应用包(`save`)时，是后也导出使用 jpack 当前构建的镜像，仅设置为 `true` 时为真。
+- `saveImages`: 导出离线应用包(`save`)时，需要一起导出的离线镜像包，值为一个数组,可以配置多个镜像，也可以同时和 `useDockerImage` 参数一起生效。
+- `saveImageFileName`: 表示导出镜像时的镜像文件名称，不填写则默认是 `images.tgz`。
+- `goals`: Helm Chart 相关的构建目标，如果不填写任何目标，则不会作任何构建任务。目前最多可以填写三个目标：打包 Chart（`package`）、推送 Chart（`push`）和导出应用包（`save`）。
+- `configFiles`: 针对 Helm Chart 可以一起打包的 Spring Boot 应用的配置文件配置。如果你配置了这个值，那么在 helmChart 下将会覆盖通用的 `configFiles` 的值。
+- `copyResources`: 针对 Helm Chart 的资源复制。如果你配置了这个值，那么在导出应用包时会额外复制这些资源到离线应用包中。
+- `excludeFiles`: 针对 Helm Chart 的资源排除。如果你配置了这个值，那么会额外从离线应用包中排除这些资源。
+- `registryUser`：当推送 Chart 到私有权限限制的镜像仓库中时，可以填写如下用户权限认证信息。通常，至少需要填写用户名和密码。该值和 Docker 平台中的 `registryUser` 可以相互使用，如果两个平台的配置都存在的话，那么你只需要在某一个平台中配置一次即可。
+  - `username`：registry 仓库的用户名。可以对用户名进行加密，只要将用户名以 `ENCRYPT#` 开头就表示是加过密的用户名，否则说明直接使用原文。
+  - `password`：registry 仓库的密码。可以对密码进行加密，只要将文本内容以 `ENCRYPT#` 开头就表示是加过密的密码，否则说明直接使用原文密码。
+
+> 注：关于 `registryUser` 中的用户名或密码加密，你可以使用 jpack 中的 `AesKit.encrypt("your-username");` 方法进行加密。该种加密并不安全，意在防君子，防不了小人。Docker 和 Helm Chart 平台中的 `registryUser` 可以相互使用，如果两个平台的配置都存在的话，那么你只需要在某一个平台中配置一次即可。
+
+示例如下：
+
+```xml
+<plugin>
+    <groupId>com.blinkfox</groupId>
+    <artifactId>jpack-maven-plugin</artifactId>
+    ...
+    <configuration>
+        <helmChart>
+            <!-- helm chart 源文件的目录位置，目前仅支持本地文件的绝对路径或相对 pom.xml 的相对路径. -->
+            <location>src/test/resources/hello-helm</location>
+            <!-- 要推送 helm chart 所在仓库的 API URL 地址. -->
+            <chartRepoUrl>http://registry.yourcompany.com:5000/api/chartrepo/blinkfox/charts</chartRepoUrl>
+            <!-- 该值表示 save 导出时，是否使用本插件 Docker 构建的镜像，将其也导出到最终的镜像包中，默认为 false. -->
+            <useDockerImage>false</useDockerImage>
+            <!-- goals 中有 save 时，需要导出的镜像名称或有标签的镜像名称，不填写会默认从上面 Docker 导出的镜像中获取. -->
+            <saveImages>
+                <param>registry.yourcompany.com:5000/blinkfox/jpack-test:1.0.0-SNAPSHOT</param>
+            </saveImages>
+            <!-- 表示导出镜像时的镜像文件名称，不填写，则默认是 'images.tgz'. -->
+            <saveImageFileName></saveImageFileName>
+            <goals>
+                <param>package</param>
+                <param>push</param>
+                <param>save</param>
+            </goals>
+            <registryUser>
+                <username>blinkfox</username>
+                <password>123456</password>
+            </registryUser>
+        </helmChart>
+    </configuration>
+</plugin>
+```
+
 ## 五、更全的配置示例及说明
 
 jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Maven 插件的所有配置项配置示例如下：
@@ -620,7 +685,7 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
 <plugin>
     <groupId>com.blinkfox</groupId>
     <artifactId>jpack-maven-plugin</artifactId>
-    <version>1.5.0</version>
+    <version>1.5.1</version>
     <executions>
         <execution>
             <goals>
@@ -695,6 +760,29 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
             </registryUser>
             ...
         </docker>
+        <helmChart>
+            <!-- helm chart 源文件的目录位置，目前仅支持本地文件的绝对路径或相对 pom.xml 的相对路径. -->
+            <location>src/test/resources/hello-helm</location>
+            <!-- 要推送 helm chart 所在仓库的 API URL 地址. -->
+            <chartRepoUrl>http://registry.yourcompany.com:5000/api/chartrepo/blinkfox/charts</chartRepoUrl>
+            <!-- 该值表示 save 导出时，是否使用本插件 Docker 构建的镜像，将其也导出到最终的镜像包中，默认为 false. -->
+            <useDockerImage>false</useDockerImage>
+            <!-- goals 中有 save 时，需要导出的镜像名称或有标签的镜像名称，不填写会默认从上面 Docker 导出的镜像中获取. -->
+            <saveImages>
+                <param>registry.yourcompany.com:5000/blinkfox/jpack-test:1.0.0-SNAPSHOT</param>
+            </saveImages>
+            <!-- 表示导出镜像时的镜像文件名称，不填写，则默认是 'images.tgz'. -->
+            <saveImageFileName></saveImageFileName>
+            <goals>
+                <param>package</param>
+                <param>push</param>
+                <param>save</param>
+            </goals>
+            <registryUser>
+                <username>blinkfox</username>
+                <password>123456</password>
+            </registryUser>
+        </helmChart>
         <!-- 需要copy 哪些资源(from 的值可以是目录或者具体的相对、绝对或网络资源路径)到部署包中的某个目录;
             to 的值只能是目录，为空或者 '.' 或者 '/' 符号则表示复制到各平台包的根目录中，否则就复制到具体的目录下 -->
         <copyResources>
