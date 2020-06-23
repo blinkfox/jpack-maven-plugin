@@ -301,7 +301,7 @@ public class ChartPackHandler extends AbstractPackHandler {
                         ? super.platformPath + File.separator + "images.tgz"
                         : super.platformPath + File.separator + saveImageFileName;
                 FileUtils.copyStreamToFile(new RawInputStreamFacade(imageInput), new File(saveImageFileName));
-                Logger.info("【Chart导出 -> 成功】从 Docker 中导出镜像包 " + saveImageFileName + " 成功.");
+                Logger.info("【Chart导出 -> 成功】从 Docker 中导出镜像包【" + saveImageFileName + "】成功.");
             }
         } catch (DockerException | DockerCertificateException e) {
             Logger.error("【Chart导出 -> 放弃】未检测到或开启 Docker 环境，将跳过 Helm Chart 导出时的镜像导出环节.", e);
