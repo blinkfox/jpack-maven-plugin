@@ -2,6 +2,7 @@ package com.blinkfox.jpack.handler.impl;
 
 import com.blinkfox.jpack.consts.DockerGoalEnum;
 import com.blinkfox.jpack.consts.ExceptionEnum;
+import com.blinkfox.jpack.consts.ImageBuildResultEnum;
 import com.blinkfox.jpack.consts.PlatformEnum;
 import com.blinkfox.jpack.consts.SkipErrorEnum;
 import com.blinkfox.jpack.entity.Docker;
@@ -133,6 +134,8 @@ public class DockerPackHandler extends AbstractPackHandler {
             // 初始化 ~/.dockercfg 文件，防止进行授权时报文件找不到的异常！
             this.initDockercfgFile();
         } catch (Exception e) {
+            // 如果开启了镜像构建监控的功能，就设置镜像构建结果为"不可达".
+            super.packInfo.getImageBuildObserver().setUnableBuildResult();
             throw new DockerPackException(ExceptionEnum.NO_DOCKER.getMsg(), e);
         }
     }
@@ -146,6 +149,8 @@ public class DockerPackHandler extends AbstractPackHandler {
         try {
             this.copyDockerfile();
         } catch (IOException e) {
+            // 如果开启了镜像构建监控的功能，就设置镜像构建结果为"不可达".
+            super.packInfo.getImageBuildObserver().setUnableBuildResult();
             throw new DockerPackException(ExceptionEnum.NO_DOCKERFILE.getMsg(), e);
         }
     }
@@ -180,13 +185,13 @@ public class DockerPackHandler extends AbstractPackHandler {
 
             // 如果开启了镜像构建监控的功能，就设置镜像已经构建完成.
             if (imageObserver.isEnabled()) {
-                imageObserver.setBuilt(true);
+                imageObserver.setBuildResult(ImageBuildResultEnum.SUCCESS);
                 imageObserver.setImageTagName(imageTagName);
             }
             FileUtils.deleteDirectory(this.getJpackTargetDir());
         } catch (Exception e) {
             if (imageObserver.isEnabled()) {
-                imageObserver.setBuilt(false);
+                imageObserver.setBuildResult(ImageBuildResultEnum.FAILURE);
             }
             throw new DockerPackException(ExceptionEnum.DOCKER_BUILD_EXCEPTION.getMsg(), e);
         }

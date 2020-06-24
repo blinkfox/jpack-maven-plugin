@@ -1,6 +1,7 @@
 package com.blinkfox.jpack.handler.impl;
 
 import com.blinkfox.jpack.consts.ChartGoalEnum;
+import com.blinkfox.jpack.consts.ImageBuildResultEnum;
 import com.blinkfox.jpack.consts.PlatformEnum;
 import com.blinkfox.jpack.entity.HelmChart;
 import com.blinkfox.jpack.entity.ImageBuildObserver;
@@ -292,7 +293,8 @@ public class ChartPackHandler extends AbstractPackHandler {
             return;
         }
 
-        Logger.info("【Chart导出 -> 开始】开始从 Docker 中导出 Chart 所需的镜像包 ...，要导出的镜像有：\n" + allSaveImages.toString());
+        Logger.info("【Chart导出 -> 开始】开始从 Docker 中导出 Chart 所需的镜像包 ...，"
+                + "要导出的镜像有：\n       " + allSaveImages.toString());
         try (DockerClient dockerClient = DefaultDockerClient.fromEnv().build()) {
             dockerClient.ping();
             try (InputStream imageInput = dockerClient.save(allSaveImages.toArray(new String[] {}))) {
@@ -334,15 +336,18 @@ public class ChartPackHandler extends AbstractPackHandler {
 
         // 如果激活了也导出使用 jpack 构建的 Docker 镜像，那么就等待镜像构建完毕，并添加到集合中.
         if (imageObserver.isEnabled()) {
-            while (imageObserver.getBuilt() == null) {
+            while (imageObserver.getBuildResult() == null) {
                 try {
                     TimeUnit.MILLISECONDS.sleep(500);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
+                    Logger.error("【Chart导出 -> 等待】等待 Docker 镜像的构建结果时被中断了.");
                 }
             }
 
-            if (imageObserver.getBuilt() && StringUtils.isNotBlank(imageObserver.getImageTagName())) {
+            // 如果构建结果是成功
+            if (imageObserver.getBuildResult() == ImageBuildResultEnum.SUCCESS
+                    && StringUtils.isNotBlank(imageObserver.getImageTagName())) {
                 allImages.add(imageObserver.getImageTagName());
             }
         }

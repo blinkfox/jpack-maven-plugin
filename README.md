@@ -2,7 +2,7 @@
 
 [![HitCount](http://hits.dwyl.io/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin) [![Build Status](https://secure.travis-ci.org/blinkfox/jpack-maven-plugin.svg)](https://travis-ci.org/blinkfox/jpack-maven-plugin) [![GitHub license](https://img.shields.io/github/license/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin/blob/master/LICENSE) [![codecov](https://codecov.io/gh/blinkfox/jpack-maven-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/blinkfox/jpack-maven-plugin) ![Java Version](https://img.shields.io/badge/Java-%3E%3D%208-blue.svg) [![Maven Central](https://img.shields.io/maven-central/v/com.blinkfox/jpack-maven-plugin.svg)](https://search.maven.org/artifact/com.blinkfox/jpack-maven-plugin/1.5.1/maven-plugin) [![Javadocs](https://img.shields.io/badge/javadoc-1.5.1-brightgreen.svg)](https://www.javadoc.io/doc/com.blinkfox/jpack-maven-plugin/1.5.1)
 
-> 这是一个用于对 SpringBoot 服务打包为 Windows、Linux 和 Docker 下可发布部署包的 Maven 插件。[参考示例项目（jpack-demo）](https://github.com/blinkfox/jpack-demo)。
+> 这是一个用于对 SpringBoot 服务打包为 Windows、Linux、Docker 和 Helm Chart 下可发布部署包的 Maven 插件。[参考示例项目（jpack-demo）](https://github.com/blinkfox/jpack-demo)。
 
 ## 一、特性
 

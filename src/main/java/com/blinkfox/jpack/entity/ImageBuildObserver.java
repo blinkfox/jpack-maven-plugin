@@ -1,5 +1,6 @@
 package com.blinkfox.jpack.entity;
 
+import com.blinkfox.jpack.consts.ImageBuildResultEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,9 +20,9 @@ public class ImageBuildObserver {
     private boolean enabled;
 
     /**
-     * 是否构建完成的布尔值.
+     * 镜像的构建结果的枚举.
      */
-    private Boolean built;
+    private ImageBuildResultEnum buildResult;
 
     /**
      * 已经打过标签的镜像名称.
@@ -47,6 +48,15 @@ public class ImageBuildObserver {
         return Boolean.TRUE.equals(useDockerImage)
                 ? new ImageBuildObserver(true)
                 : new ImageBuildObserver(false);
+    }
+
+    /**
+     * 设置 Docker 镜像的构建结果为 {@link ImageBuildResultEnum#UNABLE}.
+     */
+    public void setUnableBuildResult() {
+        if (this.isEnabled() && this.buildResult == null) {
+            this.buildResult = ImageBuildResultEnum.UNABLE;
+        }
     }
 
 }
