@@ -81,17 +81,6 @@ public class Docker extends BaseConfig {
     }
 
     /**
-     * 获取打过标签的镜像的 tgz 包的名称.
-     *
-     * @return 名称字符串
-     * @author blinkfox on 2020-06-21.
-     * @since v1.5.0
-     */
-    public String getImageTagName() {
-        return (StringUtils.isBlank(this.registry) ? "" : this.registry + "/") + this.getImageTarName();
-    }
-
-    /**
      * 获取镜像名.
      *
      * @return 镜像名

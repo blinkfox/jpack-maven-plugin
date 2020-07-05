@@ -170,7 +170,7 @@ public class PackInfo {
      */
     public String getDockerPackName() {
         return this.homeDir.getAbsolutePath() + File.separator
-                + this.docker.getImageTarName() + "-" + PlatformEnum.DOCKER.getCode();
+                + this.docker.getName() + "-" + this.docker.getTag() + "-" + PlatformEnum.DOCKER.getCode();
     }
 
     /**
