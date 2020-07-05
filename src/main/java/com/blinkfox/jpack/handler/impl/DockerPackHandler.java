@@ -214,14 +214,14 @@ public class DockerPackHandler extends AbstractPackHandler {
         this.tagImage();
 
         try {
-            String imageTgz = super.packInfo.getDocker().getImageTarName();
-            Logger.info("【导出镜像 -> 进行】正在导出 Docker 镜像包: " + imageTgz + " ...");
-            // 导出镜像为 `.tgz` 文件.
+            String imageTar = super.packInfo.getDocker().getImageTarName();
+            Logger.info("【导出镜像 -> 进行】正在导出 Docker 镜像包: " + imageTar + " ...");
+            // 导出镜像为 `.tar` 文件.
             try (InputStream imageInput = dockerClient.save(this.imageName)) {
                 FileUtils.copyStreamToFile(new RawInputStreamFacade(imageInput),
-                        new File(super.platformPath + File.separator + imageTgz));
+                        new File(super.platformPath + File.separator + imageTar));
             }
-            Logger.info("【导出镜像 -> 成功】从 Docker 中导出镜像包 " + imageTgz + " 成功.");
+            Logger.info("【导出镜像 -> 成功】从 Docker 中导出镜像包 " + imageTar + " 成功.");
             this.handleFilesAndCompress();
         } catch (Exception e) {
             throw new DockerPackException(ExceptionEnum.DOCKER_SAVE_EXCEPTION.getMsg(), e);

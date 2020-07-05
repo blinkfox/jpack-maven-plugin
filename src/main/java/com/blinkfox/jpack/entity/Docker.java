@@ -77,7 +77,7 @@ public class Docker extends BaseConfig {
      * @return 名称字符串
      */
     public String getImageTarName() {
-        return this.name + "-" + this.tag + ".tgz";
+        return this.name + "-" + this.tag + ".tar";
     }
 
     /**
