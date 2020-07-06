@@ -260,7 +260,7 @@ public class ChartPackHandler extends AbstractPackHandler {
         String registry = docker.getRegistry();
         String repo = docker.getRepo();
         return StringUtils.isNotBlank(registry) && StringUtils.isNotBlank(repo)
-                ? StringUtils.join("http://", repo, "/api/chartrepo/", repo, "/charts")
+                ? StringUtils.join("http://", registry, "/api/chartrepo/", repo, "/charts")
                 : null;
     }
 
