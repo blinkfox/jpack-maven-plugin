@@ -321,7 +321,7 @@ public class ChartPackHandler extends AbstractPackHandler {
             try (InputStream imageInput = dockerClient.save(allSaveImages.toArray(new String[] {}))) {
                 String saveImageFileName = this.helmChart.getSaveImageFileName();
                 saveImageFileName = StringUtils.isBlank(saveImageFileName)
-                        ? super.platformPath + File.separator + "images.tgz"
+                        ? super.platformPath + File.separator + "images.tar"
                         : super.platformPath + File.separator + saveImageFileName;
                 FileUtils.copyStreamToFile(new RawInputStreamFacade(imageInput), new File(saveImageFileName));
                 Logger.info("【Chart导出 -> 成功】从 Docker 中导出镜像包【" + saveImageFileName + "】成功.");
