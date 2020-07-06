@@ -1,12 +1,12 @@
 # jpack-maven-plugin
 
-[![HitCount](http://hits.dwyl.io/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin) [![Build Status](https://secure.travis-ci.org/blinkfox/jpack-maven-plugin.svg)](https://travis-ci.org/blinkfox/jpack-maven-plugin) [![GitHub license](https://img.shields.io/github/license/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin/blob/master/LICENSE) [![codecov](https://codecov.io/gh/blinkfox/jpack-maven-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/blinkfox/jpack-maven-plugin) ![Java Version](https://img.shields.io/badge/Java-%3E%3D%208-blue.svg) [![Maven Central](https://img.shields.io/maven-central/v/com.blinkfox/jpack-maven-plugin.svg)](https://search.maven.org/artifact/com.blinkfox/jpack-maven-plugin/1.5.1/maven-plugin) [![Javadocs](https://img.shields.io/badge/javadoc-1.5.1-brightgreen.svg)](https://www.javadoc.io/doc/com.blinkfox/jpack-maven-plugin/1.5.1)
+[![HitCount](http://hits.dwyl.io/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin) [![Build Status](https://secure.travis-ci.org/blinkfox/jpack-maven-plugin.svg)](https://travis-ci.org/blinkfox/jpack-maven-plugin) [![GitHub license](https://img.shields.io/github/license/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin/blob/master/LICENSE) [![codecov](https://codecov.io/gh/blinkfox/jpack-maven-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/blinkfox/jpack-maven-plugin) ![Java Version](https://img.shields.io/badge/Java-%3E%3D%208-blue.svg) [![Maven Central](https://img.shields.io/maven-central/v/com.blinkfox/jpack-maven-plugin.svg)](https://search.maven.org/artifact/com.blinkfox/jpack-maven-plugin/1.5.3/maven-plugin) [![Javadocs](https://img.shields.io/badge/javadoc-1.5.3-brightgreen.svg)](https://www.javadoc.io/doc/com.blinkfox/jpack-maven-plugin/1.5.3)
 
 > 这是一个用于对 SpringBoot 服务打包为 Windows、Linux、Docker 和 Helm Chart 下可发布部署包的 Maven 插件。[参考示例项目（jpack-demo）](https://github.com/blinkfox/jpack-demo)。
 
 ## 一、特性
 
-- 简单易用，基于**约定优于配置**的思想来构建部署包
+- 专为 SpringBoot 服务和各个主流平台而设计的自动化 Maven 打包插件，基于**约定优于配置**的思想来构建各平台的部署包
 - 支持打包为 `Windows`、 `Linux` 和 `Docker` 下的发布部署包，也可单独选择打某些平台下的部署包
 - `Windows`部署包可以安装为服务，从 `Windows` 的服务界面中来启动和停止应用服务，且默认为开机自启动
 - 支持 `Docker` 的镜像构建、导出镜像 `tgz` 包和推送镜像到远程仓库或远程私有仓库等功能
@@ -30,7 +30,7 @@
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            <version>1.5.1</version>
+            <version>1.5.3</version>
         </plugin>
     </plugins>
 </build>
@@ -53,7 +53,7 @@ mvn clean package jpack:build
                                   |  |\____ \ \__  \  _/ ___\ |  |/ /
                                   |  ||  |_> > / __ \_\  \___ |    <
                               /\__|  ||   __/ (____  / \___  >|__|_ \
-                              \______||__|         \/      \/      \/ v1.5.1
+                              \______||__|         \/      \/      \/ v1.5.3
 
 [INFO] 【Chart构建 -> 跳过】没有配置【<helmChart>】的构建目标【<goals>】，将跳过 HelmChart 相关的构建.
 [INFO] 【构建打包 -> 成功】制作 linux 下的部署压缩包完成.
@@ -94,7 +94,7 @@ openjdk                        8-jdk-alpine        a3562aa0b991        6 days ag
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            ...
+            <!-- 此处内容省略. -->
             <executions>
                 <execution>
                     <goals>
@@ -117,7 +117,7 @@ openjdk                        8-jdk-alpine        a3562aa0b991        6 days ag
 <plugin>
     <groupId>com.blinkfox</groupId>
     <artifactId>jpack-maven-plugin</artifactId>
-    ...
+    <!-- 此处内容省略. -->
     <executions>
         <execution>
             <goals>
@@ -190,14 +190,7 @@ openjdk                        8-jdk-alpine        a3562aa0b991        6 days ag
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            <version>1.5.1</version>
-            <executions>
-                <execution>
-                    <goals>
-                        <goal>build</goal>
-                    </goals>
-                </execution>
-            </executions>
+            <!-- 此处内容省略. -->
             <configuration>
                 <docker>
                     <extraGoals>
@@ -256,6 +249,7 @@ docker run -d -p 7070:7070 -e JVM_OPTS="-Xms512m -Xmx1024m" -e PROGRAM_ARGS="--s
 <plugin>
     <groupId>com.blinkfox</groupId>
     <artifactId>jpack-maven-plugin</artifactId>
+    <!-- 此处内容省略. -->
     <configuration>
         <helmChart>
             <!-- helm chart 源文件的目录位置，目前仅支持本地文件的绝对或相对路径. -->
@@ -306,7 +300,7 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 <plugin>
     <groupId>com.blinkfox</groupId>
     <artifactId>jpack-maven-plugin</artifactId>
-        ...
+    <!-- 此处内容省略. -->
     <configuration>
         <!-- 打包哪些平台的包，不填写则代表所有平台. 目前支持 Windows、Linux 和 Dokcer 三个平台（大小写均可）.
             这里作为示例，注释 Docker 的方式，就表明只打包 Windows 和 Linux 平台下的包。 -->
@@ -329,7 +323,7 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 <plugin>
     <groupId>com.blinkfox</groupId>
     <artifactId>jpack-maven-plugin</artifactId>
-        ...
+    <!-- 此处内容省略. -->
     <configuration>
         <!-- JVM 运行所需的选项参数. -->
         <vmOptions>-Xms1024m -Xmx2048m</vmOptions>
@@ -349,7 +343,7 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 <plugin>
     <groupId>com.blinkfox</groupId>
     <artifactId>jpack-maven-plugin</artifactId>
-       ...
+    <!-- 此处内容省略. -->
     <configuration>
         <!-- 所集成的 SpringBoot 服务程序运行所需的参数. -->
         <programArgs>--server.port=7070</programArgs>
@@ -369,7 +363,7 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 <plugin>
     <groupId>com.blinkfox</groupId>
     <artifactId>jpack-maven-plugin</artifactId>
-       ...
+    <!-- 此处内容省略. -->
     <configuration>
         <!-- 需要复制到部署包中 config 目录下的 yml 或者 .properties 文件的配置文件路径，
             它的值可以配置多个，可以是相对路径、绝对路径具体的目录或文件，也可以是网络资源. -->
@@ -393,7 +387,7 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 <plugin>
     <groupId>com.blinkfox</groupId>
     <artifactId>jpack-maven-plugin</artifactId>
-       ...
+    <!-- 此处内容省略. -->
     <configuration>
         <!-- 遇到错误时是否跳过错误，目前仅Docker 下有用到此配置。默认是不填写或者 default，程序会自动处理，不需要你额外关注；
             true的话，会忽略所有异常；false的话，遇到错误就直接报错。 -->
@@ -421,7 +415,7 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 <plugin>
     <groupId>com.blinkfox</groupId>
     <artifactId>jpack-maven-plugin</artifactId>
-       ...
+    <!-- 此处内容省略. -->
     <configuration>
         <!-- 需要copy 哪些资源(from 的值可以是目录或者具体的相对、绝对或网络资源路径)到部署包中的某个目录;
             to 的值只能是目录，为空或者 '.' 或者 '/' 符号则表示复制到各平台包的根目录中，否则就复制到具体的目录下 -->
@@ -461,7 +455,7 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 <plugin>
     <groupId>com.blinkfox</groupId>
     <artifactId>jpack-maven-plugin</artifactId>
-       ...
+    <!-- 此处内容省略. -->
     <configuration>
         <!-- 排除哪些文件或目录不需要打包进压缩包中，输入文件的相对路径即可. -->
         <excludeFiles>
@@ -489,7 +483,7 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 <plugin>
     <groupId>com.blinkfox</groupId>
     <artifactId>jpack-maven-plugin</artifactId>
-       ...
+    <!-- 此处内容省略. -->
     <configuration>
         <!-- 以下是仅对 Windows 平台下生效的配置项。 -->
         <windows>
@@ -559,7 +553,7 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 <plugin>
     <groupId>com.blinkfox</groupId>
     <artifactId>jpack-maven-plugin</artifactId>
-       ...
+    <!-- 此处内容省略. -->
     <configuration>
         <!-- 以下是仅对 Docker 平台下生效的配置项。 -->
         <docker>
@@ -628,7 +622,7 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 这是用于专门对 Helm Chart 平台进行构建的配置项，`v1.5.0` 版本新增，主要包括前面提到的如下几个子配置项及 Helm Chart 平台下特有的一些配置项，用法同前面类似，不再赘述：
 
 - `location`: helm chart 源文件的目录位置，目前仅支持本地文件的绝对路径或相对 `pom.xml` 的相对路径。
-- `chartRepoUrl`: 要推送 Helm Chart 包所在 Harbor Registry 仓库的 API URL 地址，示例如：`http://registry.yourcompany.com:5000/api/chartrepo/blinkfox/charts`，将 `yourcompany` 和 `blinkfox` 替换成你自己的公司仓库和项目名称。
+- `chartRepoUrl`: 要推送 Helm Chart 包所在 Harbor Registry 仓库的 API URL 地址，如果不填写将默认使用上面 `docker` 配置中的 `registry` 和 `repo` 的值去拼接。示例如：`http://registry.yourcompany.com:5000/api/chartrepo/blinkfox/charts`，将 `yourcompany` 和 `blinkfox` 替换成你自己的公司仓库和项目名称。
 - `useDockerImage`: 导出离线应用包(`save`)时，是后也导出使用 jpack 当前构建的镜像，仅设置为 `true` 时为真。
 - `saveImages`: 导出离线应用包(`save`)时，需要一起导出的离线镜像包，值为一个数组,可以配置多个镜像，也可以同时和 `useDockerImage` 参数一起生效。
 - `saveImageFileName`: 表示导出镜像时的镜像文件名称，不填写则默认是 `images.tgz`。
@@ -648,12 +642,12 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 <plugin>
     <groupId>com.blinkfox</groupId>
     <artifactId>jpack-maven-plugin</artifactId>
-    ...
+    <!-- 此处内容省略. -->
     <configuration>
         <helmChart>
-            <!-- helm chart 源文件的目录位置，目前仅支持本地文件的绝对路径或相对 pom.xml 的相对路径. -->
-            <location>src/test/resources/hello-helm</location>
-            <!-- 要推送 helm chart 所在仓库的 API URL 地址. -->
+            <!-- helm chart 源文件的目录位置，支持本地文件的绝对路径或相对 pom.xml 的相对路径. -->
+            <location>hello-helm</location>
+            <!-- 要推送 helm chart 所在仓库的 API URL 地址，不填写，将使用 docker 配置中的 registry 和 repo. -->
             <chartRepoUrl>http://registry.yourcompany.com:5000/api/chartrepo/blinkfox/charts</chartRepoUrl>
             <!-- 该值表示 save 导出时，是否使用本插件 Docker 构建的镜像，将其也导出到最终的镜像包中，默认为 false. -->
             <useDockerImage>false</useDockerImage>
@@ -669,8 +663,8 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
                 <param>save</param>
             </goals>
             <registryUser>
-                <username>blinkfox</username>
-                <password>123456</password>
+                <username>ENCRYPT#leSdRWZZesst0PRxA2uMYqWgmcBOuzQx</username>
+                <password>ENCRYPT#xrrHHzgJsGUQrfkEasF6WahbGnMXTg==</password>
             </registryUser>
         </helmChart>
     </configuration>
@@ -679,13 +673,13 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 
 ## 五、更全的配置示例及说明
 
-jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Maven 插件的所有配置项配置示例如下：
+jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Maven 插件的所有配置项配置示例和配置含义的说明如下：
 
 ```xml
 <plugin>
     <groupId>com.blinkfox</groupId>
     <artifactId>jpack-maven-plugin</artifactId>
-    <version>1.5.1</version>
+    <version>1.5.3</version>
     <executions>
         <execution>
             <goals>
@@ -750,8 +744,8 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
             <!-- jpack 推送到远程私有镜像仓库的用户权限认证信息，通常至少需要填写用户名和密码两项信息，
                 serverAddress 不填写就默认使用 registry. -->
             <registryUser>
-                <username>blinkfox</username>
-                <password>123456</password>
+                <username>ENCRYPT#leSdRWZZesst0PRxA2uMYqWgmcBOuzQx</username>
+                <password>ENCRYPT#xrrHHzgJsGUQrfkEasF6WahbGnMXTg==</password>
                 <!-- 可以对用户名或密码进行加密，可同时加密，也可只加密用户名或密码，只要将用户名或密码以 'ENCRYPT#' 开头就表示是加过密的信息. -->
                 <!-- <password>ENCRYPT#xrrHHzgJsGUQrfkEasF6WahbGnMXTg==</password>-->
                 <email>your-emial-name@gmail.com</email>
@@ -779,8 +773,8 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
                 <param>save</param>
             </goals>
             <registryUser>
-                <username>blinkfox</username>
-                <password>123456</password>
+                <username>ENCRYPT#leSdRWZZesst0PRxA2uMYqWgmcBOuzQx</username>
+                <password>ENCRYPT#xrrHHzgJsGUQrfkEasF6WahbGnMXTg==</password>
             </registryUser>
         </helmChart>
         <!-- 需要copy 哪些资源(from 的值可以是目录或者具体的相对、绝对或网络资源路径)到部署包中的某个目录;
@@ -823,6 +817,12 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
 
 ## 七、版本记录
 
+- v1.5.3 (2020-07-06)
+  - 新增了不配置 `chartRepoUrl` 时，将自动从 docker 配置的 `registry` 和 `repo` 中读取拼接；
+  - 修改回了 Docker 镜像包的文件格式为 tar；
+  - 修复了导出 Docker 完整离线部署包时包名不对的问题；
+- v1.5.2 (2020-06-24)
+  - 修改了无 Docker 环境但却配置了使用 Docker 镜像时导出 Chart 包时一直循环等待构建的问题；
 - v1.5.1 (2020-06-23)
   - 修复了未配置 `Helm Chart` 时的**空指针**问题；
 - v1.5.0 (2020-06-23)
