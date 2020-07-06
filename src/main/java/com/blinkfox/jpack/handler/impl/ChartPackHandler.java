@@ -3,6 +3,7 @@ package com.blinkfox.jpack.handler.impl;
 import com.blinkfox.jpack.consts.ChartGoalEnum;
 import com.blinkfox.jpack.consts.ImageBuildResultEnum;
 import com.blinkfox.jpack.consts.PlatformEnum;
+import com.blinkfox.jpack.entity.Docker;
 import com.blinkfox.jpack.entity.HelmChart;
 import com.blinkfox.jpack.entity.ImageBuildObserver;
 import com.blinkfox.jpack.entity.PackInfo;
@@ -223,17 +224,17 @@ public class ChartPackHandler extends AbstractPackHandler {
             registry = this.packInfo.getDocker().getRegistryUser();
         }
 
-        String charRepoUrl = this.helmChart.getChartRepoUrl();
-        if (StringUtils.isBlank(charRepoUrl) || registry == null
+        String chartRepoUrl = this.buildChartRepoUrl();
+        if (StringUtils.isBlank(chartRepoUrl) || registry == null
                 || StringUtils.isBlank(registry.getUsername()) || StringUtils.isBlank(registry.getPassword())) {
-            Logger.warn("【Chart推送 -> 跳过】未配置 registryUser 和 charRepoUrl 相关信息，将不会推送 Chart 包.");
+            Logger.warn("【Chart推送 -> 跳过】未配置 registryUser 或 chartRepoUrl 相关信息，将不会推送 Chart 包.");
             return;
         }
 
         // 拼接推送 Chart 的 CURL 命令，并执行推送的命令.
         try {
             Logger.info("【Chart推送 -> 开始】开始推送 Chart 包到远程 Registry 仓库中 ...");
-            String result = CmdKit.execute(buildPushUrl(registry, charRepoUrl));
+            String result = CmdKit.execute(buildPushUrl(registry, chartRepoUrl));
             Logger.debug("【Chart推送 -> 完毕】推送 Chart 包到远程 Registry 仓库的结果为：\n" + result);
             if (result.toLowerCase().contains(STR_TRUE)) {
                 Logger.info("【Chart推送 -> 成功】推送 Chart 包到远程 Registry 仓库中成功.");
@@ -241,6 +242,26 @@ public class ChartPackHandler extends AbstractPackHandler {
         } catch (Exception e) {
             Logger.error("【Chart推送 -> 出错】执行 CURL 指令推送 Chart 包出错，错误原因如下：", e);
         }
+    }
+
+    /**
+     * 构建 Chart 仓库所在的 URL 地址，如果未配置，就使用 Docker 中的 registry 和 repo 信息来拼接.
+     *
+     * @return Chart 所在的仓库 URL 地址.
+     */
+    private String buildChartRepoUrl() {
+        String chartRepoUrl = this.helmChart.getChartRepoUrl();
+        if (StringUtils.isNotBlank(chartRepoUrl)) {
+            return chartRepoUrl;
+        }
+
+        // 如果 Chart 为空，就尝试使用 Docker 中的 repo 名来拼接出 Chart repo 的 URL 地址.
+        Docker docker = this.packInfo.getDocker();
+        String registry = docker.getRegistry();
+        String repo = docker.getRepo();
+        return StringUtils.isNotBlank(registry) && StringUtils.isNotBlank(repo)
+                ? StringUtils.join("http://", repo, "/api/chartrepo/", repo, "/charts")
+                : null;
     }
 
     /**

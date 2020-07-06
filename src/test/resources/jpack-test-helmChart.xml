@@ -49,7 +49,7 @@
                     <helmChart>
                         <!-- helm chart 源文件的目录位置，目前仅支持本地文件的绝对路径或相对 pom.xml 的相对路径. -->
                         <location>src/test/resources/hello-helm</location>
-                        <!-- 要推送 helm chart 所在仓库的 API URL 地址. -->
+                        <!-- 要推送 helm chart 所在仓库的 API URL 地址，不填写，将使用 docker 配置中的 registry 和 repo. -->
                         <chartRepoUrl>http://registry.yourcompany.com:5000/api/chartrepo/blinkfox/charts</chartRepoUrl>
                         <!-- 该值表示 save 导出时，是否使用本插件 Docker 构建的镜像，将其也导出到最终的镜像包中，默认为 false. -->
                         <useDockerImage>false</useDockerImage>
