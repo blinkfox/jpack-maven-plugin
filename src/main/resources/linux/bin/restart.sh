@@ -1,5 +1,4 @@
 #! /bin/bash
-
 #=====================================================================
 # 项目重启的 shell 脚本;
 # 先调用 stop.sh 停服;
@@ -19,3 +18,4 @@ bash \${BIN_PATH}/stop.sh
 # 启动服务.
 echo 正在启动 \${APPLICATION} 服务...
 bash \${BIN_PATH}/start.sh
+exit 0

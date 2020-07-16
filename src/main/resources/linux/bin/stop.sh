@@ -1,5 +1,4 @@
 #! /bin/bash
-
 #=====================================================================
 # 应用服务停止的 shell 脚本
 # 通过项目名称查找到PID
@@ -11,9 +10,9 @@ APPLICATION="${name}"
 
 if [[ -z "$1" ]]
 then
-    pid=`ps ax |grep -i '${jarName}' |grep java | grep -v grep |  awk '{print $1}'`
+    pid=$(ps ax |grep -i '${jarName}' |grep java | grep -v grep |  awk '{print $1}')
 else
-    pid=`ps ax |grep -i '${jarName}' |grep java | grep -i 'server.port='''${1}''''| grep -v grep |  awk '{print $1}'`
+    pid=$(ps ax |grep -i '${jarName}' |grep java | grep -i 'server.port='''${1}''''| grep -v grep |  awk '{print $1}')
 fi
 
 if [[ -z "$pid" ]] ; then
@@ -21,5 +20,6 @@ if [[ -z "$pid" ]] ; then
     exit 0;
 fi
 
-kill -9 \${pid}
+kill -15 \${pid}
 echo "已成功关闭了 \${APPLICATION} 服务 (PID: \${pid})."
+exit 0

@@ -1,5 +1,4 @@
 #! /bin/bash
-
 #====================================================
 # ${name} 项目启动的 shell 脚本
 # logs 目录: 项目运行日志目录
@@ -16,14 +15,14 @@ APPLICATION_JAR="${jarName}"
 # 判断该服务是否已经启动，如果已经启动了，就不再重复运行了.
 if [[ -z "$1" ]]
 then
-    pid=`ps ax |grep -i '${jarName}' |grep java | grep -v grep |  awk '{print $1}'`
+    pid=$(ps ax |grep -i '${jarName}' |grep java | grep -v grep |  awk '{print $1}')
 else
-    pid=`ps ax |grep -i '${jarName}' |grep java | grep -i 'server.port='''${1}''''| grep -v grep |  awk '{print $1}'`
+    pid=$(ps ax |grep -i '${jarName}' |grep java | grep -i 'server.port='''${1}''''| grep -v grep |  awk '{print $1}')
 fi
 
 if [[ "$pid" ]] ; then
     echo "监测到 \${APPLICATION} 服务正在运行中，将不再重复启动... [running...]"
-    exit 0;
+    exit 1;
 fi
 
 # bin目录绝对路径
@@ -34,7 +33,7 @@ cd `dirname $0`
 cd ..
 # 打印项目根目录绝对路径
 # `pwd` 执行系统命令并获得结果
-BASE_PATH=`pwd`
+BASE_PATH=$(pwd)
 
 # 项目日志输出绝对路径
 LOG_DIR=\${BASE_PATH}"/logs"
@@ -102,3 +101,4 @@ STARTUP_LOG="\${STARTUP_LOG}====================================================
 
 # 打印启动日志
 echo -e \${STARTUP_LOG}
+exit 0
