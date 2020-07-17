@@ -62,9 +62,10 @@ public class WindowsPackHandler extends AbstractPackHandler {
         context.put("description", packInfo.getDescription());
 
         // 根据 JVM 选项参数和程序参数拼接出 arguments 的值.
-        String vmOptions = StringUtils.isBlank(packInfo.getVmOptions()) ? "" : packInfo.getVmOptions() + " ";
-        String args = StringUtils.isBlank(packInfo.getProgramArgs()) ? "" : " " + packInfo.getProgramArgs();
-        context.put("arguments", vmOptions + "-jar ..\\" + packInfo.getFullJarName() + args);
+        context.put("vmOptions", StringUtils.isBlank(packInfo.getVmOptions()) ? "" : packInfo.getVmOptions());
+        context.put("jarName", packInfo.getFullJarName());
+        String programArgs = packInfo.getProgramArgs();
+        context.put("programArgs", StringUtils.isBlank(programArgs) ? "" : " " + programArgs);
 
         // 渲染出 winsw.xml 模板中的内容，并将内容写入到 bin 目录的文件中.
         try {
