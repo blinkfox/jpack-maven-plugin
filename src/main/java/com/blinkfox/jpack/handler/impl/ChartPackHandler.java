@@ -252,7 +252,8 @@ public class ChartPackHandler extends AbstractPackHandler {
         OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(chain -> chain.proceed(chain.request()
                         .newBuilder()
-                        .header("Authorization", Credentials.basic(registry.getUsername(), registry.getPassword()))
+                        .header("Authorization", Credentials.basic(
+                                AesKit.decrypt(registry.getUsername()), AesKit.decrypt(registry.getPassword())))
                         .build()))
                 .build();
 
@@ -269,7 +270,8 @@ public class ChartPackHandler extends AbstractPackHandler {
                 Logger.info("【Chart推送 -> 成功】推送 Chart 包到远程 Registry 仓库中成功.");
                 return;
             }
-            Logger.info("【Chart推送 -> 失败】推送 Chart 包到远程 Registry 仓库失败！");
+
+            Logger.info("【Chart推送 -> 失败】推送 Chart 包到远程 Registry 仓库失败，状态码：[" + response.code() + "].");
         } catch (Exception e) {
             Logger.error("【Chart推送 -> 出错】推送 Chart 包到远程 Registry 仓库出错，错误原因如下：", e);
         }
@@ -293,30 +295,6 @@ public class ChartPackHandler extends AbstractPackHandler {
         return StringUtils.isNotBlank(registry) && StringUtils.isNotBlank(repo)
                 ? StringUtils.join("http://", registry, "/api/chartrepo/", repo, "/charts")
                 : null;
-    }
-
-    /**
-     * 拼接推送 Chart 的 CURL 命令.
-     *
-     * @param registry registry 权限信息
-     * @param chartRepoUrl 推送 Chart 仓库所在的 URL.
-     * @return 最终的推送命令.
-     */
-    private String[] buildPushUrl(RegistryUser registry, String chartRepoUrl) {
-        List<String> cmdList = new ArrayList<>();
-        cmdList.add("curl");
-        cmdList.add("-u");
-        cmdList.add(AesKit.decrypt(registry.getUsername()) + ":" + AesKit.decrypt(registry.getPassword()));
-        cmdList.add("-X");
-        cmdList.add("POST");
-        cmdList.add(chartRepoUrl);
-        cmdList.add("-H");
-        cmdList.add("accept: application/json");
-        cmdList.add("-H");
-        cmdList.add("Content-Type: multipart/form-data");
-        cmdList.add("-F");
-        cmdList.add("chart=@" + this.chartTgzPath + ";type=application/x-compressed");
-        return cmdList.toArray(new String[] {});
     }
 
     /**
