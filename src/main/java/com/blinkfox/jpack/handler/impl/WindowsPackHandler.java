@@ -63,7 +63,7 @@ public class WindowsPackHandler extends AbstractPackHandler {
 
         // 根据 JVM 选项参数和程序参数拼接出 arguments 的值.
         context.put("vmOptions", StringUtils.isBlank(packInfo.getVmOptions()) ? "" : packInfo.getVmOptions());
-        context.put("jarName", packInfo.getFullJarName());
+        context.put("jarName", "%BASE%\\..\\" + packInfo.getFullJarName());
         String programArgs = packInfo.getProgramArgs();
         context.put("programArgs", StringUtils.isBlank(programArgs) ? "" : " " + programArgs);
 

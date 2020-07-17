@@ -8,5 +8,5 @@
     <startmode>Automatic</startmode>
 
     <executable>java</executable>
-    <arguments> -server ${vmOptions} -jar %BASE%\..\${jarName} ${programArgs}</arguments>
+    <arguments> -server ${vmOptions} -jar ${jarName} ${programArgs}</arguments>
 </service>
