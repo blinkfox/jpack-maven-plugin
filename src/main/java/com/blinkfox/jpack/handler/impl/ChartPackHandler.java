@@ -26,6 +26,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import lombok.Getter;
+import okhttp3.Credentials;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.plexus.util.FileUtils;
@@ -232,15 +238,40 @@ public class ChartPackHandler extends AbstractPackHandler {
         }
 
         // 拼接推送 Chart 的 CURL 命令，并执行推送的命令.
+        this.doPushChart(registry, chartRepoUrl);
+    }
+
+    /**
+     * 发送 HTTP 请求推送 Chart 包到远程镜像仓库中.
+     *
+     * @param registry 镜像仓库
+     * @param chartRepoUrl Chart 包的 URL
+     */
+    private void doPushChart(RegistryUser registry, String chartRepoUrl) {
+        Logger.info("【Chart推送 -> 开始】开始推送 Chart 包到远程 Registry 仓库中 ...");
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(chain -> chain.proceed(chain.request()
+                        .newBuilder()
+                        .header("Authorization", Credentials.basic(registry.getUsername(), registry.getPassword()))
+                        .build()))
+                .build();
+
+        File chartFile = new File(this.chartTgzPath);
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("chart", chartFile.getName(), RequestBody.create(chartFile, MultipartBody.FORM))
+                .build();
+
         try {
-            Logger.info("【Chart推送 -> 开始】开始推送 Chart 包到远程 Registry 仓库中 ...");
-            String result = CmdKit.execute(buildPushUrl(registry, chartRepoUrl));
-            Logger.debug("【Chart推送 -> 完毕】推送 Chart 包到远程 Registry 仓库的结果为：\n" + result);
-            if (result.toLowerCase().contains(STR_TRUE)) {
+            Response response =
+                    client.newCall(new Request.Builder().url(chartRepoUrl).post(requestBody).build()).execute();
+            if (response.isSuccessful()) {
                 Logger.info("【Chart推送 -> 成功】推送 Chart 包到远程 Registry 仓库中成功.");
+                return;
             }
+            Logger.info("【Chart推送 -> 失败】推送 Chart 包到远程 Registry 仓库失败！");
         } catch (Exception e) {
-            Logger.error("【Chart推送 -> 出错】执行 CURL 指令推送 Chart 包出错，错误原因如下：", e);
+            Logger.error("【Chart推送 -> 出错】推送 Chart 包到远程 Registry 仓库出错，错误原因如下：", e);
         }
     }
 
