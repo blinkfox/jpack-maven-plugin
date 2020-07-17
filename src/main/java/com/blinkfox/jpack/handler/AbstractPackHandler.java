@@ -85,7 +85,10 @@ public abstract class AbstractPackHandler implements PackHandler {
     protected void createBaseDirs() {
         this.binPath = this.platformPath + File.separator + AbstractPackHandler.BIN_DIR_NAME + File.separator;
         try {
-            FileUtils.forceMkdir(new File(binPath));
+            // 如果配置了生成 bin 目录，就创建 bin 目录.
+            if (this.packInfo.isGenerateBinDir()) {
+                FileUtils.forceMkdir(new File(binPath));
+            }
             FileUtils.forceMkdir(new File(this.platformPath + File.separator + "config"));
             FileUtils.forceMkdir(new File(this.platformPath + File.separator + "docs"));
             FileUtils.forceMkdir(new File(this.platformPath + File.separator + "logs"));

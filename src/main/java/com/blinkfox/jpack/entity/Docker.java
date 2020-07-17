@@ -2,7 +2,6 @@ package com.blinkfox.jpack.entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * 构建 Docker 发布包相关的参数实体，继承自 {@link BaseConfig}.

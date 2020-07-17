@@ -29,8 +29,10 @@ public class LinuxPackHandler extends AbstractPackHandler {
         super.createBaseDirs();
         super.copyFiles("linux/README.md", "README.md");
 
-        // 渲染并写入对应的资源文件到 linux 所在的打包文件夾中.
-        this.renderShell();
+        // 如果配置了生成 bin 目录，就渲染并写入对应的资源文件到 linux 所在的打包文件夾中.
+        if (packInfo.isGenerateBinDir()) {
+            this.renderShell();
+        }
 
         // 打 Linux 下 .tar.gz 的压缩包.
         super.compress(PlatformEnum.LINUX);
@@ -42,7 +44,7 @@ public class LinuxPackHandler extends AbstractPackHandler {
     private void renderShell() {
         Map<String, Object> context = super.buildBaseTemplateContextMap();
 
-        // 渲染出 winsw.xml 模板中的内容，并将内容写入到 bin 目录的文件中.
+        // 渲染出 shell 模板中的内容，并将内容写入到 bin 目录的文件中.
         String bin = super.binPath + File.separator;
         try {
             TemplateKit.renderFile("linux/bin/start.sh", context, bin + "start.sh");

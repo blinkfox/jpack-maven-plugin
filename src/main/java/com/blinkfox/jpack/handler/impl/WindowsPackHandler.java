@@ -37,13 +37,17 @@ public class WindowsPackHandler extends AbstractPackHandler {
 
         // 复制或渲染对应的资源文件到 windows 所在的打包文件夾中.
         super.copyFiles("windows/README.md", "README.md");
-        String projectName = BIN_DIR_NAME + File.separator + packInfo.getName();
-        this.renderWinswXml(super.platformPath + File.separator + projectName + ".xml", packInfo);
-        super.copyFiles("windows/bin/winsw.exe", projectName + ".exe");
-        super.copyFiles("windows/bin/winsw.exe.config", projectName + ".exe.config");
 
-        // 创建所有的 `.bat` 文件.
-        this.createAllBatFiles(packInfo.getName());
+        // 如果生成 bin 目录，就渲染生成.
+        if (packInfo.isGenerateBinDir()) {
+            String projectName = BIN_DIR_NAME + File.separator + packInfo.getName();
+            this.renderWinswXml(super.platformPath + File.separator + projectName + ".xml", packInfo);
+            super.copyFiles("windows/bin/winsw.exe", projectName + ".exe");
+            super.copyFiles("windows/bin/winsw.exe.config", projectName + ".exe.config");
+
+            // 创建所有的 `.bat` 文件.
+            this.createAllBatFiles(packInfo.getName());
+        }
 
         // 制作 .zip 压缩包.
         super.compress(PlatformEnum.WINDOWS);

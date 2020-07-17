@@ -26,6 +26,13 @@ public class BaseConfig {
     private String programArgs;
 
     /**
+     * 是否生成 Windows、Linux 下默认的 bin 目录及文件，默认 true，即生成 jpack 构建的 bin 目录和文件.
+     *
+     * @since v1.5.4
+     */
+    private String generateBinDir;
+
+    /**
      * 运行 SpringBoot 程序所需要的配置文件路径，可以是相对路径、绝对路径或者网站资源文件.
      */
     private String[] configFiles;

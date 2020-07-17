@@ -79,6 +79,13 @@ public class PackInfo {
     private boolean cleanPackDir;
 
     /**
+     * 是否生成 Windows、Linux 下默认的 bin 目录，默认 "true"，即生成 jpack 构建的 bin 目录和文件.
+     *
+     * @since v1.5.4
+     */
+    private String generateBinDir;
+
+    /**
      * 构建 Windowns 发布包相关的个性化参数配置.
      */
     private Windows windows;
@@ -133,6 +140,7 @@ public class PackInfo {
                 .setDescription(packInfo.getDescription())
                 .setVmOptions(packInfo.getVmOptions())
                 .setProgramArgs(packInfo.getProgramArgs())
+                .setGenerateBinDir(packInfo.getGenerateBinDir())
                 .setConfigFiles(packInfo.getConfigFiles())
                 .setSkipError(packInfo.getSkipError())
                 .setWindows(packInfo.getWindows())
@@ -182,6 +190,15 @@ public class PackInfo {
     public String getChartSavePackName() {
         return this.homeDir.getAbsolutePath() + File.separator
                 + this.name + "-" + PlatformEnum.HELM_CHART.getCode();
+    }
+
+    /**
+     * 是否生成 Windows、Linux 下默认的 bin 目录，默认 {@code true}，即生成 jpack 构建的 bin 目录和文件.
+     *
+     * @return 布尔值
+     */
+    public boolean isGenerateBinDir() {
+        return !Boolean.FALSE.toString().equalsIgnoreCase(this.generateBinDir);
     }
 
     /**

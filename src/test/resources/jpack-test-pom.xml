@@ -38,6 +38,8 @@
                     <!-- 所集成的 Java 服务程序运行所需的参数. -->
                     <programArgs></programArgs>
                     <cleanPackDir>false</cleanPackDir>
+                    <!-- 是否生成 Windows、Linux 下默认的 bin 目录，默认 true，即生成 jpack 自带 bin 目录和文件. -->
+                    <generateBinDir>true</generateBinDir>
                     <!-- 需要复制到部署包中 config 目录下的 yml 或者 .properties 文件的配置文件路径，
                         它的值必须是一个具体的文件，可以是相对路径、绝对路径或网络资源. -->
                     <configFiles>
@@ -68,6 +70,7 @@
                     <linux>
                         <vmOptions>-Xms512m -Xmx2048m</vmOptions>
                         <programArgs>--server.port=9090</programArgs>
+                        <generateBinDir>true</generateBinDir>
                         <configFiles>
                             <param>src/test/resources/application-prod.yml</param>
                         </configFiles>

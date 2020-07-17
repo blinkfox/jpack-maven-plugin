@@ -35,7 +35,7 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
             + "                                  |  |\\____ \\ \\__  \\  _/ ___\\ |  |/ /\n"
             + "                                  |  ||  |_> > / __ \\_\\  \\___ |    < \n"
             + "                              /\\__|  ||   __/ (____  / \\___  >|__|_ \\\n"
-            + "                              \\______||__|         \\/      \\/      \\/ v1.5.3\n";
+            + "                              \\______||__|         \\/      \\/      \\/ v1.5.4\n";
 
     /**
      * 用来存放 jpack 打包时的文件夹名称常量.
@@ -132,6 +132,14 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
     private String cleanPackDir;
 
     /**
+     * 是否生成 Windows、Linux 下默认的 bin 目录及文件，默认 true，即生成 jpack 构建的 bin 目录和文件.
+     *
+     * @since v1.5.4
+     */
+    @Parameter(property = "generateBinDir", defaultValue = "true")
+    private String generateBinDir;
+
+    /**
      * 构建 Docker 发布包相关的参数.
      */
     @Parameter(property = "windows")
@@ -212,6 +220,7 @@ public abstract class AbstractBaseMojo extends AbstractMojo {
                 .setConfigFiles(this.configFiles)
                 .setSkipError(SkipErrorEnum.of(this.skipError))
                 .setCleanPackDir(Boolean.TRUE.equals(Boolean.valueOf(this.cleanPackDir)))
+                .setGenerateBinDir(this.generateBinDir)
                 .setWindows(this.windows)
                 .setLinux(this.linux)
                 .setDocker(this.initDefaultDockerInfo())
