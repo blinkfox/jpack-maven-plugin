@@ -1,6 +1,6 @@
 # jpack-maven-plugin
 
-[![HitCount](http://hits.dwyl.io/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin) [![Build Status](https://secure.travis-ci.org/blinkfox/jpack-maven-plugin.svg)](https://travis-ci.org/blinkfox/jpack-maven-plugin) [![GitHub license](https://img.shields.io/github/license/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin/blob/master/LICENSE) [![codecov](https://codecov.io/gh/blinkfox/jpack-maven-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/blinkfox/jpack-maven-plugin) ![Java Version](https://img.shields.io/badge/Java-%3E%3D%208-blue.svg) [![Maven Central](https://img.shields.io/maven-central/v/com.blinkfox/jpack-maven-plugin.svg)](https://search.maven.org/artifact/com.blinkfox/jpack-maven-plugin/1.5.3/maven-plugin) [![Javadocs](https://img.shields.io/badge/javadoc-1.5.3-brightgreen.svg)](https://www.javadoc.io/doc/com.blinkfox/jpack-maven-plugin/1.5.3)
+[![HitCount](http://hits.dwyl.io/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin) [![Build Status](https://secure.travis-ci.org/blinkfox/jpack-maven-plugin.svg)](https://travis-ci.org/blinkfox/jpack-maven-plugin) [![GitHub license](https://img.shields.io/github/license/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin/blob/master/LICENSE) [![codecov](https://codecov.io/gh/blinkfox/jpack-maven-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/blinkfox/jpack-maven-plugin) ![Java Version](https://img.shields.io/badge/Java-%3E%3D%208-blue.svg) [![Maven Central](https://img.shields.io/maven-central/v/com.blinkfox/jpack-maven-plugin.svg)](https://search.maven.org/artifact/com.blinkfox/jpack-maven-plugin/1.5.4/maven-plugin) [![Javadocs](https://img.shields.io/badge/javadoc-1.5.4-brightgreen.svg)](https://www.javadoc.io/doc/com.blinkfox/jpack-maven-plugin/1.5.4)
 
 > 这是一个用于对 SpringBoot 服务打包为 Windows、Linux、Docker 和 Helm Chart 下可发布部署包的 Maven 插件。[参考示例项目（jpack-demo）](https://github.com/blinkfox/jpack-demo)。
 
@@ -30,7 +30,7 @@
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            <version>1.5.3</version>
+            <version>1.5.4</version>
         </plugin>
     </plugins>
 </build>
@@ -53,7 +53,7 @@ mvn clean package jpack:build
                                   |  |\____ \ \__  \  _/ ___\ |  |/ /
                                   |  ||  |_> > / __ \_\  \___ |    <
                               /\__|  ||   __/ (____  / \___  >|__|_ \
-                              \______||__|         \/      \/      \/ v1.5.3
+                              \______||__|         \/      \/      \/ v1.5.4
 
 [INFO] 【Chart构建 -> 跳过】没有配置【<helmChart>】的构建目标【<goals>】，将跳过 HelmChart 相关的构建.
 [INFO] 【构建打包 -> 成功】制作 linux 下的部署压缩包完成.
@@ -400,7 +400,11 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 
 表示执行打包命令是否清除之前生成的发布包数据，默认清除（`true`），可配置为 `false`。
 
-### 7. copyResources
+### 7. generateBinDir
+
+表示是否生成 Windows、Linux 下默认的 `bin` 目录及相关的可执行脚本文件，默认 `true`，即表示生成 jpack 自带 `bin`目录和文件。如果你配置为 `false`，将不会生成 `jpack` 自带的 `bin` 目录和相关的可执行文件，便于你自定义自己的可执行文件。
+
+### 8. copyResources
 
 系统发布时，发布包中必然会有很多除了 `xxx.jar` 之外的其他文件，如：数据库脚本、配置文件、文档手册等等，这些也需要集成到发布包中。为了统一管理和维护，所以通过 `copyResources` 配置项，可以复制你项目中几乎所有你想要的目录、文件或者网络资源等到发布包及发布包里的自定义的目录中。
 
@@ -445,7 +449,7 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 </plugin>
 ```
 
-### 8. excludeFiles
+### 9. excludeFiles
 
 也需生成的可部署包中，某些文件资源对你而已，显得有些多余，你想排除它们。此时你可以使用 `excludeFiles` 来配置需要排除的文件或目录不会打包的部署包中，可以配置多个。
 
@@ -467,12 +471,13 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 </plugin>
 ```
 
-### 9. windows
+### 10. windows
 
 这是用于专门对 Windows 平台生效的配置项，主要包括前面提到的如下几个子配置项，用法同前面类似，不再赘述：
 
 - `vmOptions`: 针对 Windows 平台的 JVM 选项参数配置。如果你配置了这个值，那么在 Windows 下将会覆盖通用的 `vmOptions` 的值。
 - `programArgs`: 针对 Windows 平台的程序参数配置。如果你配置了这个值，那么在 Windows 下将会覆盖通用的 `programArgs` 的值。
+- `generateBinDir`: 针对 Windows 平台的是否生成 bin 目录及其下文件的配置。`v1.5.4` 版本新增，如果你配置了这个值，那么在 Windows 下将会覆盖通用的 `generateBinDir` 的值。
 - `configFiles`: 针对 Windows 平台的配置文件配置。如果你配置了这个值，那么在 Windows 下将会覆盖通用的 `configFiles` 的值。
 - `copyResources`: 针对 Windows 平台的资源复制。如果你配置了这个值，那么会额外复制这些资源到 Windows 平台的包中。
 - `excludeFiles`: 针对 Windows 平台的资源排除。如果你配置了这个值，那么会额外从 Windows 平台的包中排除这些资源。
@@ -489,6 +494,7 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
         <windows>
             <vmOptions>-Xms1024m -Xmx2048m</vmOptions>
             <programArgs>--server.port=7070</programArgs>
+            <generateBinDir>true</generateBinDir>
             <configFiles>
                 <param>src/test/resources/application.yml</param>
                 <param>src/test/resources/application-dev.yml</param>
@@ -507,19 +513,20 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 </plugin>
 ```
 
-### 10. linux
+### 11. linux
 
 这是用于专门对 Linux 平台生效的配置项，主要包括前面提到的如下几个子配置项，用法同前面类似，不再赘述：
 
 - `vmOptions`: 针对 Linux 平台的 JVM 选项参数配置。如果你配置了这个值，那么在 Linux 下将会覆盖通用的 `vmOptions` 的值。
 - `programArgs`: 针对 Linux 平台的程序参数配置。如果你配置了这个值，那么在 Linux 下将会覆盖通用的 `programArgs` 的值。
+- `generateBinDir`: 针对 Linux 平台的是否生成 bin 目录及其下文件的配置。`v1.5.4` 版本新增，如果你配置了这个值，那么在 Linux 下将会覆盖通用的 `generateBinDir` 的值。
 - `configFiles`: 针对 Linux 平台的配置文件配置。如果你配置了这个值，那么在 Linux 下将会覆盖通用的 `configFiles` 的值。
 - `copyResources`: 针对 Linux 平台的资源复制。如果你配置了这个值，那么会额外复制这些资源到 Linux 平台的包中。
 - `excludeFiles`: 针对 Linux 平台的资源排除。如果你配置了这个值，那么会额外从 Linux 平台的包中排除这些资源。
 
 示例同 Windows 下的类似。
 
-### 11. docker
+### 12. docker
 
 这是用于专门对 Docker 平台生效的配置项，主要包括前面提到的如下几个子配置项及Docker 平台下特有的一些配置项，用法同前面类似，不再赘述：
 
@@ -617,7 +624,7 @@ jpack 的所有配置参数都非必填或者有默认值。以下是关于 jpac
 </plugin>
 ```
 
-### 12. helmChart
+### 13. helmChart
 
 这是用于专门对 Helm Chart 平台进行构建的配置项，`v1.5.0` 版本新增，主要包括前面提到的如下几个子配置项及 Helm Chart 平台下特有的一些配置项，用法同前面类似，不再赘述：
 
@@ -679,7 +686,7 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
 <plugin>
     <groupId>com.blinkfox</groupId>
     <artifactId>jpack-maven-plugin</artifactId>
-    <version>1.5.3</version>
+    <version>1.5.4</version>
     <executions>
         <execution>
             <goals>
@@ -705,6 +712,8 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
             true的话，会忽略所有异常；false的话，遇到错误就直接报错。 -->
         <skipError>default</skipError>
         <cleanPackDir>true</cleanPackDir>
+        <!-- 是否生成 Windows、Linux 下默认的 bin 目录，默认 true，即生成 jpack 自带 bin 目录和文件. -->
+        <generateBinDir>true</generateBinDir>
         <windows>
             ...
         </windows>
@@ -817,6 +826,11 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
 
 ## 七、版本记录
 
+- v1.5.4 (2020-07-18)
+  - 新增了不生成默认 `bin` 目录和文件的配置项，便于自定义 `bin` 目录中的文件；
+  - 修改了 Windows 下 `logs` 目录在 `bin` 目录中的问题；
+  - 修改了 Linux 下的 Shell 脚本，将 `kill -9` 改为 `kill -15`，脚本中均添加了 `exit` 的退出指令；
+  - 重构使用了 `okhttp` 库来完成 `chart` 包推送的功能；
 - v1.5.3 (2020-07-06)
   - 新增了不配置 `chartRepoUrl` 时，将自动从 docker 配置的 `registry` 和 `repo` 中读取拼接；
   - 修改回了 Docker 镜像包的文件格式为 tar；

@@ -66,8 +66,8 @@
                         <useDockerImage>true</useDockerImage>
                         <goals>
                             <param>package</param>
-                            <param>push</param>
-                            <param>save</param>
+<!--                            <param>push</param>-->
+<!--                            <param>save</param>-->
                         </goals>
                     </helmChart>
                 </configuration>
