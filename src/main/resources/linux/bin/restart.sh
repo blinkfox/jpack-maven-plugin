@@ -15,6 +15,15 @@ BIN_PATH=$(cd `dirname $0`; pwd)
 echo 正在关闭 \${APPLICATION} 服务...
 bash \${BIN_PATH}/stop.sh
 
+# 如果是优雅停机，就要循环判断服务是否关闭完成.
+bash \${BIN_PATH}/status.sh
+while [ $? -eq 1 ]
+do
+    echo "\${APPLICATION} 服务还未停止"
+    sleep 1s
+    bash \${BIN_PATH}/status.sh
+done
+
 # 启动服务.
 echo 正在启动 \${APPLICATION} 服务...
 bash \${BIN_PATH}/start.sh

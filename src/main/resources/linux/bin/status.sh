@@ -20,4 +20,4 @@ if [[ -z "$pid" ]] ; then
 fi
 
 echo "\${APPLICATION} 服务正在运行中 (PID: \${pid}). [is running ...]"
-exit 0
+exit 1
