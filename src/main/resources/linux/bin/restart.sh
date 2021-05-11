@@ -21,7 +21,6 @@ bash \${BIN_PATH}/stop.sh
 bash \${BIN_PATH}/status.sh
 while [ $? -eq 0 ]
 do
-    echo "\${APPLICATION} 服务仍在运行中，1s 后将继续检查服务状态."
     sleep 1s
     bash \${BIN_PATH}/status.sh
 done
