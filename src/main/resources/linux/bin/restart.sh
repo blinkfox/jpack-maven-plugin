@@ -18,12 +18,15 @@ echo 正在关闭 \${APPLICATION} 服务...
 bash \${BIN_PATH}/stop.sh
 
 # 如果是优雅停机，就要循环判断服务是否关闭完成.
+echo ----------------------------------------------------------------
+echo "可能是“优雅停机”，开始检测 \${APPLICATION} 服务是否仍在运行 ..."
 bash \${BIN_PATH}/status.sh
 while [ $? -eq 0 ]
 do
     sleep 1s
     bash \${BIN_PATH}/status.sh
 done
+echo -e "----------------------------------------------------------------\n"
 
 # 启动服务.
 echo 正在启动 \${APPLICATION} 服务 ...

@@ -1,6 +1,6 @@
 # jpack-maven-plugin
 
-[![HitCount](http://hits.dwyl.io/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin) [![Build Status](https://secure.travis-ci.org/blinkfox/jpack-maven-plugin.svg)](https://travis-ci.org/blinkfox/jpack-maven-plugin) [![GitHub license](https://img.shields.io/github/license/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin/blob/master/LICENSE) [![codecov](https://codecov.io/gh/blinkfox/jpack-maven-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/blinkfox/jpack-maven-plugin) ![Java Version](https://img.shields.io/badge/Java-%3E%3D%208-blue.svg) [![Maven Central](https://img.shields.io/maven-central/v/com.blinkfox/jpack-maven-plugin.svg)](https://search.maven.org/artifact/com.blinkfox/jpack-maven-plugin/1.5.4/maven-plugin) [![Javadocs](https://img.shields.io/badge/javadoc-1.5.4-brightgreen.svg)](https://www.javadoc.io/doc/com.blinkfox/jpack-maven-plugin/1.5.4)
+[![HitCount](http://hits.dwyl.io/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin) [![Build Status](https://secure.travis-ci.org/blinkfox/jpack-maven-plugin.svg)](https://travis-ci.org/blinkfox/jpack-maven-plugin) [![GitHub license](https://img.shields.io/github/license/blinkfox/jpack-maven-plugin.svg)](https://github.com/blinkfox/jpack-maven-plugin/blob/master/LICENSE) [![codecov](https://codecov.io/gh/blinkfox/jpack-maven-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/blinkfox/jpack-maven-plugin) ![Java Version](https://img.shields.io/badge/Java-%3E%3D%208-blue.svg) [![Maven Central](https://img.shields.io/maven-central/v/com.blinkfox/jpack-maven-plugin.svg)](https://search.maven.org/artifact/com.blinkfox/jpack-maven-plugin/1.5.5/maven-plugin) [![Javadocs](https://img.shields.io/badge/javadoc-1.5.5-brightgreen.svg)](https://www.javadoc.io/doc/com.blinkfox/jpack-maven-plugin/1.5.5)
 
 > 这是一个用于对 SpringBoot 服务打包为 Windows、Linux、Docker 和 Helm Chart 下可发布部署包的 Maven 插件。[参考示例项目（jpack-demo）](https://github.com/blinkfox/jpack-demo)。
 
@@ -30,7 +30,7 @@
         <plugin>
             <groupId>com.blinkfox</groupId>
             <artifactId>jpack-maven-plugin</artifactId>
-            <version>1.5.4</version>
+            <version>1.5.5</version>
         </plugin>
     </plugins>
 </build>
@@ -53,7 +53,7 @@ mvn clean package jpack:build
                                   |  |\____ \ \__  \  _/ ___\ |  |/ /
                                   |  ||  |_> > / __ \_\  \___ |    <
                               /\__|  ||   __/ (____  / \___  >|__|_ \
-                              \______||__|         \/      \/      \/ v1.5.4
+                              \______||__|         \/      \/      \/ v1.5.5
 
 [INFO] 【Chart构建 -> 跳过】没有配置【<helmChart>】的构建目标【<goals>】，将跳过 HelmChart 相关的构建.
 [INFO] 【构建打包 -> 成功】制作 linux 下的部署压缩包完成.
@@ -686,7 +686,7 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
 <plugin>
     <groupId>com.blinkfox</groupId>
     <artifactId>jpack-maven-plugin</artifactId>
-    <version>1.5.4</version>
+    <version>1.5.5</version>
     <executions>
         <execution>
             <goals>
@@ -826,6 +826,9 @@ jpack 的所有配置参数都非必填或者有默认值。下面是 jpack Mave
 
 ## 七、版本记录
 
+- v1.5.5 (2021-05-11)
+  - 修改了Linux 中的几个脚本，使重启时也能支持优雅停机重启；
+  - 一些依赖版本升级；
 - v1.5.4 (2020-07-18)
   - 新增了不生成默认 `bin` 目录和文件的配置项，便于自定义 `bin` 目录中的文件；
   - 修改了 Windows 下 `logs` 目录在 `bin` 目录中的问题；

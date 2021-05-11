@@ -47,7 +47,7 @@ if [[ ! -d "\${LOG_DIR}" ]]; then
 fi
 
 # 当前时间
-NOW_PRETTY=`date +'%Y-%m-%m %H:%M:%S'`
+NOW_PRETTY=$(date +'%Y-%m-%m %H:%M:%S')
 
 # 启动日志
 STARTUP_LOG="================================= \${NOW_PRETTY} =================================\n"
