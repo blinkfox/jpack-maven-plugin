@@ -17,7 +17,7 @@ else
 fi
 
 if [[ -z "$pid" ]] ; then
-    echo "未监测到 \${APPLICATION} 服务. [not running!]"
+    echo "未监测到 \${APPLICATION} 服务在运行. [not running!]"
     exit 1;
 fi
 

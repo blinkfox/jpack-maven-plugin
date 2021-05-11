@@ -17,11 +17,10 @@ else
 fi
 
 if [[ -z "$pid" ]] ; then
-    echo "\${APPLICATION} 服务并没有运行."
-    exit 0;
+    echo "未监测到 \${APPLICATION} 服务运行! [not running!]"
+    exit 1;
 fi
 
 kill -15 \${pid}
-echo "已成功关闭了 \${APPLICATION} 服务 (PID: \${pid})."
+echo "已成功关闭了 \${APPLICATION} 服务 (PID: \${pid}). [stop successfully]"
 exit 0
-

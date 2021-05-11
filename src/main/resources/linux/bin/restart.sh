@@ -1,6 +1,6 @@
 #! /bin/bash
 #=====================================================================
-# 描述: 重启服务的 shell 脚本;
+# 描述: 用于重启服务的 shell 脚本.
 # 步骤: 
 #     1. 先调用 stop.sh 停服;
 #     2. 由于服务可能是“优雅停机”，再循环判断服务是否真的已停止;
@@ -21,7 +21,7 @@ bash \${BIN_PATH}/stop.sh
 bash \${BIN_PATH}/status.sh
 while [ $? -eq 0 ]
 do
-    echo "\${APPLICATION} 服务仍在运行中 ..."
+    echo "\${APPLICATION} 服务仍在运行中，1s 后将继续检查服务状态."
     sleep 1s
     bash \${BIN_PATH}/status.sh
 done
@@ -30,4 +30,3 @@ done
 echo 正在启动 \${APPLICATION} 服务 ...
 bash \${BIN_PATH}/start.sh
 exit 0
-
